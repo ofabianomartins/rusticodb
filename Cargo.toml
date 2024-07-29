@@ -1,0 +1,15 @@
+[package]
+name = "rustico_database"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlparser = "0.49.0" 
+
+[dependencies.uuid]
+version = "1.10.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
