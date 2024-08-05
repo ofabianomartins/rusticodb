@@ -1,50 +1,25 @@
-use sqlparser::ast::CreateTable;
-use sqlparser::ast::Statement;
-
-use sqlparser::dialect::*;
-use sqlparser::parser::Parser;
-
-use std::fs::File;
 use std::fs::create_dir_all;
+use std::fs::File;
 
-fn test_data_file_exists() {
-    let basepath = "/tmp/rusticodb/main";
-    let _ = create_dir_all(basepath);
-    let _ = File::create(format!("{basepath}/data.json"));
+use crate::config::Config;
+use crate::parser::parser;
+use crate::parser::ExecutionCommands;
+
+mod create_table;
+
+fn test_data_file_exists(config: &Config) {
+    let _ = create_dir_all(config.base_path.clone());
+    let _ = File::create(format!("{0}/data.json", config.base_path.clone()));
 }
 
-pub fn create_table(statement: CreateTable) {
-    let basepath = "/tmp/rusticodb/main";
-    let table_path = format!("{basepath}/tables/{0}", statement.name);
+pub fn execute(config: &Config, filepath: &str, sql: &str) {
+    test_data_file_exists(config);
 
-    let _ = create_dir_all(table_path.clone());
-    let _ = File::create(format!("{table_path}/metadata.json"));
-}
+    let _file = File::create(filepath);
 
-pub fn execute(filepath: &str, sql: &str) {
-    test_data_file_exists();
+    let commands: ExecutionCommands = parser(sql);
 
-    let file = File::create(filepath);
-
-    let dialect = GenericDialect {}; // or AnsiDialect
-    let parse_result = Parser::parse_sql(&dialect, sql);
-
-    // println!("Struct: {:?}", parse_result.clone().unwrap());
-    match parse_result {
-        Ok(statements) => {
-            for val in statements {
-                match val {
-                    Statement::CreateTable(create_table_stmt) => {
-                        create_table(create_table_stmt)
-                    },
-                    other => {
-                        println!("Not matched: {:?}", other)
-                    }
-                }
-            }
-        },
-        Err(e) => {
-            println!("Error during parsing: {e:?}");
-        }
+    for create_table_statement in commands.create_tables {
+        create_table::create_table(config, create_table_statement)
     }
 }
