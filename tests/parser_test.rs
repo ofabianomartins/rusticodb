@@ -1,5 +1,4 @@
 use rusticodb::parser::parser;
-use rusticodb::config::Config;
 
 #[test]
 fn test_parser_create_table_users() {
@@ -22,5 +21,3 @@ fn test_parser_create_table_messages() {
     assert_eq!(commands.create_tables.get(0).unwrap().name.to_string(), "messages");
     assert_eq!(commands.create_tables.get(0).unwrap().columns.len(), 3);
 }
-
-
