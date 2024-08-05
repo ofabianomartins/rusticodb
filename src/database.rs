@@ -62,8 +62,10 @@ impl Database {
                     match *source.body {
                         SetExpr::Values(Values { rows, .. }) => {
                             for (index, column) in self.tables[id].columns.iter().enumerate() {
-                                println!("Message ::: {}", rows[0][index]);
-                                json_content.insert(column.name.to_string(), rows[0][index].clone().to_string());
+                                json_content.insert(
+                                    column.name.to_string(), 
+                                    rows[0][index].clone().to_string().replace("'", "")
+                                );
                             }
                         }
                         _ => unreachable!(),
