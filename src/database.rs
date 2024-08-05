@@ -1,11 +1,16 @@
 use std::fmt::Debug;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use std::fs;
 use std::fs::File;
+use std::collections::HashMap;
 
+use sqlparser::ast::*;
 use sqlparser::ast::CreateTable;
+use sqlparser::ast::Insert;
 
 use crate::table::Table;
+use crate::table::Rows;
 use crate::column::Column;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,9 +43,40 @@ impl Database {
             Table {
                 name: create_table_statement.name.to_string(),
                 columns: table_columns,
-                indexes: Vec::new()
+                indexes: Vec::new(),
+                rows: Vec::new()
             }
         )
+    }
+
+    pub fn insert_row(&mut self, insert_statement: Insert ) {
+        let index = self.tables.iter()
+            .position(|e| e.name == insert_statement.table_name.to_string());
+
+        match index {
+            Some(id) => {
+                // let row = format!("{0}_{1}", insert_statement.columns.to_vec(), "");
+                
+                let mut json_content: HashMap<String, String> = HashMap::new();
+                if let Some(source) = insert_statement.source {
+                    match *source.body {
+                        SetExpr::Values(Values { rows, .. }) => {
+                            for (index, column) in self.tables[id].columns.iter().enumerate() {
+                                println!("Message ::: {}", rows[0][index]);
+                                json_content.insert(column.name.to_string(), rows[0][index].clone().to_string());
+                            }
+                        }
+                        _ => unreachable!(),
+                    }
+                }
+
+                let json_str = serde_json::to_string(&json_content).expect("Wrong format!!!");
+                self.tables[id].rows.push(json_str);
+            },
+            None => {
+
+            }
+        }
     }
 
 
