@@ -1,3 +1,5 @@
+run:
+	DATA_FOLDER=./rusticodb_data cargo run
 
 test:
 	mkdir -p ./tmp_tests/
