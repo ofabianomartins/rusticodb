@@ -39,3 +39,27 @@ pub fn test_create_table_tables_data_file() {
 
     destroy_tmp_test_folder();
 }
+
+#[test]
+pub fn test_create_table_databases_data_file() {
+    create_tmp_test_folder();
+
+    setup_system();
+
+    let table_filename = format!("{}/rusticodb/databases.db", Config::data_folder());
+    assert!(Path::new(&table_filename).exists());
+
+    destroy_tmp_test_folder();
+}
+
+#[test]
+pub fn test_create_table_columns_data_file() {
+    create_tmp_test_folder();
+
+    setup_system();
+
+    let table_filename = format!("{}/rusticodb/columns.db", Config::data_folder());
+    assert!(Path::new(&table_filename).exists());
+
+    destroy_tmp_test_folder();
+}
