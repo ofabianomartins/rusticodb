@@ -1,15 +1,14 @@
-use crate::storage::pager::Pager;
-use crate::storage::utils::create_if_not_exists_data_folder;
+use crate::config::Config;
+use crate::storage::machine::Machine;
+use crate::storage::os_interface::OsInterface;
 
-pub fn setup_system() {
-    create_if_not_exists_data_folder();
-
-    let mut pager = Pager::new();
+pub fn setup_system(machine: &mut Machine) {
+    OsInterface::create_folder_if_not_exists(&Config::data_folder());
 
     let main_db_name = String::from("rusticodb");
 
-    pager.create_database(&main_db_name);
-    pager.create_file(&main_db_name, &String::from("databases"));
-    pager.create_file(&main_db_name, &String::from("tables"));
-    pager.create_file(&main_db_name, &String::from("columns"));
+    machine.create_database(&main_db_name);
+    machine.create_table(&main_db_name, &String::from("databases"));
+    machine.create_table(&main_db_name, &String::from("tables"));
+    machine.create_table(&main_db_name, &String::from("columns"));
 }

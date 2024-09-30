@@ -1,2 +1,2 @@
 pub mod pager_spec;
-pub mod utils_spec;
+pub mod machine_spec;

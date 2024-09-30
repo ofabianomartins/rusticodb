@@ -1,6 +1,6 @@
-use crate::storage::config::Config;
-use crate::storage::os_inteface::OsInterface;
-use crate::storage::os_inteface::BLOCK_SIZE;
+use crate::config::Config;
+use crate::storage::os_interface::OsInterface;
+use crate::storage::os_interface::BLOCK_SIZE;
 
 #[derive(Debug)]
 pub struct Page { 
@@ -14,18 +14,6 @@ pub struct Pager {
 impl Pager {
     pub fn new() -> Self {
         Self {  }
-    }
-
-    pub fn create_database(&mut self, database_name: &String) {
-        let database_folder = format!("{}/{}", Config::data_folder(), database_name);
-
-        OsInterface::create_folder(&database_folder);
-    }
-
-    pub fn create_file(&mut self, database_name: &String, table_name: &String) {
-        let table_filename = format!("{}/{}/{}.db", Config::data_folder(), database_name, table_name);
-
-        OsInterface::create_file(&table_filename);
     }
 
     pub fn write_data(&mut self, database_name: &String, table_name: &String, pos: u64, data: &[u8; BLOCK_SIZE]) {

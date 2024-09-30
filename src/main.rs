@@ -4,16 +4,20 @@ use std::io::Write;
 pub mod storage;
 pub mod parser;
 pub mod setup;
+pub mod config;
 
-use setup::setup_system;
+use crate::setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;
+use crate::storage::machine::Machine;
 
 fn main() {
     let mut stdout = io::stdout();
     let stdin = io::stdin();
     let mut buf = String::new();
 
-    setup_system();
+    let mut machine = Machine::new();
+
+    setup_system(&mut machine);
     let mut executor = SqlExecutor::new();
 
     loop {

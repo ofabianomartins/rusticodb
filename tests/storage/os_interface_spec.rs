@@ -1,7 +1,7 @@
 
 use std::path::Path;
 
-use rusticodb::storage::utils::create_if_not_exists_data_folder;
+use rusticodb::storage::os_interface::OsInterface;
 use rusticodb::storage::config::Config;
 
 use crate::test_utils::destroy_tmp_test_folder;

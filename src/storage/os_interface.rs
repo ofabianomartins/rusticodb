@@ -17,6 +17,10 @@ impl OsInterface {
         let _ = create_dir(folder_name);
     }
 
+    pub fn create_folder_if_not_exists(folder_name: &String) {
+        let _ = create_dir(folder_name);
+    }
+
     pub fn create_file(file_name: &String) {
         let _file = OpenOptions::new()
             .create(true)

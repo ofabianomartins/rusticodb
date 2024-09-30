@@ -6,7 +6,7 @@ use sqlparser::parser::ParserError;
 
 use sqlparser::ast::Statement;
 
-use crate::storage::pager::Pager;
+use crate::storage::machine::Machine;
 
 pub struct SqlExecutor {
     pub actual_db: Option<String>
@@ -44,14 +44,14 @@ impl SqlExecutor {
                 self.actual_db = Some(db_name.to_string());
             },
             Statement::CreateDatabase { db_name, if_not_exists: _, location: _, managed_location: _ } => {
-                let mut pager = Pager::new();
+                let mut pager = Machine::new();
                 pager.create_database(&db_name.to_string());
             },
             Statement::CreateTable(create_table) => {
-                let mut pager = Pager::new();
+                let mut pager = Machine::new();
                 match &self.actual_db {
                     Some(db_name) => {
-                        pager.create_file(&db_name, &create_table.name.to_string());
+                        pager.create_table(&db_name, &create_table.name.to_string());
                     },
                     None => println!("Database not setted!")
                 }
