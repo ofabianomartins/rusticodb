@@ -1,3 +1,4 @@
+use sqlparser::ast::ObjectType;
 use sqlparser::dialect::GenericDialect;
 
 use sqlparser::parser::Parser;
@@ -54,6 +55,15 @@ impl SqlExecutor {
                     },
                     None => println!("Database not setted!")
                 }
+            },
+            Statement::Drop { object_type, if_exists, names, cascade, restrict, purge, temporary } => {
+                match object_type {
+                    ObjectType::Table => {
+                        
+                    },
+                    _ => todo!()
+                }
+
             },
             _ => todo!()
         }

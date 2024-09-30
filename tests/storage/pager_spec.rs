@@ -2,7 +2,7 @@ use std::path::Path;
 
 use rusticodb::storage::pager::Pager;
 use rusticodb::storage::config::Config;
-use rusticodb::storage::pager::BLOCK_SIZE;
+use rusticodb::storage::os_inteface::BLOCK_SIZE;
 
 use crate::test_utils::create_tmp_test_folder;
 use crate::test_utils::destroy_tmp_test_folder;

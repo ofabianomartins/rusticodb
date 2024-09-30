@@ -6,7 +6,7 @@ use std::fs::remove_dir_all;
 use std::fs::create_dir_all;
 
 use rusticodb::storage::config::Config;
-use rusticodb::storage::pager::BLOCK_SIZE;
+use rusticodb::storage::os_inteface::BLOCK_SIZE;
 
 pub fn create_tmp_test_folder() {
     let _ = create_dir_all(Config::data_folder());
