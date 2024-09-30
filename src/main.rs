@@ -3,7 +3,9 @@ use std::io::Write;
 
 pub mod storage;
 pub mod parser;
+pub mod setup;
 
+use setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;
 
 fn main() {
@@ -11,15 +13,14 @@ fn main() {
     let stdin = io::stdin();
     let mut buf = String::new();
 
+    setup_system();
     let mut executor = SqlExecutor::new();
 
-    executor.parse_command("CREATE DATABASE rusticodb");
-    executor.parse_command("CREATE TABLE tables");
-    executor.parse_command("USE rusticodb");
-    executor.parse_command("CREATE TABLE tables");
-
     loop {
-        print!("rusticodb> ");
+        match &executor.actual_db {
+            Some(actual_db) => print!("{} > ", actual_db),
+            None => print!("<no-database> > ")
+        }
         stdout.flush().expect("flush stdout");
         buf.truncate(0);
         let n = stdin.read_line(&mut buf).expect("read line");
@@ -27,8 +28,8 @@ fn main() {
         match line.trim() {
             "quit" | "exit" => break,
             "" => continue,
-            line => {
-                println!("{}", line);
+            sql_command => {
+                executor.parse_command(sql_command);
             }
         }
     }

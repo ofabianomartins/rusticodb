@@ -46,11 +46,11 @@ impl SqlExecutor {
                 let mut pager = Pager::new();
                 pager.create_database(&db_name.to_string());
             },
-            Statement::CreateTable(createTable) => {
+            Statement::CreateTable(create_table) => {
                 let mut pager = Pager::new();
                 match &self.actual_db {
                     Some(db_name) => {
-                        pager.create_file(&db_name, &createTable.name.to_string());
+                        pager.create_file(&db_name, &create_table.name.to_string());
                     },
                     None => println!("Database not setted!")
                 }

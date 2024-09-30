@@ -5,7 +5,6 @@ use rusticodb::parser::sql_executor::SqlExecutor;
 
 use crate::test_utils::create_tmp_test_folder;
 use crate::test_utils::destroy_tmp_test_folder;
-use crate::test_utils::read_from_file;
 
 #[test]
 pub fn test_create_database_metadata_file_database1() {
