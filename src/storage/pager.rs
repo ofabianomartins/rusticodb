@@ -3,11 +3,6 @@ use crate::storage::os_interface::OsInterface;
 use crate::storage::os_interface::BLOCK_SIZE;
 
 #[derive(Debug)]
-pub struct Page { 
-
-}
-
-#[derive(Debug)]
 pub struct Pager { 
 }
 
