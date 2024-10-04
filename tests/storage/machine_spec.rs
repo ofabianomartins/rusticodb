@@ -4,7 +4,6 @@ use rusticodb::config::Config;
 use rusticodb::storage::cell::Cell;
 use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::machine::Machine;
-use rusticodb::storage::pager::Pager;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 
 use crate::test_utils::create_tmp_test_folder;
@@ -56,7 +55,7 @@ pub fn test_write_data_metadata_file() {
 
     buffer.append(&mut 1u64.to_le_bytes().to_vec());
     buffer.append(&mut 1u64.to_le_bytes().to_vec());
-    buffer.append(&mut (bytes_array.len() as u64).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -65,7 +64,7 @@ pub fn test_write_data_metadata_file() {
     }
 
     let mut cell = Cell::new();
-    cell.insert_string(&data);
+    cell.string_to_bin(&data);
 
     let mut tuple = Tuple::new();
     tuple.append_cell(cell);

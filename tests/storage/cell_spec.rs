@@ -7,12 +7,12 @@ pub fn test_cell_insert_string_to_u8() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.append(&mut (bytes_array.len() as u64).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
 
-    cell.insert_string(&data);
+    cell.string_to_bin(&data);
 
     assert_eq!(cell.data, buffer);
 
