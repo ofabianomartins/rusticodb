@@ -68,6 +68,25 @@ pub fn test_push_boolean_true() {
 }
 
 #[test]
+pub fn test_push_boolean_false() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.push(CellType::Boolean as u8);
+    buffer.push(0u8);
+
+    let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
+    for (idx, elem) in &mut buffer.iter().enumerate() {
+        raw_buffer[idx] = *elem;
+    }
+
+    let mut tuple = Tuple::new();
+    tuple.push_boolean(false);
+
+    assert_eq!(tuple.to_raw_data(), raw_buffer);
+}
+
+#[test]
 pub fn test_cell_insert_false_boolean_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 

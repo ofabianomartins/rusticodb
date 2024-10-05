@@ -179,4 +179,52 @@ pub fn test_cell_insert_signed_bigint_to_u8() {
     assert_eq!(cell.data, buffer);
 }
 
+#[test]
+pub fn test_cell_get_u8_to_string() {
+    let mut buffer: Vec<u8> = Vec::new();
+    let data: String = String::from("simple_string");
 
+    let mut bytes_array = data.clone().into_bytes();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut bytes_array);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_string() {
+        Ok(format_data) => {
+            assert_eq!(format_data, data);
+        },
+        _ => {
+            
+
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_text() {
+    let mut buffer: Vec<u8> = Vec::new();
+    let data: String = String::from("simple_string");
+
+    let mut bytes_array = data.clone().into_bytes();
+
+    buffer.push(CellType::Text as u8);
+    buffer.append(&mut (bytes_array.len() as u32).to_le_bytes().to_vec());
+    buffer.append(&mut bytes_array);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_text() {
+        Ok(format_data) => {
+            assert_eq!(format_data, data);
+        },
+        _ => {
+            
+
+        }
+    }
+}

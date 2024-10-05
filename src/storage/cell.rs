@@ -16,13 +16,21 @@ pub enum CellType {
     SignedBigint = 10,
     String = 1,
     Text = 11
+}
 
+pub enum ParserError {
+    WrongFormat,
+    StringParseFailed
 }
 
 impl Cell {
 
     pub fn new() -> Self {
         Cell { data: Vec::new() }
+    }
+
+    pub fn load(&mut self, data: Vec<u8>) {
+        self.data = data;
     }
 
     pub fn string_to_bin(&mut self,raw_data: &String) {
@@ -88,6 +96,44 @@ impl Cell {
     pub fn signed_bigint_to_bin(&mut self, value: i64) {
         self.data.push(CellType::SignedBigint as u8);
         self.data.append(&mut value.to_le_bytes().to_vec());
+    }
+
+    pub fn bin_to_string(&mut self) -> Result<String, ParserError> {
+        if self.data[0] != (CellType::String as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let mut bytes: Vec<u8> = Vec::new();
+        let mut index: usize = 3;
+
+        while index < self.data.len() {
+            bytes.push(*self.data.get(index).unwrap());
+            index += 1;
+        }
+
+        match String::from_utf8(bytes) {
+            Ok(new_data) => Ok(new_data),
+            Err(error) => Err(ParserError::StringParseFailed)
+        }
+    }
+
+    pub fn bin_to_text(&mut self) -> Result<String, ParserError> {
+        if self.data[0] != (CellType::String as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let mut bytes: Vec<u8> = Vec::new();
+        let mut index: usize = 5;
+
+        while index < self.data.len() {
+            bytes.push(*self.data.get(index).unwrap());
+            index += 1;
+        }
+
+        match String::from_utf8(bytes) {
+            Ok(new_data) => Ok(new_data),
+            Err(error) => Err(ParserError::StringParseFailed)
+        }
     }
 
 }
