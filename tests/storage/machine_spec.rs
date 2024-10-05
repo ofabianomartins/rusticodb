@@ -2,6 +2,7 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::storage::cell::Cell;
+use rusticodb::storage::cell::CellType;
 use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::machine::Machine;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
@@ -55,6 +56,7 @@ pub fn test_write_data_metadata_file() {
 
     buffer.append(&mut 1u64.to_le_bytes().to_vec());
     buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.push(CellType::String as u8);
     buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
     buffer.append(&mut bytes_array);
 

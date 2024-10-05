@@ -1,7 +1,6 @@
 use crate::config::Config;
 use crate::storage::machine::Machine;
 use crate::storage::tuple::Tuple;
-use crate::storage::cell::Cell;
 use crate::storage::os_interface::OsInterface;
 
 pub fn setup_system(machine: &mut Machine) {
@@ -21,12 +20,7 @@ pub fn setup_databases_table(machine: &mut Machine) {
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
-    let mut cell: Cell = Cell::new();
-    
-    cell.string_to_bin(&String::from("rusticodb"));
-
-    tuple.append_cell(cell);
-
+    tuple.push_string(&String::from("rusticodb"));
     tuples.push(tuple);
 
     machine.create_table(&main_db_name, &table_name_databases);
@@ -38,43 +32,20 @@ pub fn setup_tables_table(machine: &mut Machine) {
     let table_name_tables = String::from("tables");
 
     let mut tuples: Vec<Tuple> = Vec::new();
+
     let mut tuple: Tuple = Tuple::new();
-
-    let mut cell_rustico: Cell = Cell::new();
-    cell_rustico.string_to_bin(&String::from("rusticodb"));
-
-    let mut cell_database: Cell = Cell::new();
-    cell_database.string_to_bin(&String::from("databases"));
-
-    tuple.append_cell(cell_rustico);
-    tuple.append_cell(cell_database);
-
+    tuple.push_string(&String::from("rusticodb"));
+    tuple.push_string(&String::from("databases"));
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
-
-    let mut cell_rustico: Cell = Cell::new();
-    cell_rustico.string_to_bin(&String::from("rusticodb"));
-
-    let mut cell_database: Cell = Cell::new();
-    cell_database.string_to_bin(&String::from("tables"));
-
-    tuple.append_cell(cell_rustico);
-    tuple.append_cell(cell_database);
-
+    tuple.push_string(&String::from("rusticodb"));
+    tuple.push_string(&String::from("tables"));
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
-
-    let mut cell_rustico: Cell = Cell::new();
-    cell_rustico.string_to_bin(&String::from("rusticodb"));
-
-    let mut cell_database: Cell = Cell::new();
-    cell_database.string_to_bin(&String::from("colums"));
-
-    tuple.append_cell(cell_rustico);
-    tuple.append_cell(cell_database);
-
+    tuple.push_string(&String::from("rusticodb"));
+    tuple.push_string(&String::from("colums"));
     tuples.push(tuple);
 
     machine.create_table(&main_db_name, &table_name_tables);
@@ -87,24 +58,10 @@ pub fn setup_columns_table(machine: &mut Machine) {
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
-
-    let mut cell_database: Cell = Cell::new();
-    cell_database.string_to_bin(&String::from("rusticodb"));
-
-    let mut cell_table: Cell = Cell::new();
-    cell_table.string_to_bin(&String::from("databases"));
-
-    let mut cell_column: Cell = Cell::new();
-    cell_column.string_to_bin(&String::from("name"));
-
-    let mut cell_column_type: Cell = Cell::new();
-    cell_column_type.string_to_bin(&String::from("VARCHAR"));
-
-    tuple.append_cell(cell_database);
-    tuple.append_cell(cell_table);
-    tuple.append_cell(cell_column);
-    tuple.append_cell(cell_column_type);
-
+    tuple.push_string(&String::from("rusticodb"));
+    tuple.push_string(&String::from("databases"));
+    tuple.push_string(&String::from("name"));
+    tuple.push_string(&String::from("VARCHAR"));
     tuples.push(tuple);
 
     machine.create_table(&main_db_name, &table_name_tables);

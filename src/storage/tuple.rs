@@ -16,6 +16,24 @@ impl Tuple {
         self.cells.push(cell);
     }
 
+    pub fn push_string(&mut self, raw_data: &String) {
+        let mut cell = Cell::new();
+        cell.string_to_bin(&raw_data);
+        self.append_cell(cell);
+    }
+
+    pub fn push_text(&mut self, raw_data: &String) {
+        let mut cell = Cell::new();
+        cell.text_to_bin(&raw_data);
+        self.append_cell(cell);
+    }
+
+    pub fn push_boolean(&mut self, value: bool) {
+        let mut cell = Cell::new();
+        cell.boolean_to_bin(value);
+        self.append_cell(cell);
+    }
+
     pub fn to_raw_data(&mut self) -> [u8; BLOCK_SIZE] {
         let mut buffer: Vec<u8> = Vec::new();
         let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
