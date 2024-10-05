@@ -3,6 +3,8 @@ use crate::machine::table::Table;
 use crate::machine::column::Column;
 
 pub struct Context {
+    pub actual_database: Option<String>,
+
     databases: Vec<Database>,
     tables: Vec<Table>,
     columns: Vec<Column>
@@ -12,11 +14,21 @@ impl Context {
 
     pub fn new() -> Self {
         Context {
+            actual_database: None,
             databases: Vec::new(),
             tables: Vec::new(),
             columns: Vec::new()
         } 
     }
+
+    pub fn set_actual_database(&mut self, name: String) -> bool {
+        if self.check_database_exists(&name) == false {
+            return false
+        }
+        self.actual_database = Some(name);
+        return true
+    }
+
 
     pub fn add_database(&mut self, name: String) -> bool {
         if self.check_database_exists(&name) == true {
