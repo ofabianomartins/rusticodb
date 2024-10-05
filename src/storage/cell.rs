@@ -1,3 +1,4 @@
+
 #[derive(Debug)]
 pub struct Cell {
     pub data: Vec<u8>
@@ -21,6 +22,7 @@ pub enum CellType {
 #[derive(Debug)]
 pub enum ParserError {
     WrongFormat,
+    WrongLength,
     StringParseFailed
 }
 
@@ -100,6 +102,10 @@ impl Cell {
     }
 
     pub fn bin_to_string(&mut self) -> Result<String, ParserError> {
+        if self.data.len() <= 1 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::String as u8) {
             return Err(ParserError::WrongFormat)
         } 
