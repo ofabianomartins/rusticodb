@@ -223,7 +223,46 @@ pub fn test_cell_get_u8_to_text() {
             assert_eq!(format_data, data);
         },
         _ => {
-            
+
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_true_boolean() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::Boolean as u8);
+    buffer.push(1u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_boolean() {
+        Ok(format_data) => {
+            assert_eq!(format_data, true);
+        },
+        _ => {
+
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_false_boolean() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::Boolean as u8);
+    buffer.push(0u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_boolean() {
+        Ok(format_data) => {
+            assert_eq!(format_data, false);
+        },
+        _ => {
 
         }
     }

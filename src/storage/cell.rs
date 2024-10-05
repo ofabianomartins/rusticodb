@@ -118,7 +118,7 @@ impl Cell {
     }
 
     pub fn bin_to_text(&mut self) -> Result<String, ParserError> {
-        if self.data[0] != (CellType::String as u8) {
+        if self.data[0] != (CellType::Text as u8) {
             return Err(ParserError::WrongFormat)
         } 
 
@@ -134,6 +134,14 @@ impl Cell {
             Ok(new_data) => Ok(new_data),
             Err(error) => Err(ParserError::StringParseFailed)
         }
+    }
+
+    pub fn bin_to_boolean(&mut self) -> Result<bool, ParserError> {
+        if self.data[0] != (CellType::Boolean as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        Ok(self.data[1] == 1u8)
     }
 
 }
