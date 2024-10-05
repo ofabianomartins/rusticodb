@@ -19,7 +19,7 @@ pub fn test_if_actual_database_is_set_to_context() {
 
     assert!(context.set_actual_database(database1.clone()));
     assert!(context.check_database_exists(&database1));
-    assert!(matches!(context.actual_database, Some(database1)))
+    assert!(matches!(context.actual_database, Some(_database1)))
 }
 
 #[test]

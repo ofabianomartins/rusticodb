@@ -1,4 +1,4 @@
-use rusticodb::storage::cell::{Cell, CellType};
+use rusticodb::storage::cell::CellType;
 use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 

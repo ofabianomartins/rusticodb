@@ -38,7 +38,7 @@ fn main() {
             "quit" | "exit" => break,
             "" => continue,
             sql_command => {
-                executor.parse_command(&mut context, sql_command);
+                executor.parse_command(&mut context, &mut machine, sql_command);
             }
         }
     }

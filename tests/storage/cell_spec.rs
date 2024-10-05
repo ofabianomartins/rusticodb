@@ -288,7 +288,6 @@ pub fn test_cell_get_u8_to_text_with_error() {
 #[test]
 pub fn test_cell_get_u8_to_text_with_lentgh_error() {
     let mut buffer: Vec<u8> = Vec::new();
-    let data: String = String::from("simple_string");
 
     buffer.push(CellType::String as u8);
 
