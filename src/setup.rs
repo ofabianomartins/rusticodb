@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::storage::machine::Machine;
+use crate::machine::Machine;
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;
 
@@ -8,7 +8,9 @@ pub fn setup_system(machine: &mut Machine) {
 
     let main_db_name = String::from("rusticodb");
 
-    machine.create_database(&main_db_name);
+    if machine.database_exists(&main_db_name) == false {
+        machine.create_database(&main_db_name);
+    }
     setup_databases_table(machine);
     setup_tables_table(machine);
     setup_columns_table(machine);

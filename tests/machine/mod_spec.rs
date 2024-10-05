@@ -1,10 +1,10 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
+use rusticodb::machine::Machine;
 use rusticodb::storage::cell::Cell;
 use rusticodb::storage::cell::CellType;
 use rusticodb::storage::tuple::Tuple;
-use rusticodb::storage::machine::Machine;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 
 use crate::test_utils::create_tmp_test_folder;

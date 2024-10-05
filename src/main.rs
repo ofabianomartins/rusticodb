@@ -4,11 +4,12 @@ use std::io::Write;
 pub mod storage;
 pub mod parser;
 pub mod setup;
+pub mod machine;
 pub mod config;
 
 use crate::setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;
-use crate::storage::machine::Machine;
+use crate::machine::Machine;
 
 fn main() {
     let mut stdout = io::stdout();
