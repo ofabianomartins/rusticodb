@@ -145,4 +145,79 @@ impl Cell {
         Ok(self.data[1] == 1u8)
     }
 
+    pub fn bin_to_unsigned_tinyint(&mut self) -> Result<u8, ParserError> {
+        if self.data[0] != (CellType::UnsignedTinyint as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+        
+        return Ok(self.data[1]);
+    }
+
+    pub fn bin_to_unsigned_smallint(&mut self) -> Result<u16, ParserError> {
+        if self.data[0] != (CellType::UnsignedSmallint as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 2] = [self.data[1], self.data[2]];
+        return Ok(u16::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+    }
+
+    pub fn bin_to_unsigned_int(&mut self) -> Result<u32, ParserError> {
+        if self.data[0] != (CellType::UnsignedInt as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 4] = [self.data[1], self.data[2], self.data[3], self.data[4]];
+        return Ok(u32::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+    }
+
+    pub fn bin_to_unsigned_bigint(&mut self) -> Result<u64, ParserError> {
+        if self.data[0] != (CellType::UnsignedInt as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 8] = [
+            self.data[1], self.data[2], self.data[3], self.data[4],
+            self.data[5], self.data[6], self.data[7], self.data[8]
+        ];
+        return Ok(u64::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+    }
+
+    pub fn bin_to_signed_tinyint(&mut self) -> Result<i8, ParserError> {
+        if self.data[0] != (CellType::UnsignedTinyint as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+        
+        return Ok(self.data[1] as i8);
+    }
+
+    pub fn bin_to_signed_smallint(&mut self) -> Result<i16, ParserError> {
+        if self.data[0] != (CellType::UnsignedSmallint as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 2] = [self.data[1], self.data[2]];
+        return Ok(i16::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+    }
+
+    pub fn bin_to_signed_int(&mut self) -> Result<i32, ParserError> {
+        if self.data[0] != (CellType::UnsignedInt as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 4] = [self.data[1], self.data[2], self.data[3], self.data[4]];
+        return Ok(i32::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+    }
+
+    pub fn bin_to_signed_bigint(&mut self) -> Result<i64, ParserError> {
+        if self.data[0] != (CellType::UnsignedInt as u8) {
+            return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 8] = [
+            self.data[1], self.data[2], self.data[3], self.data[4],
+            self.data[5], self.data[6], self.data[7], self.data[8]
+        ];
+        return Ok(i64::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+    }
 }

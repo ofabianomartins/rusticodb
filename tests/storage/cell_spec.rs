@@ -320,3 +320,307 @@ pub fn test_cell_get_u8_to_false_boolean_with_error() {
         }
     }
 }
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_tinyint() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::UnsignedTinyint as u8);
+    buffer.push(50u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_unsigned_tinyint() {
+        Ok(format_data) => {
+            assert_eq!(format_data, 50u8);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_tinyint_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.push(50u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_unsigned_tinyint() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_smallint() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::UnsignedSmallint as u8);
+    buffer.append(&mut 350u16.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_unsigned_smallint() {
+        Ok(format_data) => {
+            assert_eq!(format_data, 350u16);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_smallint_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut 50u16.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_unsigned_smallint() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_int() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::UnsignedInt as u8);
+    buffer.append(&mut 100350u32.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_unsigned_int() {
+        Ok(format_data) => {
+            assert_eq!(format_data, 100350u32);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_int_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut 50u32.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_unsigned_int() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_bigint() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::UnsignedBigint as u8);
+    buffer.append(&mut 14294967295u64.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_unsigned_bigint() {
+        Ok(format_data) => {
+            assert_eq!(format_data, 14294967295u64);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_unsigned_bigint_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut 14294967295u64.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_unsigned_bigint() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_tinyint() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::SignedTinyint as u8);
+    buffer.push(-123i8 as u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_signed_tinyint() {
+        Ok(format_data) => {
+            assert_eq!(format_data, -123i8);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_tinyint_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.push(-123i8 as u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_signed_tinyint() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_smallint() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::SignedSmallint as u8);
+    buffer.append(&mut (-31122i16).to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_signed_smallint() {
+        Ok(format_data) => {
+            assert_eq!(format_data, -31123i16);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_smallint_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut 50i16.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_signed_smallint() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_int() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::SignedInt as u8);
+    buffer.append(&mut 100350i32.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_signed_int() {
+        Ok(format_data) => {
+            assert_eq!(format_data, 100350i32);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_int_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut 50i32.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_signed_int() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_bigint() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::SignedBigint as u8);
+    buffer.append(&mut 14294967295i64.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+
+    match cell.bin_to_signed_bigint() {
+        Ok(format_data) => {
+            assert_eq!(format_data, 14294967295i64);
+        },
+        _ => { }
+    }
+}
+
+#[test]
+pub fn test_cell_get_u8_to_signed_bigint_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut 14294967295i64.to_le_bytes().to_vec());
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_signed_bigint() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
+        }
+    }
+}
