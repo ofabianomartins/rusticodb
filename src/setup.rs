@@ -1,19 +1,24 @@
 use crate::config::Config;
 use crate::machine::machine::Machine;
+use crate::machine::context::Context;
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;
 
-pub fn setup_system(machine: &mut Machine) {
+pub fn setup_system(context: &mut Context, machine: &mut Machine) {
     OsInterface::create_folder_if_not_exists(&Config::data_folder());
 
-    let main_db_name = String::from("rusticodb");
-
-    if machine.database_exists(&main_db_name) == false {
-        machine.create_database(&main_db_name);
+    setup_context(context);
+    if machine.database_exists(&Config::main_database()) == false {
+        machine.create_database(&Config::main_database());
     }
     setup_databases_table(machine);
     setup_tables_table(machine);
     setup_columns_table(machine);
+}
+
+pub fn setup_context(context: &mut Context) {
+    context.add_database(Config::main_database());
+
 }
 
 pub fn setup_databases_table(machine: &mut Machine) {

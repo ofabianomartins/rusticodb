@@ -7,6 +7,10 @@ pub struct Config {
 
 impl Config {
 
+    pub fn main_database() -> String {
+        return String::from("rusticodb");
+    }
+
     pub fn data_folder() -> String {
         let default_value = "/etc/rusticodb/data";
 

@@ -7,29 +7,27 @@ use sqlparser::parser::ParserError;
 use sqlparser::ast::Statement;
 
 use crate::machine::machine::Machine;
+use crate::machine::context::Context;
 
 pub struct SqlExecutor {
-    pub actual_db: Option<String>
 }
 
 impl SqlExecutor {
     pub fn new() -> Self {
-        SqlExecutor {
-            actual_db: None
-        }
+        SqlExecutor { }
     }
 
-    pub fn parse_command(&mut self, sql_command: &str) {
+    pub fn parse_command(&mut self, context: &mut Context, sql_command: &str) {
         let dialect = GenericDialect {};
 
-        self.process_commands(Parser::parse_sql(&dialect, sql_command))
+        self.process_commands(context, Parser::parse_sql(&dialect, sql_command))
     }
 
-    pub fn process_commands(&mut self, statements: Result<Vec<Statement>, ParserError>) { 
+    pub fn process_commands(&mut self, context: &mut Context, statements: Result<Vec<Statement>, ParserError>) { 
         match statements {
             Ok(commands) => {
                 for command in commands {
-                    self.process_command(command);
+                    self.process_command(context, command);
                 }
             },
             Err(ParserError::ParserError(err)) => println!("ParserError: {}", err),
@@ -38,22 +36,24 @@ impl SqlExecutor {
         }
     }
 
-    pub fn process_command(&mut self, statement: Statement) { 
+    pub fn process_command(&mut self, context: &mut Context, statement: Statement) { 
         match statement {
             Statement::Use { db_name } => {
-                self.actual_db = Some(db_name.to_string());
+                context.set_actual_database(db_name.to_string());
             },
             Statement::CreateDatabase { db_name, if_not_exists: _, location: _, managed_location: _ } => {
                 let mut pager = Machine::new();
                 pager.create_database(&db_name.to_string());
+                context.add_database(db_name.to_string());
+
             },
             Statement::CreateTable(create_table) => {
                 let mut pager = Machine::new();
-                match &self.actual_db {
-                    Some(db_name) => {
-                        pager.create_table(&db_name, &create_table.name.to_string());
-                    },
-                    None => println!("Database not setted!")
+                if let Some(db_name) = context.actual_database.clone() {
+                   context.add_table(db_name.to_string(), create_table.name.to_string());
+                   pager.create_table(&db_name, &create_table.name.to_string());
+                } else {
+                   println!("Database not setted!")
                 }
             },
             Statement::Drop { object_type, if_exists, names, cascade, restrict, purge, temporary } => {
