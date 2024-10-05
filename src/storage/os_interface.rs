@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use std::fs::create_dir;
 use std::fs::OpenOptions;
 use std::io::{Read, Seek, SeekFrom, Write};
@@ -11,6 +13,10 @@ pub struct OsInterface {
 impl OsInterface {
     pub fn new() -> Self {
         Self {  }
+    }
+
+    pub fn path_exists(path_name: &String) -> bool {
+        return Path::new(&path_name).exists();
     }
 
     pub fn create_folder(folder_name: &String) {

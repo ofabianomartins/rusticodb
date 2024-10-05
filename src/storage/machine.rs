@@ -13,6 +13,18 @@ impl Machine {
         Self {  }
     }
 
+    pub fn database_exists(&mut self, database_name: &String) -> bool{
+        let database_folder = format!("{}/{}", Config::data_folder(), database_name);
+
+        return OsInterface::path_exists(&database_folder);
+    }
+
+    pub fn table_exists(&mut self, database_name: &String, table_name: &String) -> bool{
+        let table_filename = format!("{}/{}/{}.db", Config::data_folder(), database_name, table_name);
+
+        return OsInterface::path_exists(&table_filename);
+    }
+
     pub fn create_database(&mut self, database_name: &String) {
         let database_folder = format!("{}/{}", Config::data_folder(), database_name);
 
