@@ -110,6 +110,13 @@ impl Cell {
             return Err(ParserError::WrongFormat)
         } 
 
+        let byte_array: [u8; 2] = [self.data[1], self.data[2]];
+        let string_size = u16::from_le_bytes(byte_array);
+
+        if self.data.len() != ((string_size + 3) as usize) {
+            return Err(ParserError::WrongLength)
+        } 
+
         let mut bytes: Vec<u8> = Vec::new();
         let mut index: usize = 3;
 
@@ -125,8 +132,19 @@ impl Cell {
     }
 
     pub fn bin_to_text(&mut self) -> Result<String, ParserError> {
+        if self.data.len() <= 1 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::Text as u8) {
             return Err(ParserError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 4] = [self.data[1], self.data[2], self.data[3], self.data[4]];
+        let string_size = u32::from_le_bytes(byte_array);
+
+        if self.data.len() != ((string_size + 5) as usize) {
+            return Err(ParserError::WrongLength)
         } 
 
         let mut bytes: Vec<u8> = Vec::new();
@@ -144,6 +162,10 @@ impl Cell {
     }
 
     pub fn bin_to_boolean(&mut self) -> Result<bool, ParserError> {
+        if self.data.len() != 2 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::Boolean as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -152,6 +174,10 @@ impl Cell {
     }
 
     pub fn bin_to_unsigned_tinyint(&mut self) -> Result<u8, ParserError> {
+        if self.data.len() != 2 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedTinyint as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -160,6 +186,10 @@ impl Cell {
     }
 
     pub fn bin_to_unsigned_smallint(&mut self) -> Result<u16, ParserError> {
+        if self.data.len() != 3 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedSmallint as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -169,6 +199,10 @@ impl Cell {
     }
 
     pub fn bin_to_unsigned_int(&mut self) -> Result<u32, ParserError> {
+        if self.data.len() != 5 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedInt as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -178,6 +212,10 @@ impl Cell {
     }
 
     pub fn bin_to_unsigned_bigint(&mut self) -> Result<u64, ParserError> {
+        if self.data.len() != 9 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedInt as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -190,6 +228,10 @@ impl Cell {
     }
 
     pub fn bin_to_signed_tinyint(&mut self) -> Result<i8, ParserError> {
+        if self.data.len() != 2 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedTinyint as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -198,6 +240,10 @@ impl Cell {
     }
 
     pub fn bin_to_signed_smallint(&mut self) -> Result<i16, ParserError> {
+        if self.data.len() != 3 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedSmallint as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -207,6 +253,10 @@ impl Cell {
     }
 
     pub fn bin_to_signed_int(&mut self) -> Result<i32, ParserError> {
+        if self.data.len() != 5 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedInt as u8) {
             return Err(ParserError::WrongFormat)
         } 
@@ -216,6 +266,10 @@ impl Cell {
     }
 
     pub fn bin_to_signed_bigint(&mut self) -> Result<i64, ParserError> {
+        if self.data.len() != 9 {
+            return Err(ParserError::WrongLength)
+        } 
+
         if self.data[0] != (CellType::UnsignedInt as u8) {
             return Err(ParserError::WrongFormat)
         } 
