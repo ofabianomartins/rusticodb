@@ -34,6 +34,54 @@ impl Tuple {
         self.append_cell(cell);
     }
 
+    pub fn push_unsigned_tinyint(&mut self, value: u8) {
+        let mut cell = Cell::new();
+        cell.unsigned_tinyint_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_unsigned_smallint(&mut self, value: u16) {
+        let mut cell = Cell::new();
+        cell.unsigned_smallint_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_unsigned_int(&mut self, value: u32) {
+        let mut cell = Cell::new();
+        cell.unsigned_int_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_unsigned_bigint(&mut self, value: u64) {
+        let mut cell = Cell::new();
+        cell.unsigned_bigint_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_signed_tinyint(&mut self, value: i8) {
+        let mut cell = Cell::new();
+        cell.signed_tinyint_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_signed_smallint(&mut self, value: i16) {
+        let mut cell = Cell::new();
+        cell.signed_smallint_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_signed_int(&mut self, value: i32) {
+        let mut cell = Cell::new();
+        cell.signed_int_to_bin(value);
+        self.append_cell(cell);
+    }
+
+    pub fn push_signed_bigint(&mut self, value: i64) {
+        let mut cell = Cell::new();
+        cell.signed_bigint_to_bin(value);
+        self.append_cell(cell);
+    }
+
     pub fn to_raw_data(&mut self) -> [u8; BLOCK_SIZE] {
         let mut buffer: Vec<u8> = Vec::new();
         let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
