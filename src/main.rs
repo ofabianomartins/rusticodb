@@ -9,7 +9,7 @@ pub mod config;
 
 use crate::setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;
-use crate::machine::Machine;
+use crate::machine::machine::Machine;
 
 fn main() {
     let mut stdout = io::stdout();

@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::machine::Machine;
+use crate::machine::machine::Machine;
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;
 

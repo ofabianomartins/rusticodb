@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::machine::Machine;
+use rusticodb::machine::machine::Machine;
 use rusticodb::setup::setup_system;
 
 use crate::test_utils::destroy_tmp_test_folder;

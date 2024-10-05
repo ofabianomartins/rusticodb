@@ -6,7 +6,7 @@ use sqlparser::parser::ParserError;
 
 use sqlparser::ast::Statement;
 
-use crate::machine::Machine;
+use crate::machine::machine::Machine;
 
 pub struct SqlExecutor {
     pub actual_db: Option<String>

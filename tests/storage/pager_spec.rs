@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::machine::Machine;
+use rusticodb::machine::machine::Machine;
 use rusticodb::storage::pager::Pager;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 

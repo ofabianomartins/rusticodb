@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::machine::Machine;
+use rusticodb::machine::machine::Machine;
 use rusticodb::storage::cell::Cell;
 use rusticodb::storage::cell::CellType;
 use rusticodb::storage::tuple::Tuple;
