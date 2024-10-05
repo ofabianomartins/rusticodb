@@ -18,6 +18,7 @@ pub enum CellType {
     Text = 11
 }
 
+#[derive(Debug)]
 pub enum ParserError {
     WrongFormat,
     StringParseFailed
@@ -113,7 +114,7 @@ impl Cell {
 
         match String::from_utf8(bytes) {
             Ok(new_data) => Ok(new_data),
-            Err(error) => Err(ParserError::StringParseFailed)
+            Err(_error) => Err(ParserError::StringParseFailed)
         }
     }
 
@@ -132,7 +133,7 @@ impl Cell {
 
         match String::from_utf8(bytes) {
             Ok(new_data) => Ok(new_data),
-            Err(error) => Err(ParserError::StringParseFailed)
+            Err(_error) => Err(ParserError::StringParseFailed)
         }
     }
 

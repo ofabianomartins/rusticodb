@@ -1,5 +1,6 @@
 use rusticodb::storage::cell::Cell;
 use rusticodb::storage::cell::CellType;
+use rusticodb::storage::cell::ParserError;
 
 #[test]
 pub fn test_cell_insert_string_to_u8() {
@@ -93,7 +94,6 @@ pub fn test_cell_insert_unsigned_smallint_to_u8() {
     assert_eq!(cell.data, buffer);
 }
 
-
 #[test]
 pub fn test_cell_insert_unsigned_int_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
@@ -150,7 +150,6 @@ pub fn test_cell_insert_signed_smallint_to_u8() {
     assert_eq!(cell.data, buffer);
 }
 
-
 #[test]
 pub fn test_cell_insert_signed_int_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
@@ -197,9 +196,28 @@ pub fn test_cell_get_u8_to_string() {
         Ok(format_data) => {
             assert_eq!(format_data, data);
         },
-        _ => {
-            
+        _ => { }
+    }
+}
 
+#[test]
+pub fn test_cell_get_u8_to_string_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+    let data: String = String::from("simple_string");
+
+    let mut bytes_array = data.clone().into_bytes();
+
+    buffer.push(CellType::Text as u8);
+    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut bytes_array);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_string() {
+        Ok(_format_data) => { },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
         }
     }
 }
@@ -222,8 +240,28 @@ pub fn test_cell_get_u8_to_text() {
         Ok(format_data) => {
             assert_eq!(format_data, data);
         },
-        _ => {
+        _ => { }
+    }
+}
 
+#[test]
+pub fn test_cell_get_u8_to_text_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+    let data: String = String::from("simple_string");
+
+    let mut bytes_array = data.clone().into_bytes();
+
+    buffer.push(CellType::String as u8);
+    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut bytes_array);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_text() {
+        Ok(_format_data) => { },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
         }
     }
 }
@@ -242,9 +280,7 @@ pub fn test_cell_get_u8_to_true_boolean() {
         Ok(format_data) => {
             assert_eq!(format_data, true);
         },
-        _ => {
-
-        }
+        _ => { }
     }
 }
 
@@ -262,8 +298,25 @@ pub fn test_cell_get_u8_to_false_boolean() {
         Ok(format_data) => {
             assert_eq!(format_data, false);
         },
-        _ => {
+        _ => { }
+    }
+}
 
+#[test]
+pub fn test_cell_get_u8_to_false_boolean_with_error() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::String as u8);
+    buffer.push(0u8);
+
+    let mut cell = Cell::new();
+    cell.load(buffer);
+
+    match cell.bin_to_boolean() {
+        Ok(_format_data) => {
+        },
+        Err(error) => {
+            matches!(error, ParserError::WrongFormat);
         }
     }
 }
