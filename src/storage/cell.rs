@@ -140,7 +140,9 @@ impl Cell {
             return Err(ParserError::WrongFormat)
         } 
 
-        let byte_array: [u8; 4] = [self.data[1], self.data[2], self.data[3], self.data[4]];
+        let byte_array: [u8; 4] = [
+            self.data[1], self.data[2], self.data[3], self.data[4]
+        ];
         let string_size = u32::from_le_bytes(byte_array);
 
         if self.data.len() != ((string_size + 5) as usize) {
@@ -207,7 +209,9 @@ impl Cell {
             return Err(ParserError::WrongFormat)
         } 
 
-        let byte_array: [u8; 4] = [self.data[1], self.data[2], self.data[3], self.data[4]];
+        let byte_array: [u8; 4] = [
+            self.data[1], self.data[2], self.data[3], self.data[4]
+        ];
         return Ok(u32::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
@@ -261,7 +265,9 @@ impl Cell {
             return Err(ParserError::WrongFormat)
         } 
 
-        let byte_array: [u8; 4] = [self.data[1], self.data[2], self.data[3], self.data[4]];
+        let byte_array: [u8; 4] = [
+            self.data[1], self.data[2], self.data[3], self.data[4]
+        ];
         return Ok(i32::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 

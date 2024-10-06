@@ -13,6 +13,7 @@ pub struct SqlExecutor {
 }
 
 impl SqlExecutor {
+
     pub fn new() -> Self {
         SqlExecutor { }
     }
