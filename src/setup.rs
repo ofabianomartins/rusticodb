@@ -7,70 +7,94 @@ use crate::storage::os_interface::OsInterface;
 pub fn setup_system(context: &mut Context, machine: &mut Machine) {
     OsInterface::create_folder_if_not_exists(&Config::data_folder());
 
-    setup_context(context);
-    if machine.database_exists(&Config::main_database()) == false {
-        machine.create_database(&Config::main_database());
-    }
-    setup_databases_table(machine);
-    setup_tables_table(machine);
-    setup_columns_table(machine);
+    load_context(context, machine);
 }
 
-pub fn setup_context(context: &mut Context) {
-    context.add_database(Config::main_database());
+pub fn load_context(context: &mut Context, machine: &mut Machine) {
+    // Verify is rusticodb databases exists
+    context.add_database(Config::system_database());
 
+    if machine.database_exists(&Config::system_database()) == false {
+        machine.create_database(&Config::system_database());
+    }
+
+    // Verify is databases table exists
+    context.add_table(Config::system_database(), Config::system_database_table_databases());
+
+    if machine.table_exists(&Config::system_database(), &Config::system_database_table_databases()) == false {
+        setup_databases_table(machine)
+    } else {
+        load_databases_table(context, machine);
+    }
+
+    // Verify is tables table exists
+    context.add_table(Config::system_database(), Config::system_database_table_tables());
+
+    if machine.table_exists(&Config::system_database(), &Config::system_database_table_tables()) == false {
+        setup_tables_table(machine)
+    } else {
+
+    }
+
+    // Verify is columns table exists
+    context.add_table(Config::system_database(), Config::system_database_table_columns());
+
+    if machine.table_exists(&Config::system_database(), &Config::system_database_table_columns()) == false {
+        setup_columns_table(machine)
+    } else {
+
+    }
 }
 
 pub fn setup_databases_table(machine: &mut Machine) {
-    let main_db_name = String::from("rusticodb");
-    let table_name_databases = String::from("databases");
-
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(&String::from("rusticodb"));
+    tuple.push_string(&Config::system_database());
     tuples.push(tuple);
 
-    machine.create_table(&main_db_name, &table_name_databases);
-    machine.insert_tuples(&main_db_name, &table_name_databases, &mut tuples);
+    machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
+    machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
+}
+
+pub fn load_databases_table(_context: &mut Context, machine: &mut Machine) {
+    let _tuples: Vec<Tuple> = machine.read_tuples(
+        &Config::system_database(), 
+        &Config::system_database_table_databases(), 
+        0u64
+    );
 }
 
 pub fn setup_tables_table(machine: &mut Machine) {
-    let main_db_name = String::from("rusticodb");
-    let table_name_tables = String::from("tables");
-
     let mut tuples: Vec<Tuple> = Vec::new();
 
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(&String::from("rusticodb"));
-    tuple.push_string(&String::from("databases"));
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_databases());
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(&String::from("rusticodb"));
-    tuple.push_string(&String::from("tables"));
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_tables());
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(&String::from("rusticodb"));
-    tuple.push_string(&String::from("colums"));
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_columns());
     tuples.push(tuple);
 
-    machine.create_table(&main_db_name, &table_name_tables);
-    machine.insert_tuples(&main_db_name, &table_name_tables, &mut tuples);
+    machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
+    machine.insert_tuples(&Config::system_database(), &Config::system_database_table_tables(), &mut tuples);
 }
 
 pub fn setup_columns_table(machine: &mut Machine) {
-    let main_db_name = String::from("rusticodb");
-    let table_name_tables = String::from("columns");
-
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(&String::from("rusticodb"));
-    tuple.push_string(&String::from("databases"));
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_databases());
     tuple.push_string(&String::from("name"));
     tuple.push_string(&String::from("VARCHAR"));
     tuples.push(tuple);
 
-    machine.create_table(&main_db_name, &table_name_tables);
-    machine.insert_tuples(&main_db_name, &table_name_tables, &mut tuples);
+    machine.create_table(&Config::system_database(), &Config::system_database_table_columns());
+    machine.insert_tuples(&Config::system_database(), &Config::system_database_table_columns(), &mut tuples);
 }

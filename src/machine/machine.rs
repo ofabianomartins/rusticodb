@@ -36,11 +36,11 @@ impl Machine {
         let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
 
         let size = tuples.len() as u64;  
-        buffer.append(&mut size.to_le_bytes().to_vec());
+        buffer.append(&mut size.to_be_bytes().to_vec());
 
         for tuple in tuples {
             let size = tuple.cells.len() as u64;  
-            buffer.append(&mut size.to_le_bytes().to_vec());
+            buffer.append(&mut size.to_be_bytes().to_vec());
 
             for cell in &mut tuple.cells {
                 buffer.append(&mut cell.data);
@@ -52,6 +52,13 @@ impl Machine {
         }
 
         pager.write_data(database_name, table_name, 0, &raw_buffer);
+    }
+
+    pub fn read_tuples(&mut self, _database_name: &String, _table_name: &String, _pos: u64) -> Vec<Tuple> {
+
+        let tuples: Vec<Tuple> = Vec::new();
+
+        return tuples;
     }
 
     fn format_database_name(&mut self, database_name: &String) -> String{

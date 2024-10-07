@@ -10,7 +10,7 @@ pub fn test_cell_insert_string_to_u8() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -28,7 +28,7 @@ pub fn test_cell_insert_text_to_u8() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::Text as u8);
-    buffer.append(&mut (bytes_array.len() as u32).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u32).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -85,7 +85,7 @@ pub fn test_cell_insert_unsigned_smallint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::UnsignedSmallint as u8);
-    buffer.append(&mut 50u16.to_le_bytes().to_vec());
+    buffer.append(&mut 50u16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -99,7 +99,7 @@ pub fn test_cell_insert_unsigned_int_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::UnsignedInt as u8);
-    buffer.append(&mut 50u32.to_le_bytes().to_vec());
+    buffer.append(&mut 50u32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -113,7 +113,7 @@ pub fn test_cell_insert_unsigned_bigint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::UnsignedBigint as u8);
-    buffer.append(&mut 50u64.to_le_bytes().to_vec());
+    buffer.append(&mut 50u64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -127,7 +127,7 @@ pub fn test_cell_insert_signed_tinyint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedTinyint as u8);
-    buffer.append(&mut 50i8.to_le_bytes().to_vec());
+    buffer.append(&mut 50i8.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -141,7 +141,7 @@ pub fn test_cell_insert_signed_smallint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedSmallint as u8);
-    buffer.append(&mut 50i16.to_le_bytes().to_vec());
+    buffer.append(&mut 50i16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -155,7 +155,7 @@ pub fn test_cell_insert_signed_int_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedInt as u8);
-    buffer.append(&mut 50i32.to_le_bytes().to_vec());
+    buffer.append(&mut 50i32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -169,7 +169,7 @@ pub fn test_cell_insert_signed_bigint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedBigint as u8);
-    buffer.append(&mut 50i64.to_le_bytes().to_vec());
+    buffer.append(&mut 50i64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
 
@@ -186,7 +186,7 @@ pub fn test_cell_get_u8_to_string() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -208,7 +208,7 @@ pub fn test_cell_get_u8_to_string_with_error() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::Text as u8);
-    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -237,7 +237,7 @@ pub fn test_cell_get_u8_to_string_with_length_error2() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut ((bytes_array.len() + 5) as u16).to_le_bytes().to_vec());
+    buffer.append(&mut ((bytes_array.len() + 5) as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -254,7 +254,7 @@ pub fn test_cell_get_u8_to_text() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::Text as u8);
-    buffer.append(&mut (bytes_array.len() as u32).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u32).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -276,7 +276,7 @@ pub fn test_cell_get_u8_to_text_with_error() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -305,7 +305,7 @@ pub fn test_cell_get_u8_to_text_with_length_error2() {
     let mut bytes_array = data.clone().into_bytes();
 
     buffer.push(CellType::Text as u8);
-    buffer.append(&mut ((bytes_array.len() + 5) as u32).to_le_bytes().to_vec());
+    buffer.append(&mut ((bytes_array.len() + 5) as u32).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
@@ -408,7 +408,7 @@ pub fn test_cell_get_u8_to_unsigned_smallint() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::UnsignedSmallint as u8);
-    buffer.append(&mut 350u16.to_le_bytes().to_vec());
+    buffer.append(&mut 350u16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -427,7 +427,7 @@ pub fn test_cell_get_u8_to_unsigned_smallint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut 50u16.to_le_bytes().to_vec());
+    buffer.append(&mut 50u16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -452,7 +452,7 @@ pub fn test_cell_get_u8_to_unsigned_int() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::UnsignedInt as u8);
-    buffer.append(&mut 100350u32.to_le_bytes().to_vec());
+    buffer.append(&mut 100350u32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -471,7 +471,7 @@ pub fn test_cell_get_u8_to_unsigned_int_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut 50u32.to_le_bytes().to_vec());
+    buffer.append(&mut 50u32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -496,7 +496,7 @@ pub fn test_cell_get_u8_to_unsigned_bigint() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::UnsignedBigint as u8);
-    buffer.append(&mut 14294967295u64.to_le_bytes().to_vec());
+    buffer.append(&mut 14294967295u64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -515,7 +515,7 @@ pub fn test_cell_get_u8_to_unsigned_bigint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut 14294967295u64.to_le_bytes().to_vec());
+    buffer.append(&mut 14294967295u64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -584,7 +584,7 @@ pub fn test_cell_get_u8_to_signed_smallint() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedSmallint as u8);
-    buffer.append(&mut (-31122i16).to_le_bytes().to_vec());
+    buffer.append(&mut (-31122i16).to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -603,7 +603,7 @@ pub fn test_cell_get_u8_to_signed_smallint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut 50i16.to_le_bytes().to_vec());
+    buffer.append(&mut 50i16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -628,7 +628,7 @@ pub fn test_cell_get_u8_to_signed_int() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedInt as u8);
-    buffer.append(&mut 100350i32.to_le_bytes().to_vec());
+    buffer.append(&mut 100350i32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -646,7 +646,7 @@ pub fn test_cell_get_u8_to_signed_int_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut 50i32.to_le_bytes().to_vec());
+    buffer.append(&mut 50i32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -671,7 +671,7 @@ pub fn test_cell_get_u8_to_signed_bigint() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::SignedBigint as u8);
-    buffer.append(&mut 14294967295i64.to_le_bytes().to_vec());
+    buffer.append(&mut 14294967295i64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -689,7 +689,7 @@ pub fn test_cell_get_u8_to_signed_bigint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.push(CellType::String as u8);
-    buffer.append(&mut 14294967295i64.to_le_bytes().to_vec());
+    buffer.append(&mut 14294967295i64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
     cell.load(buffer);

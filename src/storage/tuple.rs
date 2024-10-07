@@ -86,9 +86,9 @@ impl Tuple {
         let mut buffer: Vec<u8> = Vec::new();
         let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
 
-        let size = self.cells.len() as u64;  
+        let size = self.cells.len() as u16;  
 
-        buffer.append(&mut size.to_le_bytes().to_vec());
+        buffer.append(&mut size.to_be_bytes().to_vec());
         for cell in &mut self.cells {
             buffer.append(&mut cell.data);
         }

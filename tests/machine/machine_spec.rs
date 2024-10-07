@@ -108,10 +108,10 @@ pub fn test_write_data_metadata_file() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u64.to_be_bytes().to_vec());
+    buffer.append(&mut 1u64.to_be_bytes().to_vec());
     buffer.push(CellType::String as u8);
-    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];

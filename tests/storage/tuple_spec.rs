@@ -9,9 +9,9 @@ pub fn test_tuple_push_string() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::String as u8);
-    buffer.append(&mut (bytes_array.len() as u16).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -32,9 +32,9 @@ pub fn test_tuple_push_text() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::Text as u8);
-    buffer.append(&mut (bytes_array.len() as u32).to_le_bytes().to_vec());
+    buffer.append(&mut (bytes_array.len() as u32).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -52,7 +52,7 @@ pub fn test_tuple_push_text() {
 pub fn test_push_boolean_true() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::Boolean as u8);
     buffer.push(1u8);
 
@@ -71,7 +71,7 @@ pub fn test_push_boolean_true() {
 pub fn test_push_boolean_false() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::Boolean as u8);
     buffer.push(0u8);
 
@@ -90,7 +90,7 @@ pub fn test_push_boolean_false() {
 pub fn test_push_unsigned_tinyint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::UnsignedTinyint as u8);
     buffer.push(50u8);
 
@@ -109,9 +109,9 @@ pub fn test_push_unsigned_tinyint_to_u8() {
 pub fn test_push_unsigned_smallint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::UnsignedSmallint as u8);
-    buffer.append(&mut 50u16.to_le_bytes().to_vec());
+    buffer.append(&mut 50u16.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -128,9 +128,9 @@ pub fn test_push_unsigned_smallint_to_u8() {
 pub fn test_push_unsigned_int_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::UnsignedInt as u8);
-    buffer.append(&mut 50u32.to_le_bytes().to_vec());
+    buffer.append(&mut 50u32.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -147,9 +147,9 @@ pub fn test_push_unsigned_int_to_u8() {
 pub fn test_push_unsigned_bigint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::UnsignedBigint as u8);
-    buffer.append(&mut 50u64.to_le_bytes().to_vec());
+    buffer.append(&mut 50u64.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -166,9 +166,9 @@ pub fn test_push_unsigned_bigint_to_u8() {
 pub fn test_push_signed_tinyint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::SignedTinyint as u8);
-    buffer.append(&mut 50i8.to_le_bytes().to_vec());
+    buffer.append(&mut 50i8.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -185,9 +185,9 @@ pub fn test_push_signed_tinyint_to_u8() {
 pub fn test_push_signed_smallint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::SignedSmallint as u8);
-    buffer.append(&mut 50i16.to_le_bytes().to_vec());
+    buffer.append(&mut 50i16.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -205,9 +205,9 @@ pub fn test_push_signed_smallint_to_u8() {
 pub fn test_push_signed_int_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::SignedInt as u8);
-    buffer.append(&mut 50i32.to_le_bytes().to_vec());
+    buffer.append(&mut 50i32.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -224,9 +224,9 @@ pub fn test_push_signed_int_to_u8() {
 pub fn test_push_signed_bigint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.append(&mut 1u64.to_le_bytes().to_vec());
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.push(CellType::SignedBigint as u8);
-    buffer.append(&mut 50i64.to_le_bytes().to_vec());
+    buffer.append(&mut 50i64.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {

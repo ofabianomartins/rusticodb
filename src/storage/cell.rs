@@ -42,7 +42,7 @@ impl Cell {
         let size = bytes_array.len() as u16;  
 
         self.data.push(CellType::String as u8);
-        self.data.append(&mut size.to_le_bytes().to_vec());
+        self.data.append(&mut size.to_be_bytes().to_vec());
         self.data.append(&mut bytes_array);
     }
 
@@ -52,7 +52,7 @@ impl Cell {
         let size = bytes_array.len() as u32;  
 
         self.data.push(CellType::Text as u8);
-        self.data.append(&mut size.to_le_bytes().to_vec());
+        self.data.append(&mut size.to_be_bytes().to_vec());
         self.data.append(&mut bytes_array);
     }
 
@@ -68,37 +68,37 @@ impl Cell {
 
     pub fn unsigned_smallint_to_bin(&mut self, value: u16) {
         self.data.push(CellType::UnsignedSmallint as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn unsigned_int_to_bin(&mut self, value: u32) {
         self.data.push(CellType::UnsignedInt as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn unsigned_bigint_to_bin(&mut self, value: u64) {
         self.data.push(CellType::UnsignedBigint as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn signed_tinyint_to_bin(&mut self, value: i8) {
         self.data.push(CellType::SignedTinyint as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn signed_smallint_to_bin(&mut self, value: i16) {
         self.data.push(CellType::SignedSmallint as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn signed_int_to_bin(&mut self, value: i32) {
         self.data.push(CellType::SignedInt as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn signed_bigint_to_bin(&mut self, value: i64) {
         self.data.push(CellType::SignedBigint as u8);
-        self.data.append(&mut value.to_le_bytes().to_vec());
+        self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
     pub fn bin_to_string(&mut self) -> Result<String, ParserError> {
@@ -111,7 +111,7 @@ impl Cell {
         } 
 
         let byte_array: [u8; 2] = [self.data[1], self.data[2]];
-        let string_size = u16::from_le_bytes(byte_array);
+        let string_size = u16::from_be_bytes(byte_array);
 
         if self.data.len() != ((string_size + 3) as usize) {
             return Err(ParserError::WrongLength)
@@ -143,7 +143,7 @@ impl Cell {
         let byte_array: [u8; 4] = [
             self.data[1], self.data[2], self.data[3], self.data[4]
         ];
-        let string_size = u32::from_le_bytes(byte_array);
+        let string_size = u32::from_be_bytes(byte_array);
 
         if self.data.len() != ((string_size + 5) as usize) {
             return Err(ParserError::WrongLength)
@@ -197,7 +197,7 @@ impl Cell {
         } 
 
         let byte_array: [u8; 2] = [self.data[1], self.data[2]];
-        return Ok(u16::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+        return Ok(u16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
     pub fn bin_to_unsigned_int(&mut self) -> Result<u32, ParserError> {
@@ -212,7 +212,7 @@ impl Cell {
         let byte_array: [u8; 4] = [
             self.data[1], self.data[2], self.data[3], self.data[4]
         ];
-        return Ok(u32::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+        return Ok(u32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
     pub fn bin_to_unsigned_bigint(&mut self) -> Result<u64, ParserError> {
@@ -228,7 +228,7 @@ impl Cell {
             self.data[1], self.data[2], self.data[3], self.data[4],
             self.data[5], self.data[6], self.data[7], self.data[8]
         ];
-        return Ok(u64::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+        return Ok(u64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
     pub fn bin_to_signed_tinyint(&mut self) -> Result<i8, ParserError> {
@@ -253,7 +253,7 @@ impl Cell {
         } 
 
         let byte_array: [u8; 2] = [self.data[1], self.data[2]];
-        return Ok(i16::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+        return Ok(i16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
     pub fn bin_to_signed_int(&mut self) -> Result<i32, ParserError> {
@@ -268,7 +268,7 @@ impl Cell {
         let byte_array: [u8; 4] = [
             self.data[1], self.data[2], self.data[3], self.data[4]
         ];
-        return Ok(i32::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+        return Ok(i32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
     pub fn bin_to_signed_bigint(&mut self) -> Result<i64, ParserError> {
@@ -284,6 +284,6 @@ impl Cell {
             self.data[1], self.data[2], self.data[3], self.data[4],
             self.data[5], self.data[6], self.data[7], self.data[8]
         ];
-        return Ok(i64::from_le_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+        return Ok(i64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 }
