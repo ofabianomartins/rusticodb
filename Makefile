@@ -3,5 +3,5 @@ run:
 
 test:
 	mkdir -p ./tmp_tests/
-	DATA_FOLDER=./tmp_tests cargo test storage::tuple_spec::test_push_boolean_false -- --nocapture --test-threads=1
+	DATA_FOLDER=./tmp_tests cargo test -- --nocapture --test-threads=1
 	rm -rf ./tmp_tests/

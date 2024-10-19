@@ -13,7 +13,7 @@ impl Tuple {
         data.push(0);
         data.push(0);
         data.push(0);
-        data.push(0);
+        data.push(4);
         Tuple { data }
     }
 

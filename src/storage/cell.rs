@@ -288,9 +288,32 @@ impl Cell {
     }
 
     pub fn data_size(&mut self) -> u16 {
-        if self.data.len() > 0 && self.data[0] == (CellType::Boolean as u8) {
-            return 6;
+        if self.data.len() > 0 && 
+        (
+            self.data[0] == (CellType::Boolean as u8) || 
+            self.data[0] == (CellType::UnsignedTinyint as u8) ||
+            self.data[0] == (CellType::SignedTinyint as u8) 
+        ) {
+            return 2;
         }
-        return 0;
+        if self.data.len() > 0 && (
+            self.data[0] == (CellType::UnsignedSmallint as u8) ||
+            self.data[0] == (CellType::SignedSmallint as u8) 
+        ) {
+            return 3;
+        }
+        if self.data.len() > 0 && ( 
+            self.data[0] == (CellType::UnsignedInt as u8) ||
+            self.data[0] == (CellType::SignedInt as u8) 
+        ) {
+            return 5;
+        }
+        if self.data.len() > 0 && (
+            self.data[0] == (CellType::UnsignedBigint as u8) ||
+            self.data[0] == (CellType::SignedBigint as u8) 
+        ) {
+            return 9;
+        }
+        return self.data.len() as u16;
     }
 }
