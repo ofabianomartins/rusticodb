@@ -12,13 +12,15 @@ use crate::setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;
 use crate::machine::machine::Machine;
 use crate::machine::context::Context;
+use crate::storage::pager::Pager;
 
 fn main() {
     let mut stdout = io::stdout();
     let stdin = io::stdin();
     let mut buf = String::new();
 
-    let mut machine = Machine::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
 
     let mut context = Context::new();
     let mut executor = SqlExecutor::new();

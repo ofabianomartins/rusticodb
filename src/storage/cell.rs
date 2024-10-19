@@ -286,4 +286,11 @@ impl Cell {
         ];
         return Ok(i64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
+
+    pub fn data_size(&mut self) -> u16 {
+        if self.data.len() > 0 && self.data[0] == (CellType::Boolean as u8) {
+            return 6;
+        }
+        return 0;
+    }
 }

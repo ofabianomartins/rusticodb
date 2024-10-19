@@ -59,8 +59,7 @@ pub fn setup_databases_table(machine: &mut Machine) {
 pub fn load_databases_table(_context: &mut Context, machine: &mut Machine) {
     let _tuples: Vec<Tuple> = machine.read_tuples(
         &Config::system_database(), 
-        &Config::system_database_table_databases(), 
-        0u64
+        &Config::system_database_table_databases()
     );
 }
 

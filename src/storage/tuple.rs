@@ -3,17 +3,28 @@ use crate::storage::os_interface::BLOCK_SIZE;
 
 #[derive(Debug)]
 pub struct Tuple {
-    pub cells: Vec<Cell>
+    pub data: Vec<u8>
 }
 
 impl Tuple {
 
     pub fn new() -> Self {
-        Tuple { cells: Vec::new() }
+        let mut data = Vec::new();
+        data.push(0);
+        data.push(0);
+        data.push(0);
+        data.push(0);
+        Tuple { data }
     }
 
-    pub fn append_cell(&mut self, cell: Cell) {
-        self.cells.push(cell);
+    pub fn load(data: Vec<u8>) -> Self {
+        Tuple { data }
+    }
+
+    pub fn append_cell(&mut self, mut cell: Cell) {
+        self.set_cell_count(self.cell_count() + 1);
+        self.set_data_size(self.data_size() + (cell.data_size() as u16));
+        self.data.append(&mut cell.data);
     }
 
     pub fn push_string(&mut self, raw_data: &String) {
@@ -82,18 +93,34 @@ impl Tuple {
         self.append_cell(cell);
     }
 
+    pub fn set_cell_count(&mut self, new_cell_count: u16) {
+        if new_cell_count > 255 {
+            self.data[0] = (new_cell_count >> 8) as u8;
+        }
+        self.data[1] = (new_cell_count % 256) as u8;
+    }
+
+    pub fn cell_count(&self) -> u16 {
+        let byte_array: [u8; 2] = [self.data[0], self.data[1]];
+        return u16::from_be_bytes(byte_array); // or use `from_be_bytes` for big-endian
+    }
+
+    pub fn set_data_size(&mut self, new_data_size: u16) {
+        if new_data_size > 255 {
+            self.data[2] = (new_data_size >> 8) as u8;
+        }
+        self.data[3] = (new_data_size % 256) as u8;
+    }
+
+    pub fn data_size(&self) -> u16 {
+        let byte_array: [u8; 2] = [self.data[2], self.data[3]];
+        return u16::from_be_bytes(byte_array); // or use `from_be_bytes` for big-endian
+    }
+
     pub fn to_raw_data(&mut self) -> [u8; BLOCK_SIZE] {
-        let mut buffer: Vec<u8> = Vec::new();
         let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
 
-        let size = self.cells.len() as u16;  
-
-        buffer.append(&mut size.to_be_bytes().to_vec());
-        for cell in &mut self.cells {
-            buffer.append(&mut cell.data);
-        }
-
-        for (idx, elem) in &mut buffer.iter().enumerate() {
+        for (idx, elem) in &mut self.data.iter().enumerate() {
             raw_buffer[idx] = *elem;
         }
         return raw_buffer;

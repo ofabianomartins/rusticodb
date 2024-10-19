@@ -4,6 +4,7 @@ use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::storage::tuple::Tuple;
+use rusticodb::storage::pager::Pager;
 use rusticodb::setup::setup_system;
 
 use crate::test_utils::destroy_tmp_test_folder;
@@ -11,7 +12,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_system_database_setup() {
-    let mut machine = Machine::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
     let mut context = Context::new();
 
     setup_system(&mut context, &mut machine);
@@ -56,7 +58,8 @@ pub fn test_system_database_setup() {
 
 #[test]
 pub fn test_system_database_setup_with_data_to_load() {
-    let mut machine = Machine::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
     let mut context = Context::new();
 
     create_tmp_test_folder();

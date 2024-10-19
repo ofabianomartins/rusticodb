@@ -4,6 +4,7 @@ use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::parser::sql_executor::SqlExecutor;
+use rusticodb::storage::pager::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
 use crate::test_utils::destroy_tmp_test_folder;
@@ -12,7 +13,8 @@ use crate::test_utils::destroy_tmp_test_folder;
 pub fn test_create_database_metadata_file_database1() {
     let mut sql_executor = SqlExecutor::new();
     let mut context = Context::new();
-    let mut machine = Machine::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
@@ -32,7 +34,8 @@ pub fn test_create_database_metadata_file_database1() {
 pub fn test_use_database_set_in_context() {
     let mut sql_executor = SqlExecutor::new();
     let mut context = Context::new();
-    let mut machine = Machine::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
@@ -53,7 +56,8 @@ pub fn test_use_database_set_in_context() {
 pub fn test_create_table_metadata_file() {
     let mut sql_executor = SqlExecutor::new();
     let mut context = Context::new();
-    let mut machine = Machine::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
