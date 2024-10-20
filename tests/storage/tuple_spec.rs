@@ -356,3 +356,24 @@ pub fn test_tuple_get_signed_bigint_on_position() {
 
     assert_eq!(tuple.get_signed_bigint(0).unwrap(), 50i64);
 }
+
+#[test]
+pub fn test_tuple_insert_three_cell_and_get_signed_bigint_on_position() {
+    let mut tuple = Tuple::new();
+    tuple.push_signed_bigint(51i64);
+    tuple.push_signed_bigint(52i64);
+    tuple.push_signed_bigint(53i64);
+
+    assert_eq!(tuple.get_signed_bigint(2).unwrap(), 53i64);
+}
+
+#[test]
+pub fn test_tuple_insert_two_number_and_one_string_and_get_string_on_position() {
+    let data: String = String::from("simple_string");
+    let mut tuple = Tuple::new();
+    tuple.push_signed_bigint(51i64);
+    tuple.push_string(&data);
+    tuple.push_signed_bigint(52i64);
+
+    assert_eq!(tuple.get_string(1).unwrap(), data);
+}
