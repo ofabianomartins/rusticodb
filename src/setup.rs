@@ -11,42 +11,31 @@ pub fn setup_system(context: &mut Context, machine: &mut Machine) {
 }
 
 pub fn load_context(context: &mut Context, machine: &mut Machine) {
-    // Verify is rusticodb databases exists
-    context.add_database(Config::system_database());
-
     if machine.database_exists(&Config::system_database()) == false {
         machine.create_database(&Config::system_database());
+        context.add_database(Config::system_database());
     }
 
-    // Verify is databases table exists
-    context.add_table(Config::system_database(), Config::system_database_table_databases());
-
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_databases()) == false {
-        setup_databases_table(machine)
+        setup_databases_table(context, machine);
     } else {
         load_databases_table(context, machine);
     }
 
-    // Verify is tables table exists
-    context.add_table(Config::system_database(), Config::system_database_table_tables());
-
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_tables()) == false {
-        setup_tables_table(machine)
+        setup_tables_table(context, machine);
     } else {
-
+        load_tables_table(context, machine)
     }
 
-    // Verify is columns table exists
-    context.add_table(Config::system_database(), Config::system_database_table_columns());
-
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_columns()) == false {
-        setup_columns_table(machine)
+        setup_columns_table(context, machine);
     } else {
-
+        load_columns_table(context, machine)
     }
 }
 
-pub fn setup_databases_table(machine: &mut Machine) {
+pub fn setup_databases_table(context: &mut Context, machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
     tuple.push_string(&Config::system_database());
@@ -54,6 +43,8 @@ pub fn setup_databases_table(machine: &mut Machine) {
 
     machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
+
+    load_databases_table(context, machine);
 }
 
 pub fn load_databases_table(context: &mut Context, machine: &mut Machine) {
@@ -67,7 +58,7 @@ pub fn load_databases_table(context: &mut Context, machine: &mut Machine) {
     }
 }
 
-pub fn setup_tables_table(machine: &mut Machine) {
+pub fn setup_tables_table(context: &mut Context, machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
 
     let mut tuple: Tuple = Tuple::new();
@@ -87,9 +78,22 @@ pub fn setup_tables_table(machine: &mut Machine) {
 
     machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_tables(), &mut tuples);
+
+    load_tables_table(context, machine)
 }
 
-pub fn setup_columns_table(machine: &mut Machine) {
+pub fn load_tables_table(context: &mut Context, machine: &mut Machine) {
+    let mut tuples: Vec<Tuple> = machine.read_tuples(
+        &Config::system_database(), 
+        &Config::system_database_table_tables()
+    );
+
+    for tuple in tuples.iter_mut() {
+        context.add_table(tuple.get_string(0).unwrap(), tuple.get_string(1).unwrap());
+    }
+}
+
+pub fn setup_columns_table(context: &mut Context, machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
     tuple.push_string(&Config::system_database());
@@ -100,4 +104,21 @@ pub fn setup_columns_table(machine: &mut Machine) {
 
     machine.create_table(&Config::system_database(), &Config::system_database_table_columns());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_columns(), &mut tuples);
+
+    load_columns_table(context, machine);
+}
+
+pub fn load_columns_table(context: &mut Context, machine: &mut Machine) {
+    let mut tuples: Vec<Tuple> = machine.read_tuples(
+        &Config::system_database(), 
+        &Config::system_database_table_columns()
+    );
+
+    for tuple in tuples.iter_mut() {
+        context.add_column(
+            tuple.get_string(0).unwrap(), 
+            tuple.get_string(1).unwrap(),
+            tuple.get_string(2).unwrap()
+        );
+    }
 }
