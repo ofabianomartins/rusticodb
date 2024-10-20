@@ -2,15 +2,10 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::machine::machine::Machine;
-use rusticodb::storage::cell::Cell;
-use rusticodb::storage::cell::CellType;
-use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::pager::Pager;
-use rusticodb::storage::os_interface::BLOCK_SIZE;
 
 use crate::test_utils::create_tmp_test_folder;
 use crate::test_utils::destroy_tmp_test_folder;
-use crate::test_utils::read_from_file;
 
 #[test]
 pub fn test_if_database_exists_is_true() {

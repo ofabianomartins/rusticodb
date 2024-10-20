@@ -32,6 +32,10 @@ impl Cell {
         Cell { data: Vec::new() }
     }
 
+    pub fn load_cell(data: Vec<u8>) -> Self {
+        Cell { data }
+    }
+
     pub fn load(&mut self, data: Vec<u8>) {
         self.data = data;
     }
@@ -220,7 +224,7 @@ impl Cell {
             return Err(ParserError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::UnsignedInt as u8) {
+        if self.data[0] != (CellType::UnsignedBigint as u8) {
             return Err(ParserError::WrongFormat)
         } 
 
@@ -236,7 +240,7 @@ impl Cell {
             return Err(ParserError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::UnsignedTinyint as u8) {
+        if self.data[0] != (CellType::SignedTinyint as u8) {
             return Err(ParserError::WrongFormat)
         } 
         
@@ -248,7 +252,7 @@ impl Cell {
             return Err(ParserError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::UnsignedSmallint as u8) {
+        if self.data[0] != (CellType::SignedSmallint as u8) {
             return Err(ParserError::WrongFormat)
         } 
 
@@ -261,7 +265,7 @@ impl Cell {
             return Err(ParserError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::UnsignedInt as u8) {
+        if self.data[0] != (CellType::SignedInt as u8) {
             return Err(ParserError::WrongFormat)
         } 
 
@@ -276,7 +280,7 @@ impl Cell {
             return Err(ParserError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::UnsignedInt as u8) {
+        if self.data[0] != (CellType::SignedBigint as u8) {
             return Err(ParserError::WrongFormat)
         } 
 
@@ -287,33 +291,44 @@ impl Cell {
         return Ok(i64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn data_size(&mut self) -> u16 {
-        if self.data.len() > 0 && 
-        (
-            self.data[0] == (CellType::Boolean as u8) || 
-            self.data[0] == (CellType::UnsignedTinyint as u8) ||
-            self.data[0] == (CellType::SignedTinyint as u8) 
-        ) {
+    pub fn count_data_size(cell_type: u8) -> u32 {
+        if cell_type == (CellType::Boolean as u8) || 
+            cell_type == (CellType::UnsignedTinyint as u8) ||
+            cell_type == (CellType::SignedTinyint as u8) {
             return 2;
         }
-        if self.data.len() > 0 && (
-            self.data[0] == (CellType::UnsignedSmallint as u8) ||
-            self.data[0] == (CellType::SignedSmallint as u8) 
-        ) {
+        if cell_type == (CellType::UnsignedSmallint as u8) ||
+          cell_type == (CellType::SignedSmallint as u8) {
             return 3;
         }
-        if self.data.len() > 0 && ( 
-            self.data[0] == (CellType::UnsignedInt as u8) ||
-            self.data[0] == (CellType::SignedInt as u8) 
-        ) {
+        if cell_type == (CellType::UnsignedInt as u8) ||
+            cell_type == (CellType::SignedInt as u8) {
             return 5;
         }
-        if self.data.len() > 0 && (
-            self.data[0] == (CellType::UnsignedBigint as u8) ||
-            self.data[0] == (CellType::SignedBigint as u8) 
-        ) {
+        if cell_type == (CellType::UnsignedBigint as u8) ||
+            cell_type == (CellType::SignedBigint as u8) {
             return 9;
         }
-        return self.data.len() as u16;
+        return 0
+    }
+
+    pub fn data_size(&mut self) -> u32 {
+        if self.data.len() < 1 {
+            return 0;
+        }
+
+        if self.data[0] == (CellType::String as u8) {
+            let byte_array: [u8; 2] = [self.data[1], self.data[2]];
+            return (u16::from_be_bytes(byte_array) as u32 + 3u32); // or use `from_be_bytes` for big-endian
+        }
+
+        if self.data[0] == (CellType::Text as u8) {
+            let byte_array: [u8; 4] = [
+                self.data[1], self.data[2], self.data[3], self.data[4]
+            ];
+            return u32::from_be_bytes(byte_array) + 5u32;
+        }
+
+        return Cell::count_data_size(self.data[0]);
     }
 }

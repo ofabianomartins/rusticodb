@@ -32,17 +32,14 @@ impl Pager {
         let page_key = self.format_table_name(database_name, table_name);
         let tuples = Vec::new();
 
-        if let Some(mut page) = self.pages.get(&page_key) {
+        if let Some(page) = self.pages.get(&page_key) {
             let tuple_count = page.tuple_count();
             let mut tuple_index = 0;
 
             while tuple_index < tuple_count {
 
-                let position_index = 4;
-
                 tuple_index += 1;
             }
-
         }
 
         return tuples;

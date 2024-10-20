@@ -1,5 +1,9 @@
+
 use crate::storage::cell::Cell;
+use crate::storage::cell::ParserError;
 use crate::storage::os_interface::BLOCK_SIZE;
+
+use super::cell::CellType;
 
 #[derive(Debug)]
 pub struct Tuple {
@@ -25,6 +29,46 @@ impl Tuple {
         self.set_cell_count(self.cell_count() + 1);
         self.set_data_size(self.data_size() + (cell.data_size() as u16));
         self.data.append(&mut cell.data);
+    }
+
+    pub fn get_cell(&mut self, position: u16) -> Cell {
+        let cell_count = self.cell_count();
+
+        if position >= cell_count {
+            return Cell::new();
+        }
+
+        let mut cell_index = 0;
+        let mut position_index: usize = 4;
+        let mut cell_size: u32;
+
+        loop {
+            if self.data[position_index as usize] == (CellType::String as u8) {
+                let byte_array: [u8; 2] = [self.data[position_index + 1], self.data[position_index + 2]];
+                cell_size = (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
+            } else if self.data[position_index as usize] == (CellType::Text as u8) {
+                let byte_array: [u8; 4] = [
+                    self.data[position_index + 1], self.data[position_index + 2],
+                    self.data[position_index + 3], self.data[position_index + 4]
+                ];
+                cell_size = u32::from_be_bytes(byte_array) + 5u32; // or use `from_be_bytes` for big-endian
+            } else {
+                cell_size = Cell::count_data_size(self.data[position_index as usize]);
+            }
+
+            if cell_index == position {
+                break;
+            }
+
+            cell_index += 1;
+            position_index += cell_size as usize;
+        }
+
+        let mut buffer_array: Vec<u8> = Vec::new();
+        for n in position_index..(position_index + (cell_size as usize)) {
+            buffer_array.push(self.data[n as usize]);
+        }
+        return Cell::load_cell(buffer_array);
     }
 
     pub fn push_string(&mut self, raw_data: &String) {
@@ -91,6 +135,86 @@ impl Tuple {
         let mut cell = Cell::new();
         cell.signed_bigint_to_bin(value);
         self.append_cell(cell);
+    }
+
+    pub fn get_string(&mut self, position: u16) -> Result<String, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(String::from(""));
+        }
+
+        return self.get_cell(position).bin_to_string();
+    }
+
+    pub fn get_text(&mut self, position: u16) -> Result<String, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(String::from(""));
+        }
+
+        return self.get_cell(position).bin_to_text();
+    }
+
+    pub fn get_unsigned_tinyint(&mut self, position: u16) -> Result<u8, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_unsigned_tinyint();
+    }
+
+    pub fn get_unsigned_smallint(&mut self, position: u16) -> Result<u16, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_unsigned_smallint();
+    }
+
+    pub fn get_unsigned_int(&mut self, position: u16) -> Result<u32, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_unsigned_int();
+    }
+
+    pub fn get_unsigned_bigint(&mut self, position: u16) -> Result<u64, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_unsigned_bigint();
+    }
+
+    pub fn get_signed_tinyint(&mut self, position: u16) -> Result<i8, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_signed_tinyint();
+    }
+
+    pub fn get_signed_smallint(&mut self, position: u16) -> Result<i16, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_signed_smallint();
+    }
+
+    pub fn get_signed_int(&mut self, position: u16) -> Result<i32, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_signed_int();
+    }
+
+    pub fn get_signed_bigint(&mut self, position: u16) -> Result<i64, ParserError> {
+        if position >= self.cell_count() {
+            return Ok(0);
+        }
+
+        return self.get_cell(position).bin_to_signed_bigint();
     }
 
     pub fn set_cell_count(&mut self, new_cell_count: u16) {

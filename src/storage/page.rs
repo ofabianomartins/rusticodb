@@ -71,29 +71,19 @@ impl Page {
         let mut position_index: u16 = 4;
 
         while tuple_index < tuple_count {
-            let byte_array: [u8; 2] = [self.data[position_index as usize], self.data[(position_index as usize)+1]];
-            let cell_count = u16::from_be_bytes(byte_array); 
-
-            let byte_array2: [u8; 2] = [self.data[(position_index as usize) + 3], self.data[(position_index as usize) + 4]];
+            let byte_array2: [u8; 2] = [self.data[(position_index as usize) + 2], self.data[(position_index as usize) + 3]];
             let data_size = u16::from_be_bytes(byte_array2); 
 
-            
             let mut buffer_array: Vec<u8> = Vec::new();
 
             for n in position_index..(position_index + data_size) {
                 buffer_array.push(self.data[n as usize]);
             }
-
-            tuples.push(Tuple::new());
- 
-            
-
-
+            tuples.push(Tuple::load(buffer_array));
             tuple_index += 1;
+            position_index += data_size;
         }
 
         return tuples;
     }
-
-
 }
