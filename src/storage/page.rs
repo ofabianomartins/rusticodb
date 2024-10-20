@@ -63,7 +63,7 @@ impl Page {
         }
     }
 
-    pub fn read_tuples(&mut self) -> Vec<Tuple> {
+    pub fn read_tuples(&self) -> Vec<Tuple> {
         let mut tuples = Vec::new();
 
         let tuple_count = self.tuple_count();

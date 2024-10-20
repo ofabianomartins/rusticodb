@@ -29,7 +29,6 @@ impl Context {
         return true
     }
 
-
     pub fn add_database(&mut self, name: String) -> bool {
         if self.check_database_exists(&name) == true {
             return false

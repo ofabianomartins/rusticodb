@@ -319,7 +319,7 @@ impl Cell {
 
         if self.data[0] == (CellType::String as u8) {
             let byte_array: [u8; 2] = [self.data[1], self.data[2]];
-            return (u16::from_be_bytes(byte_array) as u32 + 3u32); // or use `from_be_bytes` for big-endian
+            return (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
         }
 
         if self.data[0] == (CellType::Text as u8) {

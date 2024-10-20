@@ -30,19 +30,12 @@ impl Pager {
 
     pub fn read_tuples(&mut self, database_name: &String, table_name: &String) -> Vec<Tuple> {
         let page_key = self.format_table_name(database_name, table_name);
-        let tuples = Vec::new();
 
         if let Some(page) = self.pages.get(&page_key) {
-            let tuple_count = page.tuple_count();
-            let mut tuple_index = 0;
-
-            while tuple_index < tuple_count {
-
-                tuple_index += 1;
-            }
+            return page.read_tuples();
         }
 
-        return tuples;
+        return Vec::new();
     }
 
 

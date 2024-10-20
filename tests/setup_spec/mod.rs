@@ -57,7 +57,7 @@ pub fn test_system_database_setup() {
 }
 
 #[test]
-pub fn test_system_database_setup_with_data_to_load() {
+pub fn test_system_database_setup_with_database_to_load() {
     let pager = Pager::new();
     let mut machine = Machine::new(pager);
     let mut context = Context::new();
@@ -94,3 +94,39 @@ pub fn test_system_database_setup_with_data_to_load() {
     destroy_tmp_test_folder();
 }
 
+#[test]
+pub fn test_system_database_setup_with_tables_to_load() {
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
+    let mut context = Context::new();
+
+    create_tmp_test_folder();
+
+    machine.create_database(&Config::system_database());
+    machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
+
+    let mut tuples: Vec<Tuple> = Vec::new();
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuples.push(tuple);
+    machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
+
+    let mut tuples: Vec<Tuple> = Vec::new();
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&String::from("databases"));
+    tuples.push(tuple);
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&String::from("tables"));
+    tuples.push(tuple);
+    machine.insert_tuples(&Config::system_database_table_tables(), &Config::system_database_table_tables(), &mut tuples);
+
+    setup_system(&mut context, &mut machine);
+
+    assert!(context.check_database_exists(&Config::system_database()));
+    assert!(context.check_table_exists(&Config::system_database(),  &Config::system_database_table_databases()));
+    assert!(context.check_table_exists(&Config::system_database(),  &Config::system_database_table_tables()));
+
+    destroy_tmp_test_folder();
+}

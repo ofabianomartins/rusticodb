@@ -52,7 +52,7 @@ pub fn test_a_empty_page() {
 }
 
 #[test]
-pub fn test_insert_tuples_on_pager() {
+pub fn test2_insert_tuples_on_pager() {
     let database1 = String::from("database1");
     let table1 = String::from("table1");
 
@@ -64,9 +64,11 @@ pub fn test_insert_tuples_on_pager() {
     buffer.push(0);
     buffer.push(1);
     buffer.push(0);
-    buffer.push(22);
+    buffer.push(24);
     buffer.push(0);
     buffer.push(1);
+    buffer.push(0);
+    buffer.push(20);
     buffer.push(CellType::String as u8);
     buffer.push(0);
     buffer.push(13);
@@ -105,20 +107,23 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
     buffer.push(0);
     buffer.push(2);
     buffer.push(0);
-    buffer.push(40);
+    buffer.push(44);
     buffer.push(0);
     buffer.push(1);
+    buffer.push(0);
+    buffer.push(20);
     buffer.push(CellType::String as u8);
     buffer.push(0);
     buffer.push(13);
     buffer.append(&mut bytes_array);
-
-    let mut bytes_array = data.clone().into_bytes();
     buffer.push(0);
     buffer.push(1);
+    buffer.push(0);
+    buffer.push(20);
     buffer.push(CellType::String as u8);
     buffer.push(0);
     buffer.push(13);
+    let mut bytes_array = data.clone().into_bytes();
     buffer.append(&mut bytes_array);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -160,20 +165,23 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
     buffer.push(0);
     buffer.push(2);
     buffer.push(0);
-    buffer.push(40);
+    buffer.push(44);
     buffer.push(0);
     buffer.push(1);
+    buffer.push(0);
+    buffer.push(20);
     buffer.push(CellType::String as u8);
     buffer.push(0);
     buffer.push(13);
     buffer.append(&mut bytes_array);
-
-    let mut bytes_array = data.clone().into_bytes();
     buffer.push(0);
     buffer.push(1);
+    buffer.push(0);
+    buffer.push(20);
     buffer.push(CellType::String as u8);
     buffer.push(0);
     buffer.push(13);
+    let mut bytes_array = data.clone().into_bytes();
     buffer.append(&mut bytes_array);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];

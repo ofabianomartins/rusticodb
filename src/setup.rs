@@ -56,11 +56,15 @@ pub fn setup_databases_table(machine: &mut Machine) {
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
 }
 
-pub fn load_databases_table(_context: &mut Context, machine: &mut Machine) {
-    let _tuples: Vec<Tuple> = machine.read_tuples(
+pub fn load_databases_table(context: &mut Context, machine: &mut Machine) {
+    let mut tuples: Vec<Tuple> = machine.read_tuples(
         &Config::system_database(), 
         &Config::system_database_table_databases()
     );
+
+    for tuple in tuples.iter_mut() {
+        context.add_database(tuple.get_string(0).unwrap());
+    }
 }
 
 pub fn setup_tables_table(machine: &mut Machine) {

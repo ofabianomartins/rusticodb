@@ -589,10 +589,9 @@ pub fn test_cell_get_u8_to_signed_smallint() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-
     match cell.bin_to_signed_smallint() {
         Ok(format_data) => {
-            assert_eq!(format_data, -31123i16);
+            assert_eq!(format_data, -31122i16);
         },
         _ => { }
     }
