@@ -7,7 +7,6 @@ pub mod setup;
 pub mod machine;
 pub mod config;
 
-
 use crate::setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;
 use crate::machine::machine::Machine;
@@ -20,15 +19,15 @@ fn main() {
     let mut buf = String::new();
 
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
-    let mut context = Context::new();
     let mut executor = SqlExecutor::new();
 
-    setup_system(&mut context, &mut machine);
+    setup_system(&mut machine);
 
     loop {
-        match &context.actual_database {
+        match &machine.context.actual_database {
             Some(database_name) => print!("{} > ", database_name),
             None => print!("<no-database> > ")
         }
@@ -40,7 +39,7 @@ fn main() {
             "quit" | "exit" => break,
             "" => continue,
             sql_command => {
-                executor.parse_command(&mut context, &mut machine, sql_command);
+                let _ = executor.parse_command(&mut machine, sql_command);
             }
         }
     }

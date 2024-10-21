@@ -1,15 +1,18 @@
+
 use crate::storage::pager::Pager;
 use crate::storage::os_interface::OsInterface;
 use crate::storage::tuple::Tuple;
+use crate::machine::context::Context;
 
 #[derive(Debug)]
 pub struct Machine { 
-    pager: Pager
+    pager: Pager,
+    pub context: Context
 }
 
 impl Machine {
-    pub fn new(pager: Pager) -> Self {
-        Self { pager }
+    pub fn new(pager: Pager, context: Context) -> Self {
+        Self { pager, context }
     }
 
     pub fn database_exists(&mut self, database_name: &String) -> bool{
@@ -22,6 +25,7 @@ impl Machine {
 
     pub fn create_database(&mut self, database_name: &String) {
         OsInterface::create_folder(&self.pager.format_database_name(database_name));
+        self.context.add_database(database_name.to_string());
     }
 
     pub fn create_table(&mut self, database_name: &String, table_name: &String) {

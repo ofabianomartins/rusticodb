@@ -2,6 +2,7 @@ use crate::machine::database::Database;
 use crate::machine::table::Table;
 use crate::machine::column::Column;
 
+#[derive(Debug)]
 pub struct Context {
     pub actual_database: Option<String>,
 

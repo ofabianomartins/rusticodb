@@ -7,7 +7,9 @@ use sqlparser::parser::ParserError;
 use sqlparser::ast::Statement;
 
 use crate::machine::machine::Machine;
-use crate::machine::context::Context;
+
+use super::result_set::ExecutionError;
+use super::result_set::ResultSet;
 
 pub struct SqlExecutor {
 }
@@ -18,51 +20,66 @@ impl SqlExecutor {
         SqlExecutor { }
     }
 
-    pub fn parse_command(&mut self, context: &mut Context, machine: &mut Machine, sql_command: &str) {
+    pub fn parse_command(
+        &mut self,
+        machine: &mut Machine,
+        sql_command: &str
+    ) -> Result<Vec<ResultSet>, ExecutionError> { 
         let dialect = GenericDialect {};
 
-        self.process_commands(context, machine, Parser::parse_sql(&dialect, sql_command))
-    }
-
-    pub fn process_commands(&mut self, context: &mut Context, machine: &mut Machine, statements: Result<Vec<Statement>, ParserError>) { 
-        match statements {
+        match Parser::parse_sql(&dialect, sql_command) {
             Ok(commands) => {
+                let mut result_sets: Vec<ResultSet> = Vec::new();
                 for command in commands {
-                    self.process_command(context, machine, command);
+                    match self.process_command(machine, command) {
+                        Ok(result_set) => {
+                            result_sets.push(result_set);
+                        },
+                        Err(err) => {
+                            return Err(err);
+                        }
+                    }
                 }
+
+                return Ok(result_sets);
             },
-            Err(ParserError::ParserError(err)) => println!("ParserError: {}", err),
-            Err(ParserError::TokenizerError(err)) => println!("TokenError: {}", err),
-            Err(ParserError::RecursionLimitExceeded) => println!("RecursionLimitExceeded! ")
+            Err(ParserError::ParserError(err)) => Err(ExecutionError::ParserError(err)),
+            Err(ParserError::TokenizerError(err)) => Err(ExecutionError::TokenizerError(err)),
+            Err(ParserError::RecursionLimitExceeded) => Err(ExecutionError::RecursionLimitExceeded)
         }
     }
 
-    pub fn process_command(&mut self, context: &mut Context, machine: &mut Machine, statement: Statement) { 
+    pub fn process_command(
+        &mut self, 
+        machine: &mut Machine,
+        statement: Statement
+    ) -> Result<ResultSet, ExecutionError> { 
         match statement {
             Statement::Use { db_name } => {
-                context.set_actual_database(db_name.to_string());
+                machine.context.set_actual_database(db_name.to_string());
+                Ok(ResultSet {})
             },
             Statement::CreateDatabase { db_name, if_not_exists: _, location: _, managed_location: _ } => {
                 machine.create_database(&db_name.to_string());
-                context.add_database(db_name.to_string());
-
+                machine.context.add_database(db_name.to_string());
+                Ok(ResultSet {})
             },
             Statement::CreateTable(create_table) => {
-                if let Some(db_name) = context.actual_database.clone() {
-                   context.add_table(db_name.to_string(), create_table.name.to_string());
+                if let Some(db_name) = machine.context.actual_database.clone() {
+                   machine.context.add_table(db_name.to_string(), create_table.name.to_string());
                    machine.create_table(&db_name, &create_table.name.to_string());
                 } else {
                    println!("Database not setted!")
                 }
+                Ok(ResultSet {})
             },
             Statement::Drop { object_type, if_exists: _, names: _, cascade: _, restrict: _, purge: _, temporary: _ } => {
                 match object_type {
                     ObjectType::Table => {
-                        
+                        Ok(ResultSet {})
                     },
                     _ => todo!()
                 }
-
             },
             _ => todo!()
         }

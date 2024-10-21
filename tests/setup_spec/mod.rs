@@ -13,17 +13,18 @@ use crate::test_utils::create_tmp_test_folder;
 #[test]
 pub fn test_system_database_setup() {
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-    let mut context = Context::new();
+    let context = Context::new();
 
-    setup_system(&mut context, &mut machine);
+    let mut machine = Machine::new(pager, context);
+
+    setup_system(&mut machine);
 
     let metadata_foldername = format!("{}", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
 
     let table_filename = format!("{}/{}/", Config::data_folder(), Config::system_database());
     assert!(Path::new(&table_filename).exists());
-    assert!(context.check_database_exists(&Config::system_database()));
+    assert!(machine.context.check_database_exists(&Config::system_database()));
 
     let table_filename = format!(
         "{}/{}/{}.db",
@@ -32,7 +33,7 @@ pub fn test_system_database_setup() {
         Config::system_database_table_databases()
     );
     assert!(Path::new(&table_filename).exists());
-    assert!(context.check_table_exists(&Config::system_database(), &Config::system_database_table_databases()));
+    assert!(machine.context.check_table_exists(&Config::system_database(), &Config::system_database_table_databases()));
 
     let table_filename = format!(
         "{}/{}/{}.db", 
@@ -41,7 +42,7 @@ pub fn test_system_database_setup() {
         Config::system_database_table_tables()
     );
     assert!(Path::new(&table_filename).exists());
-    assert!(context.check_table_exists(&Config::system_database(), &Config::system_database_table_tables()));
+    assert!(machine.context.check_table_exists(&Config::system_database(), &Config::system_database_table_tables()));
 
     let table_filename = format!(
         "{}/{}/{}.db", 
@@ -50,7 +51,7 @@ pub fn test_system_database_setup() {
         Config::system_database_table_columns()
     );
     assert!(Path::new(&table_filename).exists());
-    assert!(context.check_table_exists(&Config::system_database(), &Config::system_database_table_columns()));
+    assert!(machine.context.check_table_exists(&Config::system_database(), &Config::system_database_table_columns()));
 
     destroy_tmp_test_folder();
 }
@@ -58,8 +59,8 @@ pub fn test_system_database_setup() {
 #[test]
 pub fn test_system_database_setup_with_database_to_load() {
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-    let mut context = Context::new();
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -82,11 +83,11 @@ pub fn test_system_database_setup_with_database_to_load() {
 
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
 
-    setup_system(&mut context, &mut machine);
+    setup_system(&mut machine);
 
-    assert!(context.check_database_exists(&Config::system_database()));
-    assert!(context.check_database_exists(&String::from("database1")));
-    assert!(context.check_database_exists(&String::from("database2")));
+    assert!(machine.context.check_database_exists(&Config::system_database()));
+    assert!(machine.context.check_database_exists(&String::from("database1")));
+    assert!(machine.context.check_database_exists(&String::from("database2")));
 
     destroy_tmp_test_folder();
 }
@@ -94,8 +95,8 @@ pub fn test_system_database_setup_with_database_to_load() {
 #[test]
 pub fn test_system_database_setup_with_tables_to_load() {
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-    let mut context = Context::new();
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -128,11 +129,11 @@ pub fn test_system_database_setup_with_tables_to_load() {
 
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_tables(), &mut tuples);
 
-    setup_system(&mut context, &mut machine);
+    setup_system(&mut machine);
 
-    assert!(context.check_database_exists(&Config::system_database()));
-    assert!(context.check_table_exists(&Config::system_database(),  &Config::system_database_table_databases()));
-    assert!(context.check_table_exists(&Config::system_database(),  &Config::system_database_table_tables()));
+    assert!(machine.context.check_database_exists(&Config::system_database()));
+    assert!(machine.context.check_table_exists(&Config::system_database(),  &Config::system_database_table_databases()));
+    assert!(machine.context.check_table_exists(&Config::system_database(),  &Config::system_database_table_tables()));
 
     destroy_tmp_test_folder();
 }
@@ -140,8 +141,8 @@ pub fn test_system_database_setup_with_tables_to_load() {
 #[test]
 pub fn test_system_database_setup_with_columns_to_load() {
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-    let mut context = Context::new();
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -171,17 +172,23 @@ pub fn test_system_database_setup_with_columns_to_load() {
 
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_columns(), &mut tuples);
 
-    setup_system(&mut context, &mut machine);
+    setup_system(&mut machine);
 
-    assert!(context.check_database_exists(&Config::system_database()));
+    assert!(machine.context.check_database_exists(&Config::system_database()));
     assert!(
-        context.check_column_exists(
+        machine.context.check_column_exists(
             &Config::system_database(),
             &Config::system_database_table_databases(),
             &String::from("name")
         )
     );
-    assert!(context.check_column_exists(&Config::system_database(),  &Config::system_database_table_tables(), &String::from("name")));
+    assert!(
+        machine.context.check_column_exists(
+            &Config::system_database(), 
+            &Config::system_database_table_tables(), 
+            &String::from("name")
+        )
+    );
 
     destroy_tmp_test_folder();
 }

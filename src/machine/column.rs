@@ -1,4 +1,5 @@
 
+#[derive(Debug)]
 pub struct Column {
     database_name: String,
     table_name: String,

@@ -1,41 +1,39 @@
 use crate::config::Config;
 use crate::machine::machine::Machine;
-use crate::machine::context::Context;
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;
 
-pub fn setup_system(context: &mut Context, machine: &mut Machine) {
+pub fn setup_system(machine: &mut Machine) {
     OsInterface::create_folder_if_not_exists(&Config::data_folder());
 
-    load_context(context, machine);
+    load_context(machine);
 }
 
-pub fn load_context(context: &mut Context, machine: &mut Machine) {
+pub fn load_context(machine: &mut Machine) {
     if machine.database_exists(&Config::system_database()) == false {
         machine.create_database(&Config::system_database());
-        context.add_database(Config::system_database());
     }
 
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_databases()) == false {
-        setup_databases_table(context, machine);
+        setup_databases_table(machine);
     } else {
-        load_databases_table(context, machine);
+        load_databases_table(machine);
     }
 
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_tables()) == false {
-        setup_tables_table(context, machine);
+        setup_tables_table(machine);
     } else {
-        load_tables_table(context, machine)
+        load_tables_table(machine)
     }
 
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_columns()) == false {
-        setup_columns_table(context, machine);
+        setup_columns_table(machine);
     } else {
-        load_columns_table(context, machine)
+        load_columns_table(machine)
     }
 }
 
-pub fn setup_databases_table(context: &mut Context, machine: &mut Machine) {
+pub fn setup_databases_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
     tuple.push_string(&Config::system_database());
@@ -44,21 +42,21 @@ pub fn setup_databases_table(context: &mut Context, machine: &mut Machine) {
     machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
 
-    load_databases_table(context, machine);
+    load_databases_table(machine);
 }
 
-pub fn load_databases_table(context: &mut Context, machine: &mut Machine) {
+pub fn load_databases_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = machine.read_tuples(
         &Config::system_database(), 
         &Config::system_database_table_databases()
     );
 
     for tuple in tuples.iter_mut() {
-        context.add_database(tuple.get_string(0).unwrap());
+        machine.context.add_database(tuple.get_string(0).unwrap());
     }
 }
 
-pub fn setup_tables_table(context: &mut Context, machine: &mut Machine) {
+pub fn setup_tables_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
 
     let mut tuple: Tuple = Tuple::new();
@@ -79,21 +77,21 @@ pub fn setup_tables_table(context: &mut Context, machine: &mut Machine) {
     machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_tables(), &mut tuples);
 
-    load_tables_table(context, machine)
+    load_tables_table(machine)
 }
 
-pub fn load_tables_table(context: &mut Context, machine: &mut Machine) {
+pub fn load_tables_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = machine.read_tuples(
         &Config::system_database(), 
         &Config::system_database_table_tables()
     );
 
     for tuple in tuples.iter_mut() {
-        context.add_table(tuple.get_string(0).unwrap(), tuple.get_string(1).unwrap());
+        machine.context.add_table(tuple.get_string(0).unwrap(), tuple.get_string(1).unwrap());
     }
 }
 
-pub fn setup_columns_table(context: &mut Context, machine: &mut Machine) {
+pub fn setup_columns_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
     tuple.push_string(&Config::system_database());
@@ -105,17 +103,17 @@ pub fn setup_columns_table(context: &mut Context, machine: &mut Machine) {
     machine.create_table(&Config::system_database(), &Config::system_database_table_columns());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_columns(), &mut tuples);
 
-    load_columns_table(context, machine);
+    load_columns_table(machine);
 }
 
-pub fn load_columns_table(context: &mut Context, machine: &mut Machine) {
+pub fn load_columns_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = machine.read_tuples(
         &Config::system_database(), 
         &Config::system_database_table_columns()
     );
 
     for tuple in tuples.iter_mut() {
-        context.add_column(
+        machine.context.add_column(
             tuple.get_string(0).unwrap(), 
             tuple.get_string(1).unwrap(),
             tuple.get_string(2).unwrap()

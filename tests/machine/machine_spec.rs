@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
+use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::storage::pager::Pager;
 
@@ -11,7 +12,8 @@ use crate::test_utils::destroy_tmp_test_folder;
 pub fn test_if_database_exists_is_true() {
     let database1 = String::from("database1");
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -25,7 +27,8 @@ pub fn test_if_database_exists_is_true() {
 pub fn test_if_database_exists_is_false() {
     let database1 = String::from("database1");
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -39,7 +42,8 @@ pub fn test_if_table_exists_is_true() {
     let database1 = String::from("database1");
     let table1 = String::from("table1");
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -55,7 +59,8 @@ pub fn test_if_table_exists_is_false() {
     let database1 = String::from("database1");
     let table1 = String::from("table1");
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -69,7 +74,8 @@ pub fn test_if_table_exists_is_false() {
 pub fn test_create_database_metadata_file_database1() {
     let database1 = String::from("database1");
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 
@@ -85,7 +91,8 @@ pub fn test_create_database_metadata_file_database1() {
 pub fn test_create_table_metadata_file() {
     let database1 = String::from("database1");
     let pager = Pager::new();
-    let mut machine = Machine::new(pager);
+    let context = Context::new();
+    let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
 

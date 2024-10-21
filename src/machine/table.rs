@@ -1,4 +1,5 @@
 
+#[derive(Debug)]
 pub struct Table {
     database_name: String,
     name: String
