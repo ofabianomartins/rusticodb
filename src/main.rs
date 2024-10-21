@@ -39,7 +39,10 @@ fn main() {
             "quit" | "exit" => break,
             "" => continue,
             sql_command => {
-                let _ = executor.parse_command(&mut machine, sql_command);
+                match executor.parse_command(&mut machine, sql_command) {
+                    Ok(result_set) => println!("{:?}", result_set),
+                    Err(err) => println!("{:?}", err)
+                }
             }
         }
     }
