@@ -1,3 +1,4 @@
+use sqlparser::ast::ColumnDef;
 
 use crate::storage::pager::Pager;
 use crate::storage::os_interface::OsInterface;
@@ -52,10 +53,26 @@ impl Machine {
     pub fn create_table(
         &mut self, 
         database_name: &String, 
-        table_name: &String
+        table_name: &String,
+        if_not_exists: bool,
+        columns: Vec<ColumnDef>
     ) -> Result<ResultSet, ExecutionError>{
+        if self.context.check_table_exists(&database_name, &table_name) && if_not_exists {
+            return Ok(ResultSet {});
+        }
+        if self.context.check_table_exists(&database_name, &table_name) {
+            return Err(ExecutionError::DatabaseExists(database_name.to_string()));
+        }
         OsInterface::create_file(&self.pager.format_table_name(database_name, table_name));
         self.context.add_table(database_name.to_string(), table_name.to_string());
+
+        for column in columns.iter() {
+            self.context.add_column(
+                database_name.to_string(),
+                table_name.to_string(),
+                column.name.to_string()
+            );
+        }
         Ok(ResultSet {})
     }
 

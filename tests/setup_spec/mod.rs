@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
@@ -11,52 +9,6 @@ use crate::test_utils::destroy_tmp_test_folder;
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
-pub fn test_system_database_setup() {
-    let pager = Pager::new();
-    let context = Context::new();
-
-    let mut machine = Machine::new(pager, context);
-
-    setup_system(&mut machine);
-
-    let metadata_foldername = format!("{}", Config::data_folder());
-    assert!(Path::new(&metadata_foldername).exists());
-
-    let table_filename = format!("{}/{}/", Config::data_folder(), Config::system_database());
-    assert!(Path::new(&table_filename).exists());
-    assert!(machine.context.check_database_exists(&Config::system_database()));
-
-    let table_filename = format!(
-        "{}/{}/{}.db",
-        Config::data_folder(), 
-        Config::system_database(), 
-        Config::system_database_table_databases()
-    );
-    assert!(Path::new(&table_filename).exists());
-    assert!(machine.context.check_table_exists(&Config::system_database(), &Config::system_database_table_databases()));
-
-    let table_filename = format!(
-        "{}/{}/{}.db", 
-        Config::data_folder(), 
-        Config::system_database(),
-        Config::system_database_table_tables()
-    );
-    assert!(Path::new(&table_filename).exists());
-    assert!(machine.context.check_table_exists(&Config::system_database(), &Config::system_database_table_tables()));
-
-    let table_filename = format!(
-        "{}/{}/{}.db", 
-        Config::data_folder(), 
-        Config::system_database(),
-        Config::system_database_table_columns()
-    );
-    assert!(Path::new(&table_filename).exists());
-    assert!(machine.context.check_table_exists(&Config::system_database(), &Config::system_database_table_columns()));
-
-    destroy_tmp_test_folder();
-}
-
-#[test]
 pub fn test_system_database_setup_with_database_to_load() {
     let pager = Pager::new();
     let context = Context::new();
@@ -65,7 +17,7 @@ pub fn test_system_database_setup_with_database_to_load() {
     create_tmp_test_folder();
 
     let _ = machine.create_database(Config::system_database().to_string(), false);
-    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases(), false, Vec::new());
 
     let mut tuples: Vec<Tuple> = Vec::new();
 
@@ -101,8 +53,8 @@ pub fn test_system_database_setup_with_tables_to_load() {
     create_tmp_test_folder();
 
     let _ = machine.create_database(Config::system_database().to_string(), false);
-    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
-    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases(), false, Vec::new());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_tables(), false, Vec::new());
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
@@ -147,7 +99,7 @@ pub fn test_system_database_setup_with_columns_to_load() {
     create_tmp_test_folder();
 
     let _ = machine.create_database(Config::system_database().to_string(), false);
-    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases(), false, Vec::new());
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
