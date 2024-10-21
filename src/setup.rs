@@ -11,7 +11,7 @@ pub fn setup_system(machine: &mut Machine) {
 
 pub fn load_context(machine: &mut Machine) {
     if machine.database_exists(&Config::system_database()) == false {
-        let _ = machine.create_database(Config::system_database());
+        let _ = machine.create_database(Config::system_database(), true);
     }
 
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_databases()) == false {
@@ -39,7 +39,7 @@ pub fn setup_databases_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database());
     tuples.push(tuple);
 
-    machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
 
     load_databases_table(machine);
@@ -74,7 +74,7 @@ pub fn setup_tables_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_columns());
     tuples.push(tuple);
 
-    machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_tables(), &mut tuples);
 
     load_tables_table(machine)
@@ -100,7 +100,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&String::from("VARCHAR"));
     tuples.push(tuple);
 
-    machine.create_table(&Config::system_database(), &Config::system_database_table_columns());
+    let _ = machine.create_table(&Config::system_database(), &Config::system_database_table_columns());
     machine.insert_tuples(&Config::system_database(), &Config::system_database_table_columns(), &mut tuples);
 
     load_columns_table(machine);

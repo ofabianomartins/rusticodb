@@ -33,7 +33,14 @@ impl Machine {
         return OsInterface::path_exists(&self.pager.format_table_name(database_name, table_name));
     }
 
-    pub fn create_database(&mut self, database_name: String) -> Result<ResultSet, ExecutionError>{
+    pub fn create_database(
+        &mut self, 
+        database_name: String,
+        if_not_exists: bool
+    ) -> Result<ResultSet, ExecutionError>{
+        if self.context.check_database_exists(&database_name) && if_not_exists {
+            return Ok(ResultSet {});
+        }
         if self.context.check_database_exists(&database_name) {
             return Err(ExecutionError::DatabaseExists(database_name));
         }
@@ -42,9 +49,14 @@ impl Machine {
         Ok(ResultSet {})
     }
 
-    pub fn create_table(&mut self, database_name: &String, table_name: &String) {
+    pub fn create_table(
+        &mut self, 
+        database_name: &String, 
+        table_name: &String
+    ) -> Result<ResultSet, ExecutionError>{
         OsInterface::create_file(&self.pager.format_table_name(database_name, table_name));
         self.context.add_table(database_name.to_string(), table_name.to_string());
+        Ok(ResultSet {})
     }
 
     pub fn insert_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {

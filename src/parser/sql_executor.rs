@@ -57,16 +57,15 @@ impl SqlExecutor {
             Statement::Use { db_name } => {
                 machine.set_actual_database(db_name.to_string())
             },
-            Statement::CreateDatabase { db_name, if_not_exists: _, location: _, managed_location: _ } => {
-                machine.create_database(db_name.to_string())
+            Statement::CreateDatabase { db_name, if_not_exists, location: _, managed_location: _ } => {
+                machine.create_database(db_name.to_string(), if_not_exists)
             },
             Statement::CreateTable(create_table) => {
                 if let Some(db_name) = machine.context.actual_database.clone() {
-                   machine.create_table(&db_name, &create_table.name.to_string());
+                    return machine.create_table(&db_name, &create_table.name.to_string());
                 } else {
-                   println!("Database not setted!")
+                    return Err(ExecutionError::DatabaseNotSetted);
                 }
-                Ok(ResultSet {})
             },
             Statement::Drop { object_type, if_exists: _, names: _, cascade: _, restrict: _, purge: _, temporary: _ } => {
                 match object_type {
