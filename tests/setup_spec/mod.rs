@@ -64,7 +64,7 @@ pub fn test_system_database_setup_with_database_to_load() {
 
     create_tmp_test_folder();
 
-    machine.create_database(&Config::system_database());
+    let _ = machine.create_database(Config::system_database().to_string());
     machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
 
     let mut tuples: Vec<Tuple> = Vec::new();
@@ -100,7 +100,7 @@ pub fn test_system_database_setup_with_tables_to_load() {
 
     create_tmp_test_folder();
 
-    machine.create_database(&Config::system_database());
+    let _ = machine.create_database(Config::system_database().to_string());
     machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
     machine.create_table(&Config::system_database(), &Config::system_database_table_tables());
 
@@ -146,7 +146,7 @@ pub fn test_system_database_setup_with_columns_to_load() {
 
     create_tmp_test_folder();
 
-    machine.create_database(&Config::system_database());
+    let _ = machine.create_database(Config::system_database().to_string());
     machine.create_table(&Config::system_database(), &Config::system_database_table_databases());
 
     let mut tuples: Vec<Tuple> = Vec::new();

@@ -7,9 +7,8 @@ use sqlparser::parser::ParserError;
 use sqlparser::ast::Statement;
 
 use crate::machine::machine::Machine;
-
-use super::result_set::ExecutionError;
-use super::result_set::ResultSet;
+use crate::machine::result_set::ResultSet;
+use crate::machine::result_set::ExecutionError;
 
 pub struct SqlExecutor {
 }
@@ -56,17 +55,13 @@ impl SqlExecutor {
     ) -> Result<ResultSet, ExecutionError> { 
         match statement {
             Statement::Use { db_name } => {
-                machine.context.set_actual_database(db_name.to_string());
-                Ok(ResultSet {})
+                machine.set_actual_database(db_name.to_string())
             },
             Statement::CreateDatabase { db_name, if_not_exists: _, location: _, managed_location: _ } => {
-                machine.create_database(&db_name.to_string());
-                machine.context.add_database(db_name.to_string());
-                Ok(ResultSet {})
+                machine.create_database(db_name.to_string())
             },
             Statement::CreateTable(create_table) => {
                 if let Some(db_name) = machine.context.actual_database.clone() {
-                   machine.context.add_table(db_name.to_string(), create_table.name.to_string());
                    machine.create_table(&db_name, &create_table.name.to_string());
                 } else {
                    println!("Database not setted!")

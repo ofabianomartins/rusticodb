@@ -8,5 +8,7 @@ pub struct ResultSet {
 pub enum ExecutionError {
     ParserError(String),
     TokenizerError(String),
-    RecursionLimitExceeded
+    RecursionLimitExceeded,
+    DatabaseNotExists(String),
+    DatabaseExists(String)
 }

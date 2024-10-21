@@ -5,7 +5,8 @@ pub fn test_if_actual_database_exists_on_system_to_context() {
     let database1 = String::from("database1");
     let mut context = Context::new();
 
-    assert_eq!(context.set_actual_database(database1.clone()), false);
+    context.set_actual_database(database1.clone());
+
     assert_eq!(context.check_database_exists(&database1), false);
     assert!(matches!(context.actual_database, None))
 }
@@ -16,8 +17,8 @@ pub fn test_if_actual_database_is_set_to_context() {
     let mut context = Context::new();
 
     context.add_database(database1.clone());
+    context.set_actual_database(database1.clone());
 
-    assert!(context.set_actual_database(database1.clone()));
     assert!(context.check_database_exists(&database1));
     assert!(matches!(context.actual_database, Some(_database1)))
 }

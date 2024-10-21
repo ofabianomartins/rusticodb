@@ -3,6 +3,7 @@ use std::path::Path;
 use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
+use rusticodb::machine::result_set::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::storage::pager::Pager;
 
@@ -18,7 +19,9 @@ pub fn test_create_database_metadata_file_database1() {
 
     create_tmp_test_folder();
 
-    let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
+    let result_set = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
+
+    assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
     assert!(machine.context.check_database_exists(&database_name));
@@ -26,6 +29,56 @@ pub fn test_create_database_metadata_file_database1() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
+
+    destroy_tmp_test_folder();
+}
+
+#[test]
+pub fn test_create_database_that_already_exists() {
+    let mut sql_executor = SqlExecutor::new();
+    let context = Context::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager, context);
+
+    create_tmp_test_folder();
+
+    let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
+    let error_parse = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
+    println!("{:?}", error_parse);
+
+    assert!(matches!(error_parse, Err(ExecutionError::DatabaseExists(_result_set))));
+
+    let database_name = String::from("database1");
+    assert!(machine.context.check_database_exists(&database_name));
+    assert_eq!(matches!(machine.context.actual_database, Some(_database_name)), false);
+
+    let metadata_foldername = format!("{}/database1/", Config::data_folder());
+    assert!(Path::new(&metadata_foldername).exists());
+
+    destroy_tmp_test_folder();
+}
+
+#[test]
+pub fn test_use_database_that_not_exists() {
+    let database_name = String::from("database1");
+    let mut sql_executor = SqlExecutor::new();
+    let context = Context::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager, context);
+
+    create_tmp_test_folder();
+
+    let error_parse = sql_executor.parse_command(&mut machine, "USE database1");
+
+    assert!(
+        matches!(
+            error_parse, 
+            Err(ExecutionError::DatabaseNotExists(_))
+        )
+    );
+
+    assert!(matches!(machine.context.actual_database, None));
+    assert_eq!(machine.context.check_database_exists(&database_name), false);
 
     destroy_tmp_test_folder();
 }
@@ -40,11 +93,18 @@ pub fn test_use_database_set_in_context() {
     create_tmp_test_folder();
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
-    let _ = sql_executor.parse_command(&mut machine, "USE database1");
+    let result_set = sql_executor.parse_command(&mut machine, "USE database1");
+
+    assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
     assert!(machine.context.check_database_exists(&database_name));
-    assert!(matches!(machine.context.actual_database, Some(_database_name)));
+    assert!(
+        matches!(
+            machine.context.actual_database, 
+            Some(_database_name)
+        )
+    );
 
     let metadata_foldername = format!("{}/{}", Config::data_folder(), database_name);
     assert!(Path::new(&metadata_foldername).exists());

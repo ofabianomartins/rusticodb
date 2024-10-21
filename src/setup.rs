@@ -11,7 +11,7 @@ pub fn setup_system(machine: &mut Machine) {
 
 pub fn load_context(machine: &mut Machine) {
     if machine.database_exists(&Config::system_database()) == false {
-        machine.create_database(&Config::system_database());
+        let _ = machine.create_database(Config::system_database());
     }
 
     if machine.table_exists(&Config::system_database(), &Config::system_database_table_databases()) == false {

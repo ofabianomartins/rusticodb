@@ -22,12 +22,12 @@ impl Context {
         } 
     }
 
-    pub fn set_actual_database(&mut self, name: String) -> bool {
+    pub fn set_actual_database(&mut self, name: String) {
         if self.check_database_exists(&name) == false {
-            return false
+            self.actual_database = None;
+        } else {
+            self.actual_database = Some(name);
         }
-        self.actual_database = Some(name);
-        return true
     }
 
     pub fn add_database(&mut self, name: String) -> bool {
