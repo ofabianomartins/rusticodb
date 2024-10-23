@@ -58,6 +58,33 @@ pub fn test_create_database_with_if_not_exists() {
 }
 
 #[test]
+pub fn test_create_two_databases() {
+    let mut sql_executor = SqlExecutor::new();
+    let context = Context::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager, context);
+
+    create_tmp_test_folder();
+
+    let result_set = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1; CREATE DATABASE database2");
+
+    assert!(matches!(result_set, Ok(_result_set)));
+
+    let database_name = String::from("database1");
+    assert!(machine.context.check_database_exists(&database_name));
+
+    let database_name = String::from("database2");
+    assert!(machine.context.check_database_exists(&database_name));
+
+    assert_eq!(matches!(machine.context.actual_database, Some(_database_name)), false);
+
+    let metadata_foldername = format!("{}/database1/", Config::data_folder());
+    assert!(Path::new(&metadata_foldername).exists());
+
+    destroy_tmp_test_folder();
+}
+
+#[test]
 pub fn test_create_database_with_if_not_exists_in_wrong_order() {
     let mut sql_executor = SqlExecutor::new();
     let context = Context::new();
