@@ -40,7 +40,11 @@ fn main() {
             "" => continue,
             sql_command => {
                 match executor.parse_command(&mut machine, sql_command) {
-                    Ok(result_set) => println!("{:?}", result_set),
+                    Ok(result_set) => {
+                        for item in result_set {
+                            println!("{}", item);
+                        }
+                    },
                     Err(err) => println!("{:?}", err)
                 }
             }

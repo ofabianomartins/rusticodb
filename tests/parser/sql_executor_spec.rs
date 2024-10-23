@@ -5,6 +5,7 @@ use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::machine::result_set::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
+use rusticodb::setup::setup_system;
 use rusticodb::storage::pager::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
@@ -331,4 +332,29 @@ pub fn test_create_table_with_two_columns() {
     assert!(Path::new(&table_filename).exists());
 
     destroy_tmp_test_folder();
+}
+
+#[test]
+pub fn test_select_database_tables() {
+    let mut sql_executor = SqlExecutor::new();
+    let context = Context::new();
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager, context);
+
+    destroy_tmp_test_folder();
+    create_tmp_test_folder();
+
+    setup_system(&mut machine);
+
+    let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
+    let use_database = sql_executor.parse_command(&mut machine, "USE rusticodb;");
+    let result_set = sql_executor.parse_command(&mut machine, "SELECT * FROM databases");
+
+    assert!(matches!(use_database, Ok(_result_set)));
+    assert!(matches!(result_set, Ok(_result_set)));
+
+    let database_name = String::from("database1");
+    assert!(machine.context.check_database_exists(&database_name));
+
+    assert!(matches!(machine.context.actual_database, Some(_database_name)));
 }

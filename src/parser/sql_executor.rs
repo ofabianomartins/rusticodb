@@ -9,6 +9,7 @@ use sqlparser::ast::Statement;
 use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ExecutionError;
+use crate::machine::result_set::ResultSetType;
 
 pub struct SqlExecutor {
 }
@@ -75,10 +76,13 @@ impl SqlExecutor {
             Statement::Drop { object_type, if_exists: _, names: _, cascade: _, restrict: _, purge: _, temporary: _ } => {
                 match object_type {
                     ObjectType::Table => {
-                        Ok(ResultSet {})
+                        Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP TABLE")))
                     },
                     _ => todo!()
                 }
+            },
+            Statement::Query(box_query) => {
+                Ok(ResultSet::new_select(Vec::new(), Vec::new()))
             },
             _ => todo!()
         }

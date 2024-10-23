@@ -7,6 +7,8 @@ use crate::machine::context::Context;
 use crate::machine::result_set::ExecutionError;
 use crate::machine::result_set::ResultSet;
 
+use super::result_set::ResultSetType;
+
 #[derive(Debug)]
 pub struct Machine { 
     pager: Pager,
@@ -23,7 +25,7 @@ impl Machine {
             return Err(ExecutionError::DatabaseNotExists(name));
         }
         self.context.set_actual_database(name);
-        Ok(ResultSet {})
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("USE DATABASE")))
     }
 
     pub fn database_exists(&mut self, database_name: &String) -> bool{
@@ -40,14 +42,14 @@ impl Machine {
         if_not_exists: bool
     ) -> Result<ResultSet, ExecutionError>{
         if self.context.check_database_exists(&database_name) && if_not_exists {
-            return Ok(ResultSet {});
+            return Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")));
         }
         if self.context.check_database_exists(&database_name) {
             return Err(ExecutionError::DatabaseExists(database_name));
         }
         OsInterface::create_folder(&self.pager.format_database_name(&database_name));
         self.context.add_database(database_name.to_string());
-        Ok(ResultSet {})
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
     }
 
     pub fn create_table(
@@ -58,7 +60,7 @@ impl Machine {
         columns: Vec<ColumnDef>
     ) -> Result<ResultSet, ExecutionError>{
         if self.context.check_table_exists(&database_name, &table_name) && if_not_exists {
-            return Ok(ResultSet {});
+            return Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE TABLE")));
         }
         if self.context.check_table_exists(&database_name, &table_name) {
             return Err(ExecutionError::DatabaseExists(database_name.to_string()));
@@ -73,7 +75,7 @@ impl Machine {
                 column.name.to_string()
             );
         }
-        Ok(ResultSet {})
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE TABLE")))
     }
 
     pub fn insert_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {
