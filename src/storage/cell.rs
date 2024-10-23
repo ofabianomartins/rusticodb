@@ -16,7 +16,8 @@ pub enum CellType {
     SignedInt = 9,
     SignedBigint = 10,
     String = 1,
-    Text = 11
+    Text = 11,
+    Null = 12
 }
 
 #[derive(Debug)]
@@ -38,6 +39,10 @@ impl Cell {
 
     pub fn load(&mut self, data: Vec<u8>) {
         self.data = data;
+    }
+
+    pub fn null_to_bin(&mut self) {
+        self.data.push(CellType::Null as u8);
     }
 
     pub fn string_to_bin(&mut self,raw_data: &String) {

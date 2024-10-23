@@ -71,6 +71,12 @@ impl Tuple {
         return Cell::load_cell(buffer_array);
     }
 
+    pub fn push_null(&mut self) {
+        let mut cell = Cell::new();
+        cell.null_to_bin();
+        self.append_cell(cell);
+    }
+
     pub fn push_string(&mut self, raw_data: &String) {
         let mut cell = Cell::new();
         cell.string_to_bin(&raw_data);

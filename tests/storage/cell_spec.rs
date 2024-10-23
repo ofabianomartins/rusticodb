@@ -165,6 +165,19 @@ pub fn test_cell_insert_signed_int_to_u8() {
 }
 
 #[test]
+pub fn test_cell_insert_null_to_u8() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.push(CellType::Null as u8);
+
+    let mut cell = Cell::new();
+
+    cell.null_to_bin();
+
+    assert_eq!(cell.data, buffer);
+}
+
+#[test]
 pub fn test_cell_insert_signed_bigint_to_u8() {
     let mut buffer: Vec<u8> = Vec::new();
 

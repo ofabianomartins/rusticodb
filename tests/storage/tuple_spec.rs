@@ -3,6 +3,25 @@ use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 
 #[test]
+pub fn test_tuple_push_null() {
+    let mut buffer: Vec<u8> = Vec::new();
+
+    buffer.append(&mut 1u16.to_be_bytes().to_vec());
+    buffer.append(&mut 4u16.to_be_bytes().to_vec());
+    buffer.push(CellType::Null as u8);
+
+    let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
+    for (idx, elem) in &mut buffer.iter().enumerate() {
+        raw_buffer[idx] = *elem;
+    }
+
+    let mut tuple = Tuple::new();
+    tuple.push_null();
+
+    assert_eq!(tuple.to_raw_data(), raw_buffer);
+}
+
+#[test]
 pub fn test_tuple_push_string() {
     let mut buffer: Vec<u8> = Vec::new();
     let data: String = String::from("simple_string");
