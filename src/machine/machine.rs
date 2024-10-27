@@ -7,6 +7,7 @@ use crate::machine::context::Context;
 use crate::machine::result_set::ExecutionError;
 use crate::machine::result_set::ResultSet;
 
+use super::column::ColumnType;
 use super::result_set::ResultSetType;
 
 #[derive(Debug)]
@@ -72,7 +73,8 @@ impl Machine {
             self.context.add_column(
                 database_name.to_string(),
                 table_name.to_string(),
-                column.name.to_string()
+                column.name.to_string(),
+                ColumnType::Varchar
             );
         }
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE TABLE")))

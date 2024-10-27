@@ -1,4 +1,5 @@
 use crate::config::Config;
+use crate::machine::column::ColumnType;
 use crate::machine::machine::Machine;
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;
@@ -116,7 +117,8 @@ pub fn load_columns_table(machine: &mut Machine) {
         machine.context.add_column(
             tuple.get_string(0).unwrap(), 
             tuple.get_string(1).unwrap(),
-            tuple.get_string(2).unwrap()
+            tuple.get_string(2).unwrap(),
+            ColumnType::Varchar
         );
     }
 }

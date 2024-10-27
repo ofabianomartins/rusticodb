@@ -6,6 +6,7 @@ pub struct Cell {
 
 // Should be save in one byte
 pub enum CellType {
+    Null = 1,
     Boolean = 2,
     UnsignedTinyint = 3,
     UnsignedSmallint = 4,
@@ -15,9 +16,8 @@ pub enum CellType {
     SignedSmallint = 8,
     SignedInt = 9,
     SignedBigint = 10,
-    String = 1,
-    Text = 11,
-    Null = 12
+    String = 11,
+    Text = 12,
 }
 
 #[derive(Debug)]

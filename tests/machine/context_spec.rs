@@ -1,4 +1,4 @@
-use rusticodb::machine::context::Context;
+use rusticodb::machine::{column::ColumnType, context::Context};
 
 #[test]
 pub fn test_if_actual_database_exists_on_system_to_context() {
@@ -70,7 +70,7 @@ pub fn test_if_column_is_add_to_context() {
     let column1 = String::from("column1");
     let mut context = Context::new();
 
-    assert!(context.add_column(database1.clone(), table1.clone(), column1.clone()));
+    assert!(context.add_column(database1.clone(), table1.clone(), column1.clone(), ColumnType::Varchar));
     assert!(context.check_column_exists(&database1, &table1, &column1));
 }
 
@@ -81,7 +81,7 @@ pub fn test_if_column_of_the_same_table_is_add_twice_failed_on_second() {
     let column1 = String::from("column1");
     let mut context = Context::new();
 
-    assert!(context.add_column(database1.clone(), table1.clone(), column1.clone()));
+    assert!(context.add_column(database1.clone(), table1.clone(), column1.clone(), ColumnType::Varchar));
     assert!(context.check_column_exists(&database1, &table1, &column1));
-    assert_eq!(context.add_column(database1, table1, column1), false);
+    assert_eq!(context.add_column(database1, table1, column1, ColumnType::Varchar), false);
 }

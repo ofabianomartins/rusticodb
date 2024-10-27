@@ -1,6 +1,7 @@
 use crate::machine::database::Database;
 use crate::machine::table::Table;
 use crate::machine::column::Column;
+use crate::machine::column::ColumnType;
 
 #[derive(Debug)]
 pub struct Context {
@@ -68,11 +69,11 @@ impl Context {
         return found;
     }
 
-    pub fn add_column(&mut self, database_name: String, table_name: String, name: String) -> bool {
+    pub fn add_column(&mut self, database_name: String, table_name: String, name: String, column_type: ColumnType) -> bool {
         if self.check_column_exists(&database_name, &table_name, &name) == true {
             return false
         }
-        self.columns.push(Column::new(database_name, table_name, name));
+        self.columns.push(Column::new(database_name, table_name, name, column_type));
         return true;
     }
 
