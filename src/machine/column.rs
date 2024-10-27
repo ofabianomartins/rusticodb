@@ -7,7 +7,6 @@ pub struct Column {
 }
 
 impl Column {
-
     pub fn new(database_name: String, table_name: String, name: String) -> Self {
         Column { database_name, table_name, name }
     }
