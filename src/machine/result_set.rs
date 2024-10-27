@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::storage::tuple::Tuple;
+use crate::storage::cell::ParserError;
 use crate::machine::column::Column;
 
 #[derive(Debug)]
@@ -28,6 +29,30 @@ impl ResultSet {
             columns: Vec::new(), 
             tuples: Vec::new()
         }
+    }
+
+    fn get_column_position(&self, column_name: &String) -> Option<usize> {
+        return self.columns.iter().position(|elem| elem.check_column_name(column_name) )
+    }
+
+    pub fn get_string(&mut self, index: usize, column_name: &String) -> Result<String, ParserError> {
+
+        match &mut self.get_column_position(column_name) {
+            Some(position) => match self.tuples.get(index) {
+                Some(tuple) => tuple.get_string(*position as u16),
+                None => Err(ParserError::NoneExists)
+            },
+            None => Err(ParserError::NoneExists)
+        }
+    }
+
+
+    pub fn line_count(&mut self) -> usize {
+        return self.tuples.len(); 
+    }
+
+    pub fn column_count(&mut self) -> usize {
+        return self.columns.len(); 
     }
 }
 

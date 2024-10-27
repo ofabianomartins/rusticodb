@@ -22,6 +22,7 @@ pub enum CellType {
 
 #[derive(Debug)]
 pub enum ParserError {
+    NoneExists,
     WrongFormat,
     WrongLength,
     StringParseFailed
@@ -110,7 +111,7 @@ impl Cell {
         self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
-    pub fn bin_to_string(&mut self) -> Result<String, ParserError> {
+    pub fn bin_to_string(&self) -> Result<String, ParserError> {
         if self.data.len() <= 1 {
             return Err(ParserError::WrongLength)
         } 
@@ -140,7 +141,7 @@ impl Cell {
         }
     }
 
-    pub fn bin_to_text(&mut self) -> Result<String, ParserError> {
+    pub fn bin_to_text(&self) -> Result<String, ParserError> {
         if self.data.len() <= 1 {
             return Err(ParserError::WrongLength)
         } 
@@ -172,7 +173,7 @@ impl Cell {
         }
     }
 
-    pub fn bin_to_boolean(&mut self) -> Result<bool, ParserError> {
+    pub fn bin_to_boolean(&self) -> Result<bool, ParserError> {
         if self.data.len() != 2 {
             return Err(ParserError::WrongLength)
         } 
@@ -184,7 +185,7 @@ impl Cell {
         Ok(self.data[1] == 1u8)
     }
 
-    pub fn bin_to_unsigned_tinyint(&mut self) -> Result<u8, ParserError> {
+    pub fn bin_to_unsigned_tinyint(&self) -> Result<u8, ParserError> {
         if self.data.len() != 2 {
             return Err(ParserError::WrongLength)
         } 
@@ -196,7 +197,7 @@ impl Cell {
         return Ok(self.data[1]);
     }
 
-    pub fn bin_to_unsigned_smallint(&mut self) -> Result<u16, ParserError> {
+    pub fn bin_to_unsigned_smallint(&self) -> Result<u16, ParserError> {
         if self.data.len() != 3 {
             return Err(ParserError::WrongLength)
         } 
@@ -209,7 +210,7 @@ impl Cell {
         return Ok(u16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_unsigned_int(&mut self) -> Result<u32, ParserError> {
+    pub fn bin_to_unsigned_int(&self) -> Result<u32, ParserError> {
         if self.data.len() != 5 {
             return Err(ParserError::WrongLength)
         } 
@@ -224,7 +225,7 @@ impl Cell {
         return Ok(u32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_unsigned_bigint(&mut self) -> Result<u64, ParserError> {
+    pub fn bin_to_unsigned_bigint(&self) -> Result<u64, ParserError> {
         if self.data.len() != 9 {
             return Err(ParserError::WrongLength)
         } 
@@ -240,7 +241,7 @@ impl Cell {
         return Ok(u64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_signed_tinyint(&mut self) -> Result<i8, ParserError> {
+    pub fn bin_to_signed_tinyint(&self) -> Result<i8, ParserError> {
         if self.data.len() != 2 {
             return Err(ParserError::WrongLength)
         } 
@@ -252,7 +253,7 @@ impl Cell {
         return Ok(self.data[1] as i8);
     }
 
-    pub fn bin_to_signed_smallint(&mut self) -> Result<i16, ParserError> {
+    pub fn bin_to_signed_smallint(&self) -> Result<i16, ParserError> {
         if self.data.len() != 3 {
             return Err(ParserError::WrongLength)
         } 
@@ -265,7 +266,7 @@ impl Cell {
         return Ok(i16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_signed_int(&mut self) -> Result<i32, ParserError> {
+    pub fn bin_to_signed_int(&self) -> Result<i32, ParserError> {
         if self.data.len() != 5 {
             return Err(ParserError::WrongLength)
         } 
@@ -280,7 +281,7 @@ impl Cell {
         return Ok(i32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_signed_bigint(&mut self) -> Result<i64, ParserError> {
+    pub fn bin_to_signed_bigint(&self) -> Result<i64, ParserError> {
         if self.data.len() != 9 {
             return Err(ParserError::WrongLength)
         } 
