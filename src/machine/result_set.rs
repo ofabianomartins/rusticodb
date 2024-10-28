@@ -35,7 +35,7 @@ impl ResultSet {
         return self.columns.iter().position(|elem| elem.check_column_name(column_name) )
     }
 
-    pub fn get_string(&mut self, index: usize, column_name: &String) -> Result<String, ParserError> {
+    pub fn get_string(&self, index: usize, column_name: &String) -> Result<String, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_string(*position as u16),
@@ -45,7 +45,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_text(&mut self, index: usize, column_name: &String) -> Result<String, ParserError> {
+    pub fn get_text(&self, index: usize, column_name: &String) -> Result<String, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_text(*position as u16),
@@ -55,7 +55,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_unsigned_tinyint(&mut self, index: usize, column_name: &String) -> Result<u8, ParserError> {
+    pub fn get_unsigned_tinyint(&self, index: usize, column_name: &String) -> Result<u8, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_tinyint(*position as u16),
@@ -65,7 +65,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_unsigned_smallint(&mut self, index: usize, column_name: &String) -> Result<u16, ParserError> {
+    pub fn get_unsigned_smallint(&self, index: usize, column_name: &String) -> Result<u16, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_smallint(*position as u16),
@@ -75,7 +75,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_unsigned_int(&mut self, index: usize, column_name: &String) -> Result<u32, ParserError> {
+    pub fn get_unsigned_int(&self, index: usize, column_name: &String) -> Result<u32, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_int(*position as u16),
@@ -85,7 +85,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_unsigned_bigint(&mut self, index: usize, column_name: &String) -> Result<u64, ParserError> {
+    pub fn get_unsigned_bigint(&self, index: usize, column_name: &String) -> Result<u64, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_bigint(*position as u16),
@@ -95,7 +95,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_signed_tinyint(&mut self, index: usize, column_name: &String) -> Result<i8, ParserError> {
+    pub fn get_signed_tinyint(&self, index: usize, column_name: &String) -> Result<i8, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_tinyint(*position as u16),
@@ -105,7 +105,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_signed_smallint(&mut self, index: usize, column_name: &String) -> Result<i16, ParserError> {
+    pub fn get_signed_smallint(&self, index: usize, column_name: &String) -> Result<i16, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_smallint(*position as u16),
@@ -115,7 +115,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_signed_int(&mut self, index: usize, column_name: &String) -> Result<i32, ParserError> {
+    pub fn get_signed_int(&self, index: usize, column_name: &String) -> Result<i32, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_int(*position as u16),
@@ -125,7 +125,7 @@ impl ResultSet {
         }
     }
 
-    pub fn get_signed_bigint(&mut self, index: usize, column_name: &String) -> Result<i64, ParserError> {
+    pub fn get_signed_bigint(&self, index: usize, column_name: &String) -> Result<i64, ParserError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_bigint(*position as u16),
@@ -135,11 +135,11 @@ impl ResultSet {
         }
     }
 
-    pub fn line_count(&mut self) -> usize {
+    pub fn line_count(&self) -> usize {
         return self.tuples.len(); 
     }
 
-    pub fn column_count(&mut self) -> usize {
+    pub fn column_count(&self) -> usize {
         return self.columns.len(); 
     }
 }

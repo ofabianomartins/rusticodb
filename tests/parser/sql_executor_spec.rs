@@ -348,10 +348,12 @@ pub fn test_select_database_tables() {
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let use_database = sql_executor.parse_command(&mut machine, "USE rusticodb;");
-    let result_set = sql_executor.parse_command(&mut machine, "SELECT * FROM databases");
+    let result_set = sql_executor.parse_command(&mut machine, "SELECT name FROM databases");
 
     assert!(matches!(use_database, Ok(_result_set)));
-    assert!(matches!(result_set, Ok(_result_set)));
+    // assert!(matches!(result_set, Ok(ref result_sets)));
+
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
     assert!(machine.context.check_database_exists(&database_name));

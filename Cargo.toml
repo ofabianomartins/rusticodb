@@ -13,6 +13,7 @@ path = "src/lib.rs"
 
 [dependencies]
 sqlparser = "0.49.0" 
+failure = "0.1"
 lazy_static = "1.5.0"
 ordered-float = { version = "3", features = ["serde"] }
 bincode = "1.3"
