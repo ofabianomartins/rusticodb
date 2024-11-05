@@ -6,6 +6,7 @@ pub mod parser;
 pub mod setup;
 pub mod machine;
 pub mod config;
+pub mod utils;
 
 use crate::setup::setup_system;
 use crate::parser::sql_executor::SqlExecutor;

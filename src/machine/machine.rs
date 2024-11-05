@@ -82,6 +82,7 @@ impl Machine {
 
     pub fn insert_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {
         self.pager.insert_tuples(database_name, table_name, tuples);
+        self.pager.flush_page(database_name, table_name);
     }
 
     pub fn read_tuples(&mut self, database_name: &String, table_name: &String) -> Vec<Tuple> {

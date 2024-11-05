@@ -151,13 +151,16 @@ impl fmt::Display for ResultSet {
                 write!(f, "{}", self.message)
             },
             ResultSetType::Select => {
-                let _ = write!(f, "--------------------");
-                let _ = write!(f, "{:?}", self.columns);
-                for tuple_item in &self.tuples {
-                    let _ = write!(f, "--------------------");
-                    let _ = write!(f, "{:?}", tuple_item);
+                let _ = write!(f, "--------------------\n");
+                for column in &self.columns {
+                    let _ = write!(f, "{}", column);
                 }
-                write!(f, "--------------------")
+                let _ = write!(f, "\n");
+                for tuple_item in &self.tuples {
+                    let _ = write!(f, "--------------------\n");
+                    let _ = write!(f, "{:?}\n", tuple_item);
+                }
+                write!(f, "--------------------\n")
             }
         }
     }
@@ -176,5 +179,6 @@ pub enum ExecutionError {
     RecursionLimitExceeded,
     DatabaseNotExists(String),
     DatabaseExists(String),
-    DatabaseNotSetted
+    DatabaseNotSetted, 
+    NotImplementedYet
 }

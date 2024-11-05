@@ -38,20 +38,26 @@ impl Pager {
         return Vec::new();
     }
 
+    pub fn flush_page(&mut self, database_name: &String, table_name: &String) {
+        let page_key = self.format_table_name(database_name, table_name);
+        if let Some(page) = &self.pages.get(&page_key) {
+            self.write_data(database_name, table_name, 0, &page.data);
+        }
+    }
 
-    pub fn write_data(&mut self, database_name: &String, table_name: &String, pos: u64, data: &[u8; BLOCK_SIZE]) {
+    pub fn write_data(&self, database_name: &String, table_name: &String, pos: u64, data: &[u8; BLOCK_SIZE]) {
         OsInterface::write_data(&self.format_table_name(database_name, table_name), pos, data);
     }
 
-    pub fn read_data(&mut self, database_name: &String, table_name: &String, pos: u64) -> [u8; BLOCK_SIZE] {
+    pub fn read_data(&self, database_name: &String, table_name: &String, pos: u64) -> [u8; BLOCK_SIZE] {
         return OsInterface::read_data(&self.format_table_name(database_name, table_name), pos);
     }
 
-    pub fn format_database_name(&mut self, database_name: &String) -> String{
+    pub fn format_database_name(&self, database_name: &String) -> String{
         return format!("{}/{}", Config::data_folder(), database_name);
     }
 
-    pub fn format_table_name(&mut self, database_name: &String, table_name: &String) -> String{
+    pub fn format_table_name(&self, database_name: &String, table_name: &String) -> String{
         return format!("{}/{}/{}.db", Config::data_folder(), database_name, table_name);
     }
 }

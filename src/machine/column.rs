@@ -1,3 +1,4 @@
+use std::fmt;
 
 #[derive(Debug)]
 pub struct Column {
@@ -47,3 +48,10 @@ impl Column {
         return self.name == *other_name; 
     }
 }
+
+impl fmt::Display for Column {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self.name)
+    }
+}
+
