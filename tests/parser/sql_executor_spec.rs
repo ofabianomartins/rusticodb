@@ -9,7 +9,6 @@ use rusticodb::setup::setup_system;
 use rusticodb::storage::pager::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
-use crate::test_utils::destroy_tmp_test_folder;
 
 #[test]
 pub fn test_create_database_metadata_file_database1() {
@@ -30,8 +29,6 @@ pub fn test_create_database_metadata_file_database1() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -54,8 +51,6 @@ pub fn test_create_database_with_if_not_exists() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -81,8 +76,6 @@ pub fn test_create_two_databases() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -110,8 +103,6 @@ pub fn test_create_database_with_if_not_exists_in_wrong_order() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -134,8 +125,6 @@ pub fn test_create_database_that_already_exists() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -159,8 +148,6 @@ pub fn test_use_database_that_not_exists() {
 
     assert!(matches!(machine.context.actual_database, None));
     assert_eq!(machine.context.check_database_exists(&database_name), false);
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -188,8 +175,6 @@ pub fn test_use_database_set_in_context() {
 
     let metadata_foldername = format!("{}/{}", Config::data_folder(), database_name);
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -213,8 +198,6 @@ pub fn test_create_table_metadata_file() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -224,7 +207,6 @@ pub fn test_create_table_without_set_database() {
     let pager = Pager::new();
     let mut machine = Machine::new(pager, context);
 
-    destroy_tmp_test_folder();
     create_tmp_test_folder();
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
@@ -245,8 +227,6 @@ pub fn test_create_table_without_set_database() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert_eq!(Path::new(&table_filename).exists(), false);
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -273,8 +253,6 @@ pub fn test_create_table_that_already_exists() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -301,8 +279,6 @@ pub fn test_create_table_with_if_not_exists() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -330,8 +306,6 @@ pub fn test_create_table_with_two_columns() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -341,7 +315,6 @@ pub fn test_select_database_tables() {
     let pager = Pager::new();
     let mut machine = Machine::new(pager, context);
 
-    destroy_tmp_test_folder();
     create_tmp_test_folder();
 
     setup_system(&mut machine);

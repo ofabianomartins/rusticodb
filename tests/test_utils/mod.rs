@@ -9,6 +9,7 @@ use rusticodb::config::Config;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 
 pub fn create_tmp_test_folder() {
+    destroy_tmp_test_folder();
     let _ = create_dir_all(Config::data_folder());
 }
 

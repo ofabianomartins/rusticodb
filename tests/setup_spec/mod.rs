@@ -5,7 +5,6 @@ use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::pager::Pager;
 use rusticodb::setup::setup_system;
 
-use crate::test_utils::destroy_tmp_test_folder;
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
@@ -14,7 +13,6 @@ pub fn test_system_database_setup_with_database_to_load() {
     let context = Context::new();
     let mut machine = Machine::new(pager, context);
 
-    destroy_tmp_test_folder();
     create_tmp_test_folder();
 
     let _ = machine.create_database(Config::system_database().to_string(), false);
@@ -49,7 +47,6 @@ pub fn test_system_database_setup_with_tables_to_load() {
     let context = Context::new();
     let mut machine = Machine::new(pager, context);
 
-    destroy_tmp_test_folder();
     create_tmp_test_folder();
 
     let _ = machine.create_database(Config::system_database().to_string(), false);
@@ -94,7 +91,6 @@ pub fn test_system_database_setup_with_columns_to_load() {
     let context = Context::new();
     let mut machine = Machine::new(pager, context);
 
-    destroy_tmp_test_folder();
     create_tmp_test_folder();
 
     let _ = machine.create_database(Config::system_database().to_string(), false);
@@ -140,5 +136,4 @@ pub fn test_system_database_setup_with_columns_to_load() {
             &String::from("name")
         )
     );
-
 }

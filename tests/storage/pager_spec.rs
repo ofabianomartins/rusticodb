@@ -9,7 +9,6 @@ use rusticodb::storage::page::Page;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 
 use crate::test_utils::create_tmp_test_folder;
-use crate::test_utils::destroy_tmp_test_folder;
 use crate::test_utils::read_from_file;
 
 #[test]
@@ -235,8 +234,6 @@ pub fn test_write_data_metadata_file() {
      // Read the content back from the file
     let actual_content = read_from_file(&rows_filename).expect("Failed to read from file");
     assert_eq!(actual_content, data, "File content does not match expected content");
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -256,6 +253,4 @@ pub fn test_read_data_metadata_file() {
 
     let actual_content = pager.read_data(&database1, &table1, 0u64);
     assert_eq!(actual_content, data, "File content does not match expected content");
-
-    destroy_tmp_test_folder();
 }

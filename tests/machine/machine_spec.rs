@@ -6,7 +6,6 @@ use rusticodb::machine::machine::Machine;
 use rusticodb::storage::pager::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
-use crate::test_utils::destroy_tmp_test_folder;
 
 #[test]
 pub fn test_if_database_exists_is_true() {
@@ -19,8 +18,6 @@ pub fn test_if_database_exists_is_true() {
 
     let _ = machine.create_database(database1.clone(), false);
     assert!(machine.database_exists(&database1));
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -33,8 +30,6 @@ pub fn test_if_database_exists_is_false() {
     create_tmp_test_folder();
 
     assert_eq!(machine.database_exists(&database1), false);
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -50,8 +45,6 @@ pub fn test_if_table_exists_is_true() {
     let _ = machine.create_database(database1.clone(), false);
     let _ = machine.create_table(&database1, &table1, false, Vec::new());
     assert!(machine.table_exists(&database1, &table1));
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -66,8 +59,6 @@ pub fn test_if_table_exists_is_false() {
 
     let _ = machine.create_database(database1.clone(), false);
     assert_eq!(machine.table_exists(&database1, &table1), false);
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -83,8 +74,6 @@ pub fn test_create_database_metadata_file_database1() {
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
-
-    destroy_tmp_test_folder();
 }
 
 #[test]
@@ -101,6 +90,4 @@ pub fn test_create_table_metadata_file() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
-
-    destroy_tmp_test_folder();
 }
