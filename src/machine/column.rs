@@ -5,7 +5,7 @@ pub struct Column {
     database_name: String,
     table_name: String,
     name: String,
-    column_type: ColumnType
+    pub column_type: ColumnType
 }
 
 #[derive(Debug)]

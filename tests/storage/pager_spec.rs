@@ -220,7 +220,7 @@ pub fn test_write_data_metadata_file() {
 
     let data = [2u8; BLOCK_SIZE];
 
-    let mut pager = Pager::new();
+    let pager = Pager::new();
 
     create_tmp_test_folder();
 
@@ -246,7 +246,7 @@ pub fn test_read_data_metadata_file() {
 
     let data = [2u8; BLOCK_SIZE];
 
-    let mut pager = Pager::new();
+    let pager = Pager::new();
 
     create_tmp_test_folder();
 

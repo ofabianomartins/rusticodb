@@ -36,8 +36,8 @@ impl OsInterface {
     }
 
     pub fn write_data(file_name: &String, pos: u64, data: &[u8; BLOCK_SIZE]) {
-
         let mut file = OpenOptions::new()
+            .create(true)
             .write(true)
             .open(file_name)
             .unwrap();
