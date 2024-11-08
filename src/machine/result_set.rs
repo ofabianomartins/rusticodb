@@ -142,6 +142,49 @@ impl ResultSet {
     pub fn column_count(&self) -> usize {
         return self.columns.len(); 
     }
+
+    fn count_column_size(&self) -> Vec<u64> {
+        let mut column_length: Vec<u64> = Vec::new();
+        for column in &self.columns {
+            column_length.push(column.name.len() as u64);
+        }
+        for tuple_item in &self.tuples {
+            let cell_count = tuple_item.cell_count() as u64;
+            let mut cell_index: u64 = 0;
+
+            while cell_index < cell_count {
+                let cell_length = tuple_item.get_cell(cell_index as u16).to_string().len() as u64;
+
+                let old_version = column_length.get_mut(cell_index as usize).unwrap();
+
+                if *old_version < cell_length {
+                    column_length[cell_index as usize] = cell_length;
+                }
+
+                cell_index += 1;
+            }
+        }
+        return column_length;
+    }
+
+}
+
+fn print_line_result(f: &mut fmt::Formatter, column_size_count: u64) {
+    let mut cell_index: u64 = 1;
+    let _ = write!(f, "+");
+    while cell_index < (column_size_count - 1){
+        let _ = write!(f, "-");
+        cell_index += 1;
+    }
+    let _ = write!(f, "+\n");
+}
+
+fn print_complete_cell(f: &mut fmt::Formatter, column_size_count: u64) {
+    let mut cell_index: u64 = 0;
+    while cell_index < column_size_count{
+        let _ = write!(f, " ");
+        cell_index += 1;
+    }
 }
 
 impl fmt::Display for ResultSet {
@@ -151,16 +194,40 @@ impl fmt::Display for ResultSet {
                 write!(f, "{}", self.message)
             },
             ResultSetType::Select => {
-                let _ = write!(f, "--------------------\n");
-                for column in &self.columns {
-                    let _ = write!(f, "{}", column);
+                let column_length: Vec<u64> = self.count_column_size();
+
+                let column_sum_count: u64 = column_length.iter().sum();
+                let column_size_count: u64 = column_sum_count + (column_length.len() as u64) * 3u64 + 1u64;
+                let _ = print_line_result(f, column_size_count);
+
+                let _ = write!(f, "|");
+                for (cell_index, column) in self.columns.iter().enumerate() {
+                    let _ = write!(f, " {}", column);
+
+                    let adjust_column_size = column_length.get(cell_index as usize).unwrap() - (column.name.len() as u64);
+                    print_complete_cell(f, adjust_column_size);
+                    let _ = write!(f, " |");
                 }
                 let _ = write!(f, "\n");
+
+                let _ = print_line_result(f, column_size_count);
+
                 for tuple_item in &self.tuples {
-                    let _ = write!(f, "--------------------\n");
-                    let _ = write!(f, "{}\n", tuple_item);
+                    let cell_count = tuple_item.cell_count() as u64;
+                    let mut cell_index: u64 = 0;
+                    while cell_index < cell_count {
+                        let cell_value = tuple_item.get_cell(cell_index as u16).to_string();
+                        let _ = write!(f, "| {} ", cell_value);
+
+                        let adjust_column_size = column_length.get(cell_index as usize).unwrap() - (cell_value.len() as u64);
+                        print_complete_cell(f, adjust_column_size);
+                        cell_index += 1;
+                    }
+                    let _ = write!(f, "|\n");
                 }
-                write!(f, "--------------------\n")
+
+                let _ = print_line_result(f, column_size_count);
+                write!(f, "")
             }
         }
     }

@@ -1,5 +1,6 @@
 use sqlparser::ast::ColumnDef;
 
+use crate::config::Config;
 use crate::storage::pager::Pager;
 use crate::storage::os_interface::OsInterface;
 use crate::storage::tuple::Tuple;
@@ -51,6 +52,14 @@ impl Machine {
         }
         OsInterface::create_folder(&self.pager.format_database_name(&database_name));
         self.context.add_database(database_name.to_string());
+
+        let mut tuples: Vec<Tuple> = Vec::new();
+        let mut tuple: Tuple = Tuple::new();
+        tuple.push_string(&database_name);
+        tuples.push(tuple);
+
+        self.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
+
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
     }
 

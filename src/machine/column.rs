@@ -2,9 +2,9 @@ use std::fmt;
 
 #[derive(Debug)]
 pub struct Column {
-    database_name: String,
-    table_name: String,
-    name: String,
+    pub database_name: String,
+    pub table_name: String,
+    pub name: String,
     pub column_type: ColumnType
 }
 
@@ -51,7 +51,7 @@ impl Column {
 
 impl fmt::Display for Column {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self.name)
+        write!(f, "{}", self.name)
     }
 }
 

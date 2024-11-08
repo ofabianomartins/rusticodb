@@ -1,4 +1,5 @@
 use std::fmt;
+use std::string::ToString;
 
 #[derive(Debug)]
 pub struct Cell {
@@ -338,71 +339,74 @@ impl Cell {
 
         return Cell::count_data_size(self.data[0]);
     }
-}
 
-impl fmt::Display for Cell {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-
+    pub fn to_string(&self) -> String {
         if self.data[0] == (CellType::Boolean as u8) {
             if let Ok(value) = self.bin_to_boolean() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::UnsignedTinyint as u8) {
             if let Ok(value) = self.bin_to_unsigned_tinyint() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::SignedTinyint as u8) {
             if let Ok(value) = self.bin_to_signed_tinyint() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::UnsignedSmallint as u8) {
             if let Ok(value) = self.bin_to_unsigned_smallint() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::SignedSmallint as u8) {
             if let Ok(value) = self.bin_to_signed_smallint() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::UnsignedInt as u8) {
             if let Ok(value) = self.bin_to_unsigned_int() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::SignedInt as u8) {
             if let Ok(value) = self.bin_to_signed_int() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::UnsignedBigint as u8) {
             if let Ok(value) = self.bin_to_unsigned_bigint() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::SignedBigint as u8) {
             if let Ok(value) = self.bin_to_signed_bigint() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
         if self.data[0] == (CellType::String as u8) {
             if let Ok(value) = self.bin_to_string() {
-                return write!(f, "{}", value);
+                return value.to_string();
             }
         }
 
-        return write!(f, "");
+        return String::from("");
+    }
+}
+
+impl fmt::Display for Cell {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "{}", self.to_string());
     }
 }
