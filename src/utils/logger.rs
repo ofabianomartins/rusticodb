@@ -14,4 +14,8 @@ impl Logger {
     pub fn error(message: &'static str) {
         println!("[ERROR]: {}", message);
     }
+
+    pub fn debug(message: &'static str) {
+        println!("[DEBUG]: {}", message);
+    }
 }

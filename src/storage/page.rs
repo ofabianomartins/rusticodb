@@ -17,6 +17,10 @@ impl Page {
         Self { index, size: 0, data: empty_data }
     }
 
+    pub fn load(index: u64, data: [u8; BLOCK_SIZE]) -> Self {
+        Self { index, size: 0, data }
+    }
+
     pub fn is_full(&mut self) -> bool {
         return self.size < BLOCK_SIZE;
     }

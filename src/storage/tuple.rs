@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::storage::cell::Cell;
 use crate::storage::cell::ParserError;
 use crate::storage::os_interface::BLOCK_SIZE;
@@ -255,4 +257,18 @@ impl Tuple {
         return raw_buffer;
     }
 
+}
+
+impl fmt::Display for Tuple {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let cell_count = self.cell_count();
+        let mut cell_index = 0;
+
+        while cell_index < cell_count {
+            let _ = write!(f, "{}", self.get_cell(cell_index));
+
+            cell_index += 1;
+        }
+        write!(f, "")
+    }
 }

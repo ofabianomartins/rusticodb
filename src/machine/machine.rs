@@ -6,6 +6,7 @@ use crate::storage::tuple::Tuple;
 use crate::machine::context::Context;
 use crate::machine::result_set::ExecutionError;
 use crate::machine::result_set::ResultSet;
+use crate::utils::logger::Logger;
 
 use super::column::ColumnType;
 use super::result_set::ResultSetType;
@@ -86,6 +87,7 @@ impl Machine {
     }
 
     pub fn read_tuples(&mut self, database_name: &String, table_name: &String) -> Vec<Tuple> {
+        Logger::debug(format!("Reading datbase {} table {}", database_name, table_name).leak());
         return self.pager.read_tuples(database_name, table_name)
     }
 }

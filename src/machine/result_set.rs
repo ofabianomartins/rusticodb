@@ -158,7 +158,7 @@ impl fmt::Display for ResultSet {
                 let _ = write!(f, "\n");
                 for tuple_item in &self.tuples {
                     let _ = write!(f, "--------------------\n");
-                    let _ = write!(f, "{:?}\n", tuple_item);
+                    let _ = write!(f, "{}\n", tuple_item);
                 }
                 write!(f, "--------------------\n")
             }
