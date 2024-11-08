@@ -12,7 +12,7 @@ name = "rusticodb"
 path = "src/lib.rs"
 
 [dependencies]
-sqlparser = "0.49.0" 
+sqlparser = { git = "https://github.com/apache/datafusion-sqlparser-rs.git", branch="main" }
 failure = "0.1"
 lazy_static = "1.5.0"
 ordered-float = { version = "3", features = ["serde"] }

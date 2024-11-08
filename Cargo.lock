@@ -235,9 +235,8 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "sqlparser"
-version = "0.49.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4a404d0e14905361b918cb8afdb73605e25c1d5029312bd9785142dcb3aa49e"
+version = "0.52.0"
+source = "git+https://github.com/apache/datafusion-sqlparser-rs.git?branch=main#334a5bf354ac964a14f2e2dc3851ed4d853b28d7"
 dependencies = [
  "log",
 ]

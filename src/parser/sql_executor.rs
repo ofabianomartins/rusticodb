@@ -57,7 +57,7 @@ impl SqlExecutor {
         statement: Statement
     ) -> Result<ResultSet, ExecutionError> { 
         match statement {
-            Statement::Use { db_name } => {
+            Statement::Use(db_name) => {
                 machine.set_actual_database(db_name.to_string())
             },
             Statement::CreateDatabase { db_name, if_not_exists, location: _, managed_location: _ } => {
@@ -80,7 +80,10 @@ impl SqlExecutor {
                     ObjectType::Table => {
                         Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP TABLE")))
                     },
-                    _ => todo!()
+                    value => { 
+                        println!("DROP {:?}", value);
+                        Err(ExecutionError::NotImplementedYet)
+                    }
                 }
             },
             Statement::Query(query) => {
@@ -105,7 +108,7 @@ impl SqlExecutor {
                 }
                 Err(ExecutionError::NotImplementedYet)
             },
-            Statement::ShowTables { extended: _, full: _, db_name, filter: _ } => {
+            Statement::ShowTables { extended: _, full: _, db_name, filter: _, clause: _} => {
                 let mut columns: Vec<Column> = Vec::new();
                 columns.push(Column::new_column(String::from("database"), ColumnType::Varchar));
                 columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
