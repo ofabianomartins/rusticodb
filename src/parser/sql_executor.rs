@@ -3,6 +3,7 @@ use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
 use sqlparser::parser::ParserError;
 use sqlparser::ast::Statement;
+use sqlparser::ast::Use;
 
 use crate::machine::column::Column;
 use crate::machine::column::ColumnType;
@@ -57,8 +58,16 @@ impl SqlExecutor {
         statement: Statement
     ) -> Result<ResultSet, ExecutionError> { 
         match statement {
-            Statement::Use(db_name) => {
-                machine.set_actual_database(db_name.to_string())
+            Statement::Use(statement) => {
+                match statement {
+                    Use::Object(db_name) => {
+                        machine.set_actual_database(db_name.to_string())
+                    },
+                    value => { 
+                        println!("USE {:?}", value);
+                        Err(ExecutionError::NotImplementedYet)
+                    }
+                }
             },
             Statement::CreateDatabase { db_name, if_not_exists, location: _, managed_location: _ } => {
                 machine.create_database(db_name.to_string(), if_not_exists)
@@ -95,18 +104,13 @@ impl SqlExecutor {
                     return Err(ExecutionError::DatabaseNotSetted);
                 }
             },
-            Statement::ShowVariable { variable } => {
-                if let Some(data) = variable.get(0) {
-                    if data.value == "DATABASES" {
-                        let db_name = Config::system_database();
-                        let table_databases = Config::system_database_table_databases();
-                        let mut columns: Vec<Column> = Vec::new();
-                        columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
-                        let tuples = machine.read_tuples(&db_name, &table_databases);
-                        return Ok(ResultSet::new_select(columns, tuples))
-                    }
-                }
-                Err(ExecutionError::NotImplementedYet)
+            Statement::ShowDatabases { filter: _ } => {
+                let db_name = Config::system_database();
+                let table_databases = Config::system_database_table_databases();
+                let mut columns: Vec<Column> = Vec::new();
+                columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+                let tuples = machine.read_tuples(&db_name, &table_databases);
+                return Ok(ResultSet::new_select(columns, tuples))
             },
             Statement::ShowTables { extended: _, full: _, db_name, filter: _, clause: _} => {
                 let mut columns: Vec<Column> = Vec::new();
