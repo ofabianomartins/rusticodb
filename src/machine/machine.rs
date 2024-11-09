@@ -63,6 +63,30 @@ impl Machine {
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
     }
 
+    pub fn drop_database(
+        &mut self, 
+        database_name: String,
+        if_exists: bool
+    ) -> Result<ResultSet, ExecutionError>{
+        if self.context.check_database_exists(&database_name) == false && if_exists {
+            return Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP DATABASE")));
+        }
+        if self.context.check_database_exists(&database_name) == false {
+            return Err(ExecutionError::DatabaseNotExists(database_name));
+        }
+        OsInterface::destroy_folder(&self.pager.format_database_name(&database_name));
+        self.context.remove_database(database_name.to_string());
+
+        let mut tuples: Vec<Tuple> = Vec::new();
+        let mut tuple: Tuple = Tuple::new();
+        tuple.push_string(&database_name);
+        tuples.push(tuple);
+
+        self.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
+
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
+    }
+
     pub fn create_table(
         &mut self, 
         database_name: &String, 

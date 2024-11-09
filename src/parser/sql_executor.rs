@@ -11,6 +11,7 @@ use crate::machine::result_set::ExecutionError;
 use crate::parser::use_database::use_database;
 use crate::parser::show_databases::show_databases;
 use crate::parser::create_database::create_database;
+use crate::parser::drop_database::drop_database;
 use crate::parser::show_tables::show_tables;
 use crate::parser::create_table::create_table;
 use crate::parser::drop_table::drop_table;
@@ -67,6 +68,7 @@ impl SqlExecutor {
             Statement::CreateTable(statement) => create_table(&mut self.machine, statement),
             Statement::Drop { object_type, if_exists, names, .. } => {
                 match object_type {
+                    ObjectType::Database => drop_database(&mut self.machine, names, if_exists),
                     ObjectType::Table => drop_table(&mut self.machine, names, if_exists),
                     value => { 
                         println!("DROP {:?}", value);

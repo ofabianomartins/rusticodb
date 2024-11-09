@@ -15,3 +15,10 @@ impl Database {
     }
 
 }
+
+impl PartialEq for Database {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+impl Eq for Database {}

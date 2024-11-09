@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use std::fs::create_dir;
+use std::fs::remove_dir_all;
 use std::fs::OpenOptions;
 use std::io::{Read, Seek, SeekFrom, Write};
 
@@ -25,6 +26,10 @@ impl OsInterface {
 
     pub fn create_folder(folder_name: &String) {
         let _ = create_dir(folder_name);
+    }
+
+    pub fn destroy_folder(folder_name: &String) {
+        let _ = remove_dir_all(folder_name);
     }
 
     pub fn create_folder_if_not_exists(folder_name: &String) {

@@ -38,6 +38,14 @@ impl Context {
         return true;
     }
 
+    pub fn remove_database(&mut self, name: String) -> bool {
+        if let Some(index) = self.databases.iter().position(|x| x.check_name(&name)) {
+            self.databases.remove(index);
+            return true;
+        }
+        return false;
+    }
+
     pub fn check_database_exists(&self, name: &String) -> bool {
         let mut found = false;
         for elem in &self.databases {

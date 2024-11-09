@@ -4,7 +4,6 @@ use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ExecutionError;
 
-
 pub fn use_database(machine: &mut Machine, statement: Use) -> Result<ResultSet, ExecutionError> { 
     match statement {
         Use::Object(db_name) => {
