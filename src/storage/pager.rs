@@ -6,6 +6,8 @@ use crate::storage::page::Page;
 use crate::storage::os_interface::OsInterface;
 use crate::storage::os_interface::BLOCK_SIZE;
 
+use crate::utils::logger::Logger;
+
 #[derive(Debug)]
 pub struct Pager { 
     pub pages: HashMap<String, Page>
@@ -24,6 +26,18 @@ impl Pager {
         self.pages.entry(page_key.clone())
             .and_modify(|page| {
                 page.insert_tuples(tuples);
+            })
+            .or_insert(Page::new(0));
+    }
+
+    pub fn update_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {
+        let page_key = self.format_table_name(database_name, table_name);
+
+        self.pages.entry(page_key.clone()).and_modify(|_| {}).or_insert(Page::new(0));
+
+        self.pages.entry(page_key.clone())
+            .and_modify(|page| {
+                page.update_tuples(tuples);
             })
             .or_insert(Page::new(0));
     }
@@ -47,6 +61,7 @@ impl Pager {
 
     pub fn flush_page(&mut self, database_name: &String, table_name: &String) {
         let page_key = self.format_table_name(database_name, table_name);
+        Logger::debug(format!("FLUSH database {} table {}", database_name, table_name).leak());
         if let Some(page) = &self.pages.get(&page_key) {
             self.write_data(database_name, table_name, 0, &page.data);
         }

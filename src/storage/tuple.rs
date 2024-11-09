@@ -256,7 +256,6 @@ impl Tuple {
         }
         return raw_buffer;
     }
-
 }
 
 impl fmt::Display for Tuple {

@@ -4,13 +4,14 @@ use crate::config::Config;
 use crate::storage::pager::Pager;
 use crate::storage::os_interface::OsInterface;
 use crate::storage::tuple::Tuple;
+use crate::machine::column::Column;
+use crate::machine::column::ColumnType;
 use crate::machine::context::Context;
 use crate::machine::result_set::ExecutionError;
 use crate::machine::result_set::ResultSet;
+use crate::machine::result_set::ResultSetType;
 use crate::utils::logger::Logger;
 
-use super::column::ColumnType;
-use super::result_set::ResultSetType;
 
 #[derive(Debug)]
 pub struct Machine { 
@@ -63,11 +64,7 @@ impl Machine {
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
     }
 
-    pub fn drop_database(
-        &mut self, 
-        database_name: String,
-        if_exists: bool
-    ) -> Result<ResultSet, ExecutionError>{
+    pub fn drop_database(&mut self, database_name: String, if_exists: bool) -> Result<ResultSet, ExecutionError>{
         if self.context.check_database_exists(&database_name) == false && if_exists {
             return Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP DATABASE")));
         }
@@ -77,7 +74,9 @@ impl Machine {
         OsInterface::destroy_folder(&self.pager.format_database_name(&database_name));
         self.context.remove_database(database_name.to_string());
 
-        Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
+        let _ = self.remove_database(&database_name);
+
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP DATABASE")))
     }
 
     pub fn create_table(
@@ -142,8 +141,57 @@ impl Machine {
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP TABLE")))
     }
 
+    pub fn remove_database(&mut self, name: &String) -> Result<ResultSet, ExecutionError>{
+        let tuples = self.read_tuples(
+            &Config::system_database(),
+            &Config::system_database_table_databases()
+        );
+
+        let mut new_tuples: Vec<Tuple> = tuples
+            .into_iter()
+            .filter(|tuple| tuple.get_string(0).unwrap() != *name)
+            .collect();
+
+        self.update_tuples(
+            &Config::system_database(),
+            &Config::system_database_table_databases(),
+            &mut new_tuples
+        );
+
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP DATABASE")))
+    }
+
+    pub fn list_databases(&mut self) -> Result<ResultSet, ExecutionError>{
+        let db_name = Config::system_database();
+        let table_databases = Config::system_database_table_databases();
+        let mut columns: Vec<Column> = Vec::new();
+        columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+        let tuples = self.read_tuples(&db_name, &table_databases);
+        return Ok(ResultSet::new_select(columns, tuples))
+    }
+
+    pub fn list_tables(&mut self, db_name: String) -> Result<ResultSet, ExecutionError>{
+        let mut columns: Vec<Column> = Vec::new();
+        columns.push(Column::new_column(String::from("database"), ColumnType::Varchar));
+        columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+
+        let tuples = self.read_tuples(
+            &Config::system_database(),
+            &Config::system_database_table_tables()
+        ).into_iter()
+            .filter(|tuple| tuple.get_string(0).unwrap() == db_name)
+            .collect();
+
+        return Ok(ResultSet::new_select(columns, tuples))
+    }
+
     pub fn insert_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {
         self.pager.insert_tuples(database_name, table_name, tuples);
+        self.pager.flush_page(database_name, table_name);
+    }
+
+    pub fn update_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {
+        self.pager.update_tuples(database_name, table_name, tuples);
         self.pager.flush_page(database_name, table_name);
     }
 

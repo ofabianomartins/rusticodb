@@ -67,6 +67,21 @@ impl Page {
         }
     }
 
+    pub fn update_tuples(&mut self, tuples: &mut Vec<Tuple>) {
+        self.set_tuple_count(tuples.len() as u16);
+
+        let mut buffer: Vec<u8> = Vec::new();
+        for tuple in tuples {
+            buffer.append(&mut tuple.data);
+        }
+
+        self.set_next_tuple_position(buffer.len() as u16);
+
+        for (idx, elem) in &mut buffer.iter().enumerate() {
+            (*self).data[4usize + idx] = *elem;
+        }
+    }
+
     pub fn read_tuples(&self) -> Vec<Tuple> {
         let mut tuples = Vec::new();
 

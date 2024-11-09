@@ -78,7 +78,7 @@ impl SqlExecutor {
             },
             Statement::Query(statement) => query(&mut self.machine, statement),
             Statement::ShowDatabases { .. } => show_databases(&mut self.machine),
-            Statement::ShowTables { db_name, .. } => show_tables(&mut self.machine, db_name),
+            Statement::ShowTables { .. } => show_tables(&mut self.machine),
             value => { 
                 println!("{:?}", value);
                 Err(ExecutionError::NotImplementedYet)
