@@ -28,6 +28,8 @@ fn main() {
 
     let mut executor = SqlExecutor::new(machine);
 
+    // let previous_comands: Vec<String> = Vec::new();
+
     loop {
         print!("{} > ", executor.get_database_name());
         stdout.flush().expect("flush stdout");

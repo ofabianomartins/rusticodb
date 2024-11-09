@@ -5,6 +5,7 @@ pub struct Column {
     pub database_name: String,
     pub table_name: String,
     pub name: String,
+    pub alias: String,
     pub column_type: ColumnType
 }
 
@@ -25,15 +26,43 @@ pub enum ColumnType {
 }
 
 impl Column {
-    pub fn new(database_name: String, table_name: String, name: String, column_type: ColumnType) -> Self {
-        Column { database_name, table_name, name, column_type }
+    pub fn new(
+        database_name: String,
+        table_name: String,
+        name: String,
+        column_type: ColumnType
+    ) -> Self {
+        Column { 
+            database_name, 
+            table_name, 
+            name: name.clone(), 
+            alias: name, 
+            column_type 
+        }
+    }
+
+    pub fn new_with_alias(
+        database_name: String,
+        table_name: String,
+        name: String,
+        alias: String,
+        column_type: ColumnType
+    ) -> Self {
+        Column { 
+            database_name, 
+            table_name, 
+            name, 
+            alias, 
+            column_type 
+        }
     }
 
     pub fn new_column(name: String, column_type: ColumnType) -> Self {
         Column {
             database_name: String::from(""), 
             table_name: String::from(""), 
-            name,
+            name: name.clone(),
+            alias: name,
             column_type
         }
     }
@@ -51,7 +80,7 @@ impl Column {
 
 impl fmt::Display for Column {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.name)
+        write!(f, "{}", self.alias)
     }
 }
 

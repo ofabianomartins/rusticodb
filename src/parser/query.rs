@@ -1,17 +1,242 @@
+extern crate sqlparser;
 
-use sqlparser::ast::Query;
+use failure::Fail;
+
+use sqlparser::ast::Query as Select;
+use sqlparser::ast::{Expr as ASTNode, *};
 
 use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ExecutionError;
+use crate::machine::column::Column;
+use crate::machine::column::ColumnType;
 
-use crate::parser::parse_query::parse_query;
+fn strip_quotes(ident: &str) -> String {
+    if ident.starts_with('`') || ident.starts_with('"') {
+        ident[1..ident.len() - 1].to_string()
+    } else {
+        ident.to_string()
+    }
+}
 
-pub fn query(machine: &mut Machine, query: Box<Query>) -> Result<ResultSet, ExecutionError> { 
+/*
+fn get_order_by(order_by: Option<Vec<OrderByExpr>>) -> Result<Vec<(Expr, bool)>, QueryError> {
+    let mut order = Vec::new();
+    if let Some(sql_order_by_exprs) = order_by {
+        for e in sql_order_by_exprs {
+            order.push((*(convert_to_native_expr(&e.expr))?, !e.asc.unwrap_or(true)));
+        }
+    }
+    Ok(order)
+}
+
+fn get_limit(limit: Option<ASTNode>) -> Result<u64, QueryError> {
+    match limit {
+        Some(ASTNode::Value(Value::Number(int, _))) => Ok(int.parse::<u64>().unwrap()),
+        None => Ok(u64::MAX),
+        _ => Err(QueryError::NotImplemented(format!(
+            "Invalid expression in limit clause: {:?}",
+            limit
+        ))),
+    }
+}
+
+fn get_offset(offset: Option<Offset>) -> Result<u64, QueryError> {
+    match offset {
+        None => Ok(0),
+        Some(offset) => match offset.value {
+            ASTNode::Value(Value::Number(rows, _)) => Ok(rows.parse::<u64>().unwrap()),
+            expr => Err(QueryError::ParseError(format!(
+                "Invalid expression in offset clause: Expected constant integer, got {:?}",
+                expr,
+            ))),
+        },
+    }
+}
+
+fn function_arg_to_expr(node: &FunctionArg) -> Result<&ASTNode, QueryError> {
+    match node {
+        FunctionArg::Named { name, .. } => Err(QueryError::NotImplemented(format!(
+            "Named function arguments are not supported: {}",
+            name
+        ))),
+        FunctionArg::Unnamed(FunctionArgExpr::Expr(expr)) => Ok(expr),
+        FunctionArg::Unnamed(FunctionArgExpr::Wildcard) => {
+            Err(QueryError::NotImplemented("Wildcard function arguments are not supported".to_string()))
+        }
+        FunctionArg::Unnamed(FunctionArgExpr::QualifiedWildcard(_)) => {
+            Err(QueryError::NotImplemented("Qualified wildcard function arguments are not supported".to_string()))
+        }
+    }
+}
+
+fn func_arg_to_native_expr(node: &FunctionArg) -> Result<Box<Expr>, QueryError> {
+    convert_to_native_expr(function_arg_to_expr(node)?)
+}
+
+fn map_unary_operator(op: &UnaryOperator) -> Result<Func1Type, QueryError> {
+    Ok(match op {
+        UnaryOperator::Not => Func1Type::Not,
+        UnaryOperator::Minus => Func1Type::Negate,
+        _ => return Err(fatal!("Unexpected unary operator: {}", op)),
+    })
+}
+
+fn map_binary_operator(o: &BinaryOperator) -> Result<Func2Type, QueryError> {
+    Ok(match o {
+        BinaryOperator::And => Func2Type::And,
+        BinaryOperator::Plus => Func2Type::Add,
+        BinaryOperator::Minus => Func2Type::Subtract,
+        BinaryOperator::Multiply => Func2Type::Multiply,
+        BinaryOperator::Divide => Func2Type::Divide,
+        BinaryOperator::Modulo => Func2Type::Modulo,
+        BinaryOperator::Gt => Func2Type::GT,
+        BinaryOperator::GtEq => Func2Type::GTE,
+        BinaryOperator::Lt => Func2Type::LT,
+        BinaryOperator::LtEq => Func2Type::LTE,
+        BinaryOperator::Eq => Func2Type::Equals,
+        BinaryOperator::NotEq => Func2Type::NotEquals,
+        BinaryOperator::Or => Func2Type::Or,
+        _ => {
+            return Err(QueryError::NotImplemented(format!(
+                "Unsupported operator {:?}",
+                o
+            )))
+        }
+    })
+}
+
+// Fn to map sqlparser-rs `Value` to LocustDB's `RawVal`.
+fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
+    match constant {
+        Value::Number(num, _) => {
+            if num.parse::<i64>().is_ok() {
+                Ok(RawVal::Int(num.parse::<i64>().unwrap()))
+            } else {
+                Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
+            }
+        },
+        Value::SingleQuotedString(string) => Ok(RawVal::Str(string.to_string())),
+        Value::Null => Ok(RawVal::Null),
+        _ => Err(QueryError::NotImplemented(format!("{:?}", constant))),
+    }
+}
+
+*/
+
+#[derive(Debug)]
+pub struct Query {
+    pub select: Vec<Column>,
+    pub table: String,
+    // pub filter: Expr,
+    //  pub order_by: Vec<(Expr, bool)>,
+    //  pub limit: LimitClause,
+}
+
+#[derive(Fail, Debug)]
+pub enum QueryError {
+    #[fail(display = "Failed to parse query. Chars remaining: {}", _0)]
+    SytaxErrorCharsRemaining(String),
+    #[fail(display = "Failed to parse query. Bytes remaining: {:?}", _0)]
+    SyntaxErrorBytesRemaining(Vec<u8>),
+    #[fail(display = "Failed to parse query: {}", _0)]
+    ParseError(String),
+    // #[fail(display = "Some assumption was violated. This is a bug: {}", _0)]
+    // FatalError(String, Backtrace),
+    #[fail(display = "Not implemented: {}", _0)]
+    NotImplemented(String),
+    #[fail(display = "Type error: {}", _0)]
+    TypeError(String),
+    #[fail(display = "Overflow or division by zero")]
+    Overflow,
+}
+
+
+type QueryResult = (Vec<SelectItem>, Option<TableFactor>, Option<ASTNode>);
+
+#[allow(clippy::type_complexity)]
+fn get_query_components(query: Box<Select>) -> Result<QueryResult, QueryError> {
+    match *query.body {
+        SetExpr::Select(select) => {
+            let mut from = select.from;
+            Ok((
+                select.projection,
+                from.pop().map(|t| t.relation),
+                select.selection,
+            ))
+        },
+        _ => Err(
+            QueryError::NotImplemented(
+                "Only SELECT queries are supported.".to_string()
+            )
+        )
+    }
+}
+
+fn get_table_name(relation: Option<TableFactor>) -> Result<String, QueryError> {
+    match relation {
+        // TODO: error message if any unused fields are set
+        Some(TableFactor::Table { name, .. }) => Ok(strip_quotes(&name.to_string().leak())),
+        Some(s) => Err(QueryError::ParseError(format!(
+            "Invalid expression for table name: {:?}",
+            s
+        ))),
+        None => Err(QueryError::ParseError("Table name missing.".to_string())),
+    }
+}
+
+pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.context.actual_database.clone() {
-        let query_data = parse_query(query).unwrap();
-        let tuples = machine.read_tuples(&db_name, &query_data.table);
-        return Ok(ResultSet::new_select(query_data.select, tuples))
+        let (projection, relation, _selection) = get_query_components(query).unwrap();
+        let table_name = get_table_name(relation).unwrap();
+
+        let list_column_from_table = machine.list_columns(
+            db_name.clone(), 
+            table_name.clone()
+        );
+
+        let mut columns = Vec::<Column>::new();
+        for elem in &projection {
+            match elem {
+                SelectItem::UnnamedExpr(e) => {
+                    columns.push(
+                        Column::new(
+                            db_name.clone(),
+                            table_name.clone(),
+                            e.to_string(),
+                            ColumnType::Varchar
+                        )
+                    )
+                },
+                SelectItem::ExprWithAlias { expr, alias } => {
+                    columns.push(
+                        Column::new_with_alias(
+                            db_name.clone(),
+                            table_name.clone(),
+                            expr.to_string(),
+                            alias.to_string(),
+                            ColumnType::Varchar
+                        )
+                    )
+                },
+                SelectItem::Wildcard(_) => {
+                    for line in list_column_from_table.tuples.clone().into_iter() {
+                        columns.push(
+                            Column::new(
+                                db_name.clone(),
+                                table_name.clone(),
+                                line.get_string(2).unwrap(),
+                                ColumnType::Varchar
+                            )
+                        )
+                    }
+                },
+                SelectItem::QualifiedWildcard(_, _) => {},
+            }
+        }
+
+        let tuples = machine.load_query(&db_name, &table_name, &columns);
+        return Ok(ResultSet::new_select(columns, tuples))
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
     }

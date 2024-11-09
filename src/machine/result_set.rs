@@ -146,7 +146,7 @@ impl ResultSet {
     fn count_column_size(&self) -> Vec<u64> {
         let mut column_length: Vec<u64> = Vec::new();
         for column in &self.columns {
-            column_length.push(column.name.len() as u64);
+            column_length.push(column.alias.len() as u64);
         }
         for tuple_item in &self.tuples {
             let cell_count = tuple_item.cell_count() as u64;

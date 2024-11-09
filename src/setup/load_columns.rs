@@ -16,6 +16,48 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&String::from("VARCHAR"));
     tuples.push(tuple);
 
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_tables());
+    tuple.push_string(&String::from("database_name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_tables());
+    tuple.push_string(&String::from("name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_columns());
+    tuple.push_string(&String::from("database_name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_columns());
+    tuple.push_string(&String::from("table_name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_columns());
+    tuple.push_string(&String::from("name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_columns());
+    tuple.push_string(&String::from("type"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuples.push(tuple);
+
     OsInterface::create_file(
         &machine.pager.format_table_name(
             &Config::system_database(),

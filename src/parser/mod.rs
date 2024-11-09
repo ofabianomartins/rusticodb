@@ -1,5 +1,4 @@
 pub mod sql_executor;
-pub mod parse_query;
 
 pub mod use_database;
 pub mod create_database;

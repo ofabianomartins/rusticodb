@@ -6,7 +6,7 @@ use crate::storage::os_interface::BLOCK_SIZE;
 
 use super::cell::CellType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Tuple {
     pub data: Vec<u8>
 }
