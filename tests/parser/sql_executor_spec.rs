@@ -19,6 +19,8 @@ pub fn test_create_database_metadata_file_database1() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let result_set = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
 
     assert!(matches!(result_set, Ok(_result_set)));
@@ -39,6 +41,8 @@ pub fn test_create_database_with_if_not_exists() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let result_set = sql_executor.parse_command(&mut machine, "CREATE DATABASE IF NOT EXISTS database1");
@@ -61,6 +65,8 @@ pub fn test_create_two_databases() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let result_set = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1; CREATE DATABASE database2");
 
@@ -86,6 +92,8 @@ pub fn test_create_database_with_if_not_exists_in_wrong_order() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let error_parse = sql_executor.parse_command(&mut machine, "CREATE IF NOT EXISTS DATABASE database1");
@@ -114,6 +122,8 @@ pub fn test_create_database_that_already_exists() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let error_parse = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
 
@@ -137,6 +147,8 @@ pub fn test_use_database_that_not_exists() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let error_parse = sql_executor.parse_command(&mut machine, "USE database1");
 
     assert!(
@@ -158,6 +170,8 @@ pub fn test_use_database_set_in_context() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let result_set = sql_executor.parse_command(&mut machine, "USE database1");
@@ -186,6 +200,8 @@ pub fn test_create_table_metadata_file() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let _ = sql_executor.parse_command(&mut machine, "USE database1");
     let _ = sql_executor.parse_command(&mut machine, "CREATE TABLE table1");
@@ -208,6 +224,8 @@ pub fn test_create_table_without_set_database() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let error_parse = sql_executor.parse_command(&mut machine, "CREATE TABLE table1");
@@ -238,6 +256,8 @@ pub fn test_create_table_that_already_exists() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let _ = sql_executor.parse_command(&mut machine, "USE database1");
     let _ = sql_executor.parse_command(&mut machine, "CREATE TABLE table1");
@@ -264,6 +284,8 @@ pub fn test_create_table_with_if_not_exists() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let _ = sql_executor.parse_command(&mut machine, "USE database1");
     let _ = sql_executor.parse_command(&mut machine, "CREATE TABLE table1");
@@ -289,6 +311,8 @@ pub fn test_create_table_with_two_columns() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = sql_executor.parse_command(&mut machine, "CREATE DATABASE database1");
     let _ = sql_executor.parse_command(&mut machine, "USE database1");

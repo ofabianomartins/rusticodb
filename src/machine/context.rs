@@ -13,7 +13,6 @@ pub struct Context {
 }
 
 impl Context {
-
     pub fn new() -> Self {
         Context {
             actual_database: None,

@@ -36,8 +36,11 @@ impl Pager {
         } else {
             let data = self.read_data(database_name, table_name, 0u64);
             let page = Page::load(0, data);
-            self.pages.entry(page_key.clone()).and_modify(|_| {})
-                .or_insert(page);
+            self.pages.insert(page_key.clone(), page);
+
+            if let Some(page) = self.pages.get(&page_key) {
+                return page.read_tuples();
+            } 
         }
         return Vec::new();
     }

@@ -4,6 +4,8 @@ use std::fs::create_dir;
 use std::fs::OpenOptions;
 use std::io::{Read, Seek, SeekFrom, Write};
 
+use crate::utils::logger::Logger;
+
 pub const BLOCK_SIZE: usize = 4096;
 
 #[derive(Debug)]
@@ -16,6 +18,8 @@ impl OsInterface {
     }
 
     pub fn path_exists(path_name: &String) -> bool {
+        Logger::debug(format!("Check path {} exists", path_name).leak());
+
         return Path::new(&path_name).exists();
     }
 

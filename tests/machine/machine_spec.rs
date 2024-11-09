@@ -4,6 +4,7 @@ use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::storage::pager::Pager;
+use rusticodb::setup::setup_system;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -15,6 +16,8 @@ pub fn test_if_database_exists_is_true() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = machine.create_database(database1.clone(), false);
     assert!(machine.database_exists(&database1));
@@ -29,6 +32,8 @@ pub fn test_if_database_exists_is_false() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     assert_eq!(machine.database_exists(&database1), false);
 }
 
@@ -41,6 +46,8 @@ pub fn test_if_table_exists_is_true() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = machine.create_database(database1.clone(), false);
     let _ = machine.create_table(&database1, &table1, false, Vec::new());
@@ -57,6 +64,8 @@ pub fn test_if_table_exists_is_false() {
 
     create_tmp_test_folder();
 
+    setup_system(&mut machine);
+
     let _ = machine.create_database(database1.clone(), false);
     assert_eq!(machine.table_exists(&database1, &table1), false);
 }
@@ -69,6 +78,8 @@ pub fn test_create_database_metadata_file_database1() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = machine.create_database(database1.clone(), false);
 
@@ -84,6 +95,8 @@ pub fn test_create_table_metadata_file() {
     let mut machine = Machine::new(pager, context);
 
     create_tmp_test_folder();
+
+    setup_system(&mut machine);
 
     let _ = machine.create_database(database1.clone(), false);
     let _ = machine.create_table(&database1, &String::from("table1"), false, Vec::new());
