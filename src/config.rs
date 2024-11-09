@@ -23,10 +23,21 @@ impl Config {
         return String::from("columns");
     }
 
-    pub fn data_folder() -> String {
-        let default_value = "/etc/rusticodb/data";
+    pub fn log_mode() -> u8 {
+        match env::var("LOG_MODE") {
+            Ok(value) => match value.parse::<u8>() {
+                Ok(value2) => value2,
+                Err(_) => 0u8
+            },
+            Err(_) => 0u8
+        }
+    }
 
-        return env::var("DATA_FOLDER").unwrap_or_else(|_| default_value.to_string());
+    pub fn data_folder() -> String {
+        match env::var("DATA_FOLDER") {
+            Ok(value) => value.to_string(),
+            Err(_) => String::from("/etc/rusticodb/data")
+        } 
     }
 
 }
