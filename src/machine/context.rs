@@ -65,6 +65,14 @@ impl Context {
         return true;
     }
 
+    pub fn remove_table(&mut self, database_name: String, name: String) -> bool {
+        if let Some(index) = self.tables.iter().position(|x| x.check_name(&database_name, &name)) {
+            self.tables.remove(index);
+            return true;
+        }
+        return false;
+    }
+
     pub fn check_table_exists(&self, database_name: &String, name: &String) -> bool {
         let mut found = false;
         for elem in &self.tables {

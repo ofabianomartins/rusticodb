@@ -247,5 +247,7 @@ pub enum ExecutionError {
     DatabaseNotExists(String),
     DatabaseExists(String),
     DatabaseNotSetted, 
+    TableNotExists(String),
+    TableExists(String),
     NotImplementedYet
 }

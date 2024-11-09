@@ -2,6 +2,7 @@ use std::path::Path;
 
 use std::fs::create_dir;
 use std::fs::remove_dir_all;
+use std::fs::remove_file;
 use std::fs::OpenOptions;
 use std::io::{Read, Seek, SeekFrom, Write};
 
@@ -42,6 +43,10 @@ impl OsInterface {
             .write(true)
             .open(file_name)
             .unwrap();
+    }
+
+    pub fn destroy_file(file_name: &String) {
+        let _ = remove_file(file_name);
     }
 
     pub fn write_data(file_name: &String, pos: u64, data: &[u8; BLOCK_SIZE]) {

@@ -77,13 +77,6 @@ impl Machine {
         OsInterface::destroy_folder(&self.pager.format_database_name(&database_name));
         self.context.remove_database(database_name.to_string());
 
-        let mut tuples: Vec<Tuple> = Vec::new();
-        let mut tuple: Tuple = Tuple::new();
-        tuple.push_string(&database_name);
-        tuples.push(tuple);
-
-        self.insert_tuples(&Config::system_database(), &Config::system_database_table_databases(), &mut tuples);
-
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
     }
 
@@ -129,6 +122,24 @@ impl Machine {
             self.insert_tuples(&Config::system_database(), &Config::system_database_table_columns(), &mut tuples);
         }
         Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE TABLE")))
+    }
+
+    pub fn drop_table(
+        &mut self, 
+        database_name: &String, 
+        table_name: &String,
+        if_exists: bool
+    ) -> Result<ResultSet, ExecutionError>{
+        if self.context.check_table_exists(&database_name, &table_name) == false && if_exists {
+            return Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP TABLE")));
+        }
+        if self.context.check_table_exists(&database_name, &table_name) == false {
+            return Err(ExecutionError::TableNotExists(database_name.to_string()));
+        }
+        OsInterface::destroy_file(&self.pager.format_table_name(database_name, table_name));
+        self.context.remove_table(database_name.to_string(), table_name.to_string());
+
+        Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP TABLE")))
     }
 
     pub fn insert_tuples(&mut self, database_name: &String, table_name: &String, tuples: &mut Vec<Tuple>) {
