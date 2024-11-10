@@ -520,3 +520,152 @@ pub fn test_select_database_tables() {
 
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 }
+
+#[test]
+pub fn test_select_all_database_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let use_database = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM databases");
+
+    assert!(matches!(use_database, Ok(_result_set)));
+    // assert!(matches!(result_set, Ok(ref result_sets)));
+
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+
+    let database_name = String::from("database1");
+    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+
+    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+}
+
+#[test]
+pub fn test_select_with_alias_database_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let use_database = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT name as atr1 FROM databases");
+
+    assert!(matches!(use_database, Ok(_result_set)));
+    // assert!(matches!(result_set, Ok(ref result_sets)));
+
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+
+    let database_name = String::from("database1");
+    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+
+    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+}
+
+#[test]
+pub fn test_select_with_defined_wizard_database_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let use_database = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT columns.*, name FROM columns");
+
+    assert!(matches!(use_database, Ok(_result_set)));
+    // assert!(matches!(result_set, Ok(ref result_sets)));
+
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+
+    let database_name = String::from("database1");
+    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+
+    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+}
+
+#[test]
+pub fn test_select_with_defined_wizard_and_alias_database_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let use_database = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT columns.*, name as atr1 FROM columns");
+
+    assert!(matches!(use_database, Ok(_result_set)));
+    // assert!(matches!(result_set, Ok(ref result_sets)));
+
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+
+    let database_name = String::from("database1");
+    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+
+    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+}
+
+#[test]
+pub fn test_select_with_defined_attr_and_alias_database_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let use_database = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT columns.name as atr2, name as atr1 FROM columns");
+
+    assert!(matches!(use_database, Ok(_result_set)));
+    // assert!(matches!(result_set, Ok(ref result_sets)));
+
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+
+    let database_name = String::from("database1");
+    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+
+    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+}
+
+#[test]
+pub fn test_select_with_wrong_database_that_not_exists() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM columns22");
+
+    assert!(matches!(result_set, Err(ExecutionError::TableNotExists(_result_set))));
+}
+

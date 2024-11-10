@@ -190,10 +190,9 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
         let (projection, relation, _selection) = get_query_components(query).unwrap();
         let table_name = get_table_name(relation).unwrap();
 
-        let list_column_from_table = machine.list_columns(
-            db_name.clone(), 
-            table_name.clone()
-        );
+        if machine.context.check_table_exists(&db_name, &table_name) == false {
+            return Err(ExecutionError::TableNotExists(table_name.to_string()));
+        }
 
         let mut columns = Vec::<Column>::new();
         for elem in &projection {
@@ -220,6 +219,10 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
                     )
                 },
                 SelectItem::Wildcard(_) => {
+                    let list_column_from_table = machine.list_columns(
+                        db_name.clone(), 
+                        table_name.clone()
+                    );
                     for line in list_column_from_table.tuples.clone().into_iter() {
                         columns.push(
                             Column::new(
@@ -231,7 +234,22 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
                         )
                     }
                 },
-                SelectItem::QualifiedWildcard(_, _) => {},
+                SelectItem::QualifiedWildcard(name, _options) => {
+                    let list_column_from_table = machine.list_columns(
+                        db_name.clone(), 
+                        name.to_string()
+                    );
+                    for line in list_column_from_table.tuples.clone().into_iter() {
+                        columns.push(
+                            Column::new(
+                                db_name.clone(),
+                                name.to_string(),
+                                line.get_string(2).unwrap(),
+                                ColumnType::Varchar
+                            )
+                        )
+                    }
+                },
             }
         }
 
