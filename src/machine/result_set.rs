@@ -149,16 +149,15 @@ impl ResultSet {
             column_length.push(column.alias.len() as u64);
         }
         for tuple_item in &self.tuples {
-            let cell_count = tuple_item.cell_count() as u64;
-            let mut cell_index: u64 = 0;
+            let mut cell_index: usize = 0;
 
-            while cell_index < cell_count {
+            while cell_index < column_length.len() {
                 let cell_length = tuple_item.get_cell(cell_index as u16).to_string().len() as u64;
 
-                let old_version = column_length.get_mut(cell_index as usize).unwrap();
+                let old_version = column_length.get_mut(cell_index).unwrap();
 
                 if *old_version < cell_length {
-                    column_length[cell_index as usize] = cell_length;
+                    column_length[cell_index] = cell_length;
                 }
 
                 cell_index += 1;
@@ -213,13 +212,12 @@ impl fmt::Display for ResultSet {
                 let _ = print_line_result(f, column_size_count);
 
                 for tuple_item in &self.tuples {
-                    let cell_count = tuple_item.cell_count() as u64;
-                    let mut cell_index: u64 = 0;
-                    while cell_index < cell_count {
+                    let mut cell_index: usize = 0;
+                    while cell_index < column_length.len() {
                         let cell_value = tuple_item.get_cell(cell_index as u16).to_string();
                         let _ = write!(f, "| {} ", cell_value);
 
-                        let adjust_column_size = column_length.get(cell_index as usize).unwrap() - (cell_value.len() as u64);
+                        let adjust_column_size = column_length.get(cell_index).unwrap() - (cell_value.len() as u64);
                         print_complete_cell(f, adjust_column_size);
                         cell_index += 1;
                     }
@@ -227,7 +225,7 @@ impl fmt::Display for ResultSet {
                 }
 
                 let _ = print_line_result(f, column_size_count);
-                write!(f, "")
+                write!(f, "Result size: {} ", self.tuples.len())
             }
         }
     }

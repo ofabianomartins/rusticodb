@@ -669,3 +669,60 @@ pub fn test_select_with_wrong_database_that_not_exists() {
     assert!(matches!(result_set, Err(ExecutionError::TableNotExists(_result_set))));
 }
 
+#[test]
+pub fn test_select_with_two_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 49);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 8);
+}
+
+#[test]
+pub fn test_select_with_three_tables() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b, columns c");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 343);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 12);
+}
+
+#[test]
+pub fn test_select_with_all_and_more_one_attr() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT *, name FROM columns");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 7);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 5);
+}
+

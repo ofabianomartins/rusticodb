@@ -12,7 +12,6 @@ use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ResultSetType;
 use crate::utils::logger::Logger;
 
-
 #[derive(Debug)]
 pub struct Machine { 
     pub pager: Pager,
@@ -262,33 +261,39 @@ impl Machine {
         return self.pager.read_tuples(database_name, table_name)
     }
 
-    pub fn load_query(
+    pub fn product_cartesian(
         &mut self,
         db_name: &String,
-        table_name: &String,
-        query_columns: &Vec<Column>
+        table_names: Vec<String>
     ) -> Vec<Tuple> {
-        let table_tuples = self.read_tuples(&db_name, &table_name);
+        let mut list_tuples: Vec<Vec<Tuple>> = Vec::new();
 
-        let mut tuples: Vec<Tuple> = Vec::new();
-
-        let list_column_from_table = self.list_columns(
-            db_name.clone(), 
-            table_name.clone()
-        );
-
-        for elem in table_tuples {
-            let mut tuple = Tuple::new();
-            for column in query_columns {
-                if let Some(index) = list_column_from_table.tuples.iter().position(|x| {
-                    x.get_string(2).unwrap() == column.name
-                }) {
-                    tuple.push_string(&elem.get_string(index as u16).unwrap());
-                } 
-            }
-            tuples.push(tuple);
+        for table_name in table_names {
+            list_tuples.push(self.read_tuples(&db_name, &table_name));
         }
-        return tuples;
+
+        let mut result: Vec<Tuple> = vec![Tuple::new()]; 
+        for (_idx, array) in list_tuples.iter().enumerate() {
+            let mut temp: Vec<Tuple> = vec![];
+
+            for (_idxr, partial) in result.iter().enumerate() {
+                for (_idx2, element) in array.iter().enumerate() {
+                    let mut new_tuple: Tuple = partial.clone();
+
+                    let mut cell_index = 0;
+                    while cell_index < element.cell_count() {
+                        let cell = element.get_cell(cell_index);
+                        new_tuple.append_cell(cell);
+                        cell_index += 1;
+                    }
+                    
+                    temp.push(new_tuple);
+                }
+            }
+            result = temp;
+        }
+
+        return result;
     }
 
 }

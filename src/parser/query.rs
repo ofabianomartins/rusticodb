@@ -151,19 +151,13 @@ pub enum QueryError {
     Overflow,
 }
 
-
-type QueryResult = (Vec<SelectItem>, Option<TableFactor>, Option<ASTNode>);
+type QueryResult = (Vec<SelectItem>, Vec<TableWithJoins>, Option<ASTNode>);
 
 #[allow(clippy::type_complexity)]
 fn get_query_components(query: Box<Select>) -> Result<QueryResult, QueryError> {
     match *query.body {
         SetExpr::Select(select) => {
-            let mut from = select.from;
-            Ok((
-                select.projection,
-                from.pop().map(|t| t.relation),
-                select.selection,
-            ))
+            Ok((select.projection, select.from, select.selection))
         },
         _ => Err(
             QueryError::NotImplemented(
@@ -173,25 +167,28 @@ fn get_query_components(query: Box<Select>) -> Result<QueryResult, QueryError> {
     }
 }
 
-fn get_table_name(relation: Option<TableFactor>) -> Result<String, QueryError> {
-    match relation {
-        // TODO: error message if any unused fields are set
-        Some(TableFactor::Table { name, .. }) => Ok(strip_quotes(&name.to_string().leak())),
-        Some(s) => Err(QueryError::ParseError(format!(
-            "Invalid expression for table name: {:?}",
-            s
-        ))),
-        None => Err(QueryError::ParseError("Table name missing.".to_string())),
+fn get_table_name(relations: Vec<TableWithJoins>) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    for relation in relations {
+        match relation.relation {
+            TableFactor::Table { name, .. } => {
+                result.push(strip_quotes(&name.to_string().leak()))
+            },
+            _ => {}
+        }
     }
+    return result;
 }
 
 pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.context.actual_database.clone() {
-        let (projection, relation, _selection) = get_query_components(query).unwrap();
-        let table_name = get_table_name(relation).unwrap();
+        let (projection, relations, _selection) = get_query_components(query).unwrap();
+        let table_names: Vec<String> = get_table_name(relations);
 
-        if machine.context.check_table_exists(&db_name, &table_name) == false {
-            return Err(ExecutionError::TableNotExists(table_name.to_string()));
+        for table_name in &table_names {
+            if machine.context.check_table_exists(&db_name, &table_name.clone()) == false {
+                return Err(ExecutionError::TableNotExists(table_name.to_string()));
+            }
         }
 
         let mut columns = Vec::<Column>::new();
@@ -201,7 +198,7 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
                     columns.push(
                         Column::new(
                             db_name.clone(),
-                            table_name.clone(),
+                            String::from(""),
                             e.to_string(),
                             ColumnType::Varchar
                         )
@@ -211,7 +208,7 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
                     columns.push(
                         Column::new_with_alias(
                             db_name.clone(),
-                            table_name.clone(),
+                            String::from(""),
                             expr.to_string(),
                             alias.to_string(),
                             ColumnType::Varchar
@@ -219,19 +216,21 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
                     )
                 },
                 SelectItem::Wildcard(_) => {
-                    let list_column_from_table = machine.list_columns(
-                        db_name.clone(), 
-                        table_name.clone()
-                    );
-                    for line in list_column_from_table.tuples.clone().into_iter() {
-                        columns.push(
-                            Column::new(
-                                db_name.clone(),
-                                table_name.clone(),
-                                line.get_string(2).unwrap(),
-                                ColumnType::Varchar
+                    for table_name in &table_names {
+                        let list_column_from_table = machine.list_columns(
+                            db_name.clone(), 
+                            table_name.clone()
+                        );
+                        for line in list_column_from_table.tuples.clone().into_iter() {
+                            columns.push(
+                                Column::new(
+                                    db_name.clone(),
+                                    table_name.clone(),
+                                    line.get_string(2).unwrap(),
+                                    ColumnType::Varchar
+                                )
                             )
-                        )
+                        }
                     }
                 },
                 SelectItem::QualifiedWildcard(name, _options) => {
@@ -253,7 +252,7 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
             }
         }
 
-        let tuples = machine.load_query(&db_name, &table_name, &columns);
+        let tuples = machine.product_cartesian(&db_name, table_names);
         return Ok(ResultSet::new_select(columns, tuples))
     } else {
         return Err(ExecutionError::DatabaseNotSetted);

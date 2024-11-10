@@ -72,7 +72,7 @@ impl OsInterface {
         match file.read(&mut buffer) {
             Ok(_) => buffer,
             Err(err) => { 
-                println!("{}", err);
+                println!("{:?}", err);
                 buffer
             }
         }
