@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Column {
     pub database_name: String,
     pub table_name: String,
@@ -9,7 +9,7 @@ pub struct Column {
     pub column_type: ColumnType
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ColumnType {
     Null = 1,
     Boolean = 2,

@@ -1,4 +1,5 @@
 use std::fmt;
+use std::vec::Vec;
 
 use crate::storage::tuple::Tuple;
 use crate::storage::cell::ParserError;
@@ -164,6 +165,28 @@ impl ResultSet {
             }
         }
         return column_length;
+    }
+
+    pub fn cartesian_product(&self, other_set: &ResultSet) -> ResultSet {
+        let new_columns: Vec<Column> = vec![self.columns.clone(), other_set.columns.clone()].concat();
+        let mut new_set: ResultSet = ResultSet::new_select(new_columns, vec![]);
+
+        for (_idxr, partial) in self.tuples.iter().enumerate() {
+            for (_idx2, element) in other_set.tuples.iter().enumerate() {
+                let mut new_tuple: Tuple = partial.clone();
+
+                let mut cell_index = 0;
+                while cell_index < element.cell_count() {
+                    let cell = element.get_cell(cell_index);
+                    new_tuple.append_cell(cell);
+                    cell_index += 1;
+                }
+                
+                new_set.tuples.push(new_tuple);
+            }
+        }
+
+        return new_set;
     }
 
 }
