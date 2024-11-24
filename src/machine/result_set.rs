@@ -13,6 +13,22 @@ pub struct ResultSet {
     pub columns: Vec<Column>
 }
 
+/*
+ * This object sholud implement the relational algebra operator
+ * and acts like a dataframe. On futher situation, will be implement to use
+ * Hard Disk to increase the data limit. But now only use the main memory. 
+ *
+ * The basic operator to be implement will be: 
+ *   - selection
+ *   - projection
+ *   - cartesian product
+ *   - union
+ *   - diff 
+ *   - rename
+ *
+ * 
+ */
+
 impl ResultSet {
     pub fn new_select(columns: Vec<Column>, tuples: Vec<Tuple>) -> Self {
         ResultSet { 
