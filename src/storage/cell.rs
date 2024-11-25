@@ -1,6 +1,8 @@
 use std::fmt;
 use std::string::ToString;
 
+use crate::utils::execution_error::ExecutionError;
+
 #[derive(Debug)]
 pub struct Cell {
     pub data: Vec<u8>
@@ -20,14 +22,6 @@ pub enum CellType {
     SignedBigint = 10,
     String = 11,
     Text = 12,
-}
-
-#[derive(Debug)]
-pub enum ParserError {
-    NoneExists,
-    WrongFormat,
-    WrongLength,
-    StringParseFailed
 }
 
 impl Cell {
@@ -113,20 +107,20 @@ impl Cell {
         self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
-    pub fn bin_to_string(&self) -> Result<String, ParserError> {
+    pub fn bin_to_string(&self) -> Result<String, ExecutionError> {
         if self.data.len() <= 1 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::String as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 2] = [self.data[1], self.data[2]];
         let string_size = u16::from_be_bytes(byte_array);
 
         if self.data.len() != ((string_size + 3) as usize) {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         let mut bytes: Vec<u8> = Vec::new();
@@ -139,17 +133,17 @@ impl Cell {
 
         match String::from_utf8(bytes) {
             Ok(new_data) => Ok(new_data),
-            Err(_error) => Err(ParserError::StringParseFailed)
+            Err(_error) => Err(ExecutionError::StringParseFailed)
         }
     }
 
-    pub fn bin_to_text(&self) -> Result<String, ParserError> {
+    pub fn bin_to_text(&self) -> Result<String, ExecutionError> {
         if self.data.len() <= 1 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::Text as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 4] = [
@@ -158,7 +152,7 @@ impl Cell {
         let string_size = u32::from_be_bytes(byte_array);
 
         if self.data.len() != ((string_size + 5) as usize) {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         let mut bytes: Vec<u8> = Vec::new();
@@ -171,54 +165,54 @@ impl Cell {
 
         match String::from_utf8(bytes) {
             Ok(new_data) => Ok(new_data),
-            Err(_error) => Err(ParserError::StringParseFailed)
+            Err(_error) => Err(ExecutionError::StringParseFailed)
         }
     }
 
-    pub fn bin_to_boolean(&self) -> Result<bool, ParserError> {
+    pub fn bin_to_boolean(&self) -> Result<bool, ExecutionError> {
         if self.data.len() != 2 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::Boolean as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         Ok(self.data[1] == 1u8)
     }
 
-    pub fn bin_to_unsigned_tinyint(&self) -> Result<u8, ParserError> {
+    pub fn bin_to_unsigned_tinyint(&self) -> Result<u8, ExecutionError> {
         if self.data.len() != 2 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::UnsignedTinyint as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
         
         return Ok(self.data[1]);
     }
 
-    pub fn bin_to_unsigned_smallint(&self) -> Result<u16, ParserError> {
+    pub fn bin_to_unsigned_smallint(&self) -> Result<u16, ExecutionError> {
         if self.data.len() != 3 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::UnsignedSmallint as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 2] = [self.data[1], self.data[2]];
         return Ok(u16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_unsigned_int(&self) -> Result<u32, ParserError> {
+    pub fn bin_to_unsigned_int(&self) -> Result<u32, ExecutionError> {
         if self.data.len() != 5 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::UnsignedInt as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 4] = [
@@ -227,13 +221,13 @@ impl Cell {
         return Ok(u32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_unsigned_bigint(&self) -> Result<u64, ParserError> {
+    pub fn bin_to_unsigned_bigint(&self) -> Result<u64, ExecutionError> {
         if self.data.len() != 9 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::UnsignedBigint as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 8] = [
@@ -243,38 +237,38 @@ impl Cell {
         return Ok(u64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_signed_tinyint(&self) -> Result<i8, ParserError> {
+    pub fn bin_to_signed_tinyint(&self) -> Result<i8, ExecutionError> {
         if self.data.len() != 2 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::SignedTinyint as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
         
         return Ok(self.data[1] as i8);
     }
 
-    pub fn bin_to_signed_smallint(&self) -> Result<i16, ParserError> {
+    pub fn bin_to_signed_smallint(&self) -> Result<i16, ExecutionError> {
         if self.data.len() != 3 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::SignedSmallint as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 2] = [self.data[1], self.data[2]];
         return Ok(i16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_signed_int(&self) -> Result<i32, ParserError> {
+    pub fn bin_to_signed_int(&self) -> Result<i32, ExecutionError> {
         if self.data.len() != 5 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::SignedInt as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 4] = [
@@ -283,13 +277,13 @@ impl Cell {
         return Ok(i32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
     }
 
-    pub fn bin_to_signed_bigint(&self) -> Result<i64, ParserError> {
+    pub fn bin_to_signed_bigint(&self) -> Result<i64, ExecutionError> {
         if self.data.len() != 9 {
-            return Err(ParserError::WrongLength)
+            return Err(ExecutionError::WrongLength)
         } 
 
         if self.data[0] != (CellType::SignedBigint as u8) {
-            return Err(ParserError::WrongFormat)
+            return Err(ExecutionError::WrongFormat)
         } 
 
         let byte_array: [u8; 8] = [

@@ -6,7 +6,7 @@ use sqlparser::ast::Statement;
 
 use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
-use crate::machine::result_set::ExecutionError;
+use crate::utils::execution_error::ExecutionError;
 
 use crate::parser::use_database::use_database;
 use crate::parser::show_databases::show_databases;

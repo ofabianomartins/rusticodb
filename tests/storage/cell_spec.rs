@@ -1,6 +1,6 @@
 use rusticodb::storage::cell::Cell;
 use rusticodb::storage::cell::CellType;
-use rusticodb::storage::cell::ParserError;
+use rusticodb::utils::execution_error::ExecutionError;
 
 #[test]
 pub fn test_cell_insert_string_to_u8() {
@@ -227,7 +227,7 @@ pub fn test_cell_get_u8_to_string_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_string(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_string(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -239,7 +239,7 @@ pub fn test_cell_get_u8_to_string_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_string(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_string(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -256,7 +256,7 @@ pub fn test_cell_get_u8_to_string_with_length_error2() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_string(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_string(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -295,7 +295,7 @@ pub fn test_cell_get_u8_to_text_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_text(),Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_text(),Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -307,7 +307,7 @@ pub fn test_cell_get_u8_to_text_with_lentgh_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_text(),Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_text(),Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -324,7 +324,7 @@ pub fn test_cell_get_u8_to_text_with_length_error2() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_text(),Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_text(),Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -363,7 +363,7 @@ pub fn test_cell_get_u8_to_false_boolean_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_boolean(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_boolean(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -375,7 +375,7 @@ pub fn test_cell_get_u8_to_false_boolean_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_boolean(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_boolean(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -401,7 +401,7 @@ pub fn test_cell_get_u8_to_unsigned_tinyint_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_tinyint(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_unsigned_tinyint(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -413,7 +413,7 @@ pub fn test_cell_get_u8_to_unsigned_tinyint_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_tinyint(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_unsigned_tinyint(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -445,7 +445,7 @@ pub fn test_cell_get_u8_to_unsigned_smallint_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_smallint(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_unsigned_smallint(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -457,7 +457,7 @@ pub fn test_cell_get_u8_to_unsigned_smallint_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_smallint(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_unsigned_smallint(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -489,7 +489,7 @@ pub fn test_cell_get_u8_to_unsigned_int_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_int(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_unsigned_int(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -501,7 +501,7 @@ pub fn test_cell_get_u8_to_unsigned_int_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_int(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_unsigned_int(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -533,7 +533,7 @@ pub fn test_cell_get_u8_to_unsigned_bigint_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_bigint(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_unsigned_bigint(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -545,7 +545,7 @@ pub fn test_cell_get_u8_to_unsigned_bigint_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_unsigned_bigint(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_unsigned_bigint(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -577,7 +577,7 @@ pub fn test_cell_get_u8_to_signed_tinyint_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_tinyint(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_signed_tinyint(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -589,7 +589,7 @@ pub fn test_cell_get_u8_to_signed_tinyint_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_tinyint(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_signed_tinyint(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -620,7 +620,7 @@ pub fn test_cell_get_u8_to_signed_smallint_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_smallint(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_signed_smallint(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -632,7 +632,7 @@ pub fn test_cell_get_u8_to_signed_smallint_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_smallint(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_signed_smallint(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -663,7 +663,7 @@ pub fn test_cell_get_u8_to_signed_int_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_int(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_signed_int(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -675,7 +675,7 @@ pub fn test_cell_get_u8_to_signed_int_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_int(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_signed_int(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -706,7 +706,7 @@ pub fn test_cell_get_u8_to_signed_bigint_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_bigint(), Err(ParserError::WrongFormat)));
+    assert!(matches!(cell.bin_to_signed_bigint(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
@@ -718,5 +718,5 @@ pub fn test_cell_get_u8_to_signed_bigint_with_length_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_signed_bigint(), Err(ParserError::WrongLength)));
+    assert!(matches!(cell.bin_to_signed_bigint(), Err(ExecutionError::WrongLength)));
 }

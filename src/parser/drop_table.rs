@@ -2,7 +2,7 @@ use sqlparser::ast::ObjectName;
 
 use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
-use crate::machine::result_set::ExecutionError;
+use crate::utils::execution_error::ExecutionError;
 
 pub fn drop_table(machine: &mut Machine, names: Vec<ObjectName>, if_exists: bool) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.context.actual_database.clone() {

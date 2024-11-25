@@ -7,10 +7,10 @@ use crate::storage::tuple::Tuple;
 use crate::machine::column::Column;
 use crate::machine::column::ColumnType;
 use crate::machine::context::Context;
-use crate::machine::result_set::ExecutionError;
 use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ResultSetType;
 use crate::utils::logger::Logger;
+use crate::utils::execution_error::ExecutionError;
 
 #[derive(Debug)]
 pub struct Machine { 

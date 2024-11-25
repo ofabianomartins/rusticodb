@@ -1,8 +1,8 @@
 use std::fmt;
 use std::vec::Vec;
 
+use crate::utils::execution_error::ExecutionError;
 use crate::storage::tuple::Tuple;
-use crate::storage::cell::ParserError;
 use crate::machine::column::Column;
 
 #[derive(Debug)]
@@ -52,103 +52,103 @@ impl ResultSet {
         return self.columns.iter().position(|elem| elem.check_column_name(column_name) )
     }
 
-    pub fn get_string(&self, index: usize, column_name: &String) -> Result<String, ParserError> {
+    pub fn get_string(&self, index: usize, column_name: &String) -> Result<String, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_string(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::TupleNotExists(index))
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::ColumnNotExists(column_name.clone()))
         }
     }
 
-    pub fn get_text(&self, index: usize, column_name: &String) -> Result<String, ParserError> {
+    pub fn get_text(&self, index: usize, column_name: &String) -> Result<String, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_text(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_unsigned_tinyint(&self, index: usize, column_name: &String) -> Result<u8, ParserError> {
+    pub fn get_unsigned_tinyint(&self, index: usize, column_name: &String) -> Result<u8, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_tinyint(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_unsigned_smallint(&self, index: usize, column_name: &String) -> Result<u16, ParserError> {
+    pub fn get_unsigned_smallint(&self, index: usize, column_name: &String) -> Result<u16, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_smallint(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_unsigned_int(&self, index: usize, column_name: &String) -> Result<u32, ParserError> {
+    pub fn get_unsigned_int(&self, index: usize, column_name: &String) -> Result<u32, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_int(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_unsigned_bigint(&self, index: usize, column_name: &String) -> Result<u64, ParserError> {
+    pub fn get_unsigned_bigint(&self, index: usize, column_name: &String) -> Result<u64, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_unsigned_bigint(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_signed_tinyint(&self, index: usize, column_name: &String) -> Result<i8, ParserError> {
+    pub fn get_signed_tinyint(&self, index: usize, column_name: &String) -> Result<i8, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_tinyint(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_signed_smallint(&self, index: usize, column_name: &String) -> Result<i16, ParserError> {
+    pub fn get_signed_smallint(&self, index: usize, column_name: &String) -> Result<i16, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_smallint(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_signed_int(&self, index: usize, column_name: &String) -> Result<i32, ParserError> {
+    pub fn get_signed_int(&self, index: usize, column_name: &String) -> Result<i32, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_int(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
-    pub fn get_signed_bigint(&self, index: usize, column_name: &String) -> Result<i64, ParserError> {
+    pub fn get_signed_bigint(&self, index: usize, column_name: &String) -> Result<i64, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
                 Some(tuple) => tuple.get_signed_bigint(*position as u16),
-                None => Err(ParserError::NoneExists)
+                None => Err(ExecutionError::NoneExists)
             },
-            None => Err(ParserError::NoneExists)
+            None => Err(ExecutionError::NoneExists)
         }
     }
 
@@ -181,6 +181,31 @@ impl ResultSet {
             }
         }
         return column_length;
+    }
+
+    pub fn projection(&self, projection_columns: Vec<Column>) -> Result<ResultSet, ExecutionError> {
+        let mut column_indexes: Vec<u16> = Vec::new();
+
+        for (_idxr, partial) in projection_columns.iter().enumerate() {
+            for (main_index, partial2) in self.columns.iter().enumerate() {
+                if partial2 == partial {
+                    column_indexes.push(main_index as u16)
+                }
+            }
+        }
+        let mut new_set: ResultSet = ResultSet::new_select(projection_columns, vec![]);
+
+        for (_idxr, partial) in self.tuples.iter().enumerate() {
+            let mut new_tuple: Tuple = partial.clone();
+
+            for (_idxr, cell_index) in column_indexes.iter().enumerate() {
+                new_tuple.append_cell(partial.get_cell(*cell_index));
+            }
+            
+            new_set.tuples.push(new_tuple);
+        }
+
+        return Ok(new_set);
     }
 
     pub fn cartesian_product(&self, other_set: &ResultSet) -> ResultSet {
@@ -276,15 +301,3 @@ pub enum ResultSetType {
     Select,
 }
 
-#[derive(Debug)]
-pub enum ExecutionError {
-    ParserError(String),
-    TokenizerError(String),
-    RecursionLimitExceeded,
-    DatabaseNotExists(String),
-    DatabaseExists(String),
-    DatabaseNotSetted, 
-    TableNotExists(String),
-    TableExists(String),
-    NotImplementedYet
-}

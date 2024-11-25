@@ -1,6 +1,6 @@
 use rusticodb::machine::result_set::ResultSet;
 use rusticodb::machine::column::{Column, ColumnType};
-use rusticodb::storage::cell::ParserError;
+use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::storage::tuple::Tuple;
 
 #[test]
@@ -217,7 +217,7 @@ pub fn test_check_signed_bigint_with_string_line_on_result_set() {
 
     let result_set = ResultSet::new_select(columns, tuples);
 
-    assert!(matches!(result_set.get_string(0, &String::from("id")),Err(ParserError::WrongFormat)));
+    assert!(matches!(result_set.get_string(0, &String::from("id")),Err(ExecutionError::WrongFormat)));
     assert_eq!(result_set.line_count(), 1);
     assert_eq!(result_set.column_count(), 1);
 }
@@ -256,6 +256,92 @@ pub fn test_check_result_on_result_set_with_two_lines() {
 }
 
 #[test]
+pub fn test_projection_in_one_column() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("fabiano"));
+    tuple1.push_string(&String::from("martins"));
+    tuples.push(tuple1);
+
+    let mut projection_columns: Vec<Column> = Vec::new();
+
+    projection_columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+
+    let result_set = ResultSet::new_select(columns, tuples);
+    let new_set_result = result_set.projection(projection_columns);
+
+    let new_set = new_set_result.unwrap();
+
+    assert_eq!(new_set.line_count(), 2);
+    assert_eq!(new_set.column_count(), 1);
+    // assert!(matches!(new_set_result, Ok(_new_set)));
+}
+
+#[test]
+pub fn test_projection_in_two_columns() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("fabiano"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+    let mut projection_columns: Vec<Column> = Vec::new();
+
+    projection_columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    projection_columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+
+    let result_set = ResultSet::new_select(columns, tuples);
+    let new_set_result = result_set.projection(projection_columns);
+
+    let new_set = new_set_result.unwrap();
+
+    assert_eq!(new_set.line_count(), 2);
+    assert_eq!(new_set.column_count(), 2);
+    assert!(
+        matches!(
+            new_set.get_string(0, &String::from("name")),
+            Ok(_)
+        )
+    );
+    assert!(
+        matches!(
+            new_set.get_string(0, &String::from("last_name")),
+            Ok(_)
+        )
+    );
+    assert!(
+        matches!(
+            new_set.get_string(0, &String::from("country")),
+            Err(ExecutionError::ColumnNotExists(_))
+        )
+    );
+    // assert!(matches!(new_set_result, Ok(_new_set)));
+}
+
+#[test]
 pub fn test_cartesian_product_between_two_result_sets() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
@@ -275,13 +361,13 @@ pub fn test_cartesian_product_between_two_result_sets() {
 
     assert!(
         matches!(
-            result_set.get_string(0, &String::from("name")),
+            new_set.get_string(0, &String::from("name")),
             Ok(_)
         )
     );
     assert!(
         matches!(
-            result_set.get_string(1, &String::from("name")),
+            new_set.get_string(1, &String::from("name")),
             Ok(_)
         )
     );

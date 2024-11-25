@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::storage::cell::Cell;
-use crate::storage::cell::ParserError;
+use crate::utils::execution_error::ExecutionError;
 use crate::storage::os_interface::BLOCK_SIZE;
 
 use super::cell::CellType;
@@ -144,7 +144,7 @@ impl Tuple {
         self.append_cell(cell);
     }
 
-    pub fn get_string(&self, position: u16) -> Result<String, ParserError> {
+    pub fn get_string(&self, position: u16) -> Result<String, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(String::from(""));
         }
@@ -152,7 +152,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_string();
     }
 
-    pub fn get_text(&self, position: u16) -> Result<String, ParserError> {
+    pub fn get_text(&self, position: u16) -> Result<String, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(String::from(""));
         }
@@ -160,7 +160,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_text();
     }
 
-    pub fn get_unsigned_tinyint(&self, position: u16) -> Result<u8, ParserError> {
+    pub fn get_unsigned_tinyint(&self, position: u16) -> Result<u8, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -168,7 +168,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_unsigned_tinyint();
     }
 
-    pub fn get_unsigned_smallint(&self, position: u16) -> Result<u16, ParserError> {
+    pub fn get_unsigned_smallint(&self, position: u16) -> Result<u16, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -176,7 +176,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_unsigned_smallint();
     }
 
-    pub fn get_unsigned_int(&self, position: u16) -> Result<u32, ParserError> {
+    pub fn get_unsigned_int(&self, position: u16) -> Result<u32, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -184,7 +184,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_unsigned_int();
     }
 
-    pub fn get_unsigned_bigint(&self, position: u16) -> Result<u64, ParserError> {
+    pub fn get_unsigned_bigint(&self, position: u16) -> Result<u64, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -192,7 +192,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_unsigned_bigint();
     }
 
-    pub fn get_signed_tinyint(&self, position: u16) -> Result<i8, ParserError> {
+    pub fn get_signed_tinyint(&self, position: u16) -> Result<i8, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -200,7 +200,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_signed_tinyint();
     }
 
-    pub fn get_signed_smallint(&self, position: u16) -> Result<i16, ParserError> {
+    pub fn get_signed_smallint(&self, position: u16) -> Result<i16, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -208,7 +208,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_signed_smallint();
     }
 
-    pub fn get_signed_int(&self, position: u16) -> Result<i32, ParserError> {
+    pub fn get_signed_int(&self, position: u16) -> Result<i32, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }
@@ -216,7 +216,7 @@ impl Tuple {
         return self.get_cell(position).bin_to_signed_int();
     }
 
-    pub fn get_signed_bigint(&self, position: u16) -> Result<i64, ParserError> {
+    pub fn get_signed_bigint(&self, position: u16) -> Result<i64, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);
         }

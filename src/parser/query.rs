@@ -7,7 +7,7 @@ use sqlparser::ast::{Expr as ASTNode, *};
 
 use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
-use crate::machine::result_set::ExecutionError;
+use crate::utils::execution_error::ExecutionError;
 use crate::machine::column::Column;
 use crate::machine::column::ColumnType;
 

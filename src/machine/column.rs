@@ -78,6 +78,13 @@ impl Column {
     }
 }
 
+impl PartialEq for Column {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+impl Eq for Column {}
+
 impl fmt::Display for Column {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.alias)
