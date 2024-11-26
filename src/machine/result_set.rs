@@ -230,6 +230,20 @@ impl ResultSet {
         return new_set;
     }
 
+    pub fn union(&self, other_set: &ResultSet) -> Result<ResultSet, ExecutionError> {
+        let mut new_set: ResultSet = ResultSet::new_select(self.columns.clone(), vec![]);
+
+        for (_idxr, partial) in self.tuples.iter().enumerate() {
+            new_set.tuples.push(partial.clone());
+        }
+
+        for (_idxr, partial) in other_set.tuples.iter().enumerate() {
+            new_set.tuples.push(partial.clone());
+        }
+
+        return Ok(new_set);
+    }
+
 }
 
 fn print_line_result(f: &mut fmt::Formatter, column_size_count: u64) {

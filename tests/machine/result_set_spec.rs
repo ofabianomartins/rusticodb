@@ -374,3 +374,59 @@ pub fn test_cartesian_product_between_two_result_sets() {
     assert_eq!(new_set.line_count(), 4);
     assert_eq!(new_set.column_count(), 2);
 }
+
+#[test]
+pub fn test_union_of_two_result_set() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("fabiano"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+
+    let result_set = ResultSet::new_select(columns.clone(), tuples);
+
+    let mut columns2: Vec<Column> = Vec::new();
+    let mut tuples2: Vec<Tuple> = Vec::new();
+
+    columns2.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns2.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns2.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples2.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("fabiano"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples2.push(tuple1);
+
+
+    let result_set2 = ResultSet::new_select(columns, tuples2);
+
+
+    let new_set_result = result_set.union(&result_set2);
+
+    let new_set = new_set_result.unwrap();
+
+    assert_eq!(new_set.line_count(), 4);
+    assert_eq!(new_set.column_count(), 3);
+    // assert!(matches!(new_set_result, Ok(_new_set)));
+}
