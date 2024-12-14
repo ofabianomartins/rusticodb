@@ -107,6 +107,33 @@ impl Cell {
         self.data.append(&mut value.to_be_bytes().to_vec());
     }
 
+    pub fn get_bin(&self) -> Result<Vec<u8>, ExecutionError> {
+        if self.data.len() <= 1 {
+            return Err(ExecutionError::WrongLength)
+        } 
+
+        if self.data[0] != (CellType::String as u8) {
+            return Err(ExecutionError::WrongFormat)
+        } 
+
+        let byte_array: [u8; 2] = [self.data[1], self.data[2]];
+        let string_size = u16::from_be_bytes(byte_array);
+
+        if self.data.len() != ((string_size + 3) as usize) {
+            return Err(ExecutionError::WrongLength)
+        } 
+
+        let mut bytes: Vec<u8> = Vec::new();
+        let mut index: usize = 3;
+
+        while index < self.data.len() {
+            bytes.push(*self.data.get(index).unwrap());
+            index += 1;
+        }
+
+        return Ok(bytes);
+    }
+
     pub fn bin_to_string(&self) -> Result<String, ExecutionError> {
         if self.data.len() <= 1 {
             return Err(ExecutionError::WrongLength)

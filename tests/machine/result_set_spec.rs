@@ -1,5 +1,8 @@
 use rusticodb::machine::result_set::ResultSet;
 use rusticodb::machine::column::{Column, ColumnType};
+use rusticodb::machine::filter::Filter;
+use rusticodb::machine::filter::Condition;
+use rusticodb::machine::filter::ConditionType;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::storage::tuple::Tuple;
 
@@ -396,7 +399,6 @@ pub fn test_union_of_two_result_set() {
     tuple1.push_string(&String::from("Brazil"));
     tuples.push(tuple1);
 
-
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
     let mut columns2: Vec<Column> = Vec::new();
@@ -418,15 +420,59 @@ pub fn test_union_of_two_result_set() {
     tuple1.push_string(&String::from("Brazil"));
     tuples2.push(tuple1);
 
-
     let result_set2 = ResultSet::new_select(columns, tuples2);
-
 
     let new_set_result = result_set.union(&result_set2);
 
     let new_set = new_set_result.unwrap();
 
     assert_eq!(new_set.line_count(), 4);
+    assert_eq!(new_set.column_count(), 3);
+    // assert!(matches!(new_set_result, Ok(_new_set)));
+}
+
+#[test]
+pub fn test_selection_of_two_result_set() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("Renato"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+    let mut tuple2 = Tuple::new();
+    tuple2.push_string(&String::from("Renato"));
+    tuple2.push_string(&String::from("martins"));
+    tuple2.push_string(&String::from("United States"));
+    tuples.push(tuple2);
+
+    let result_set = ResultSet::new_select(columns.clone(), tuples);
+
+    let mut conditions: Vec<Condition> = Vec::new();
+
+    let value = String::from("fabiano");
+
+    conditions.push(Condition::new(String::from("name"), ConditionType::Equal, value.as_bytes().to_vec()));
+
+    let filters = Filter::new(conditions);
+
+    let new_set_result = result_set.selection(filters);
+
+    let new_set = new_set_result.unwrap();
+
+    assert_eq!(new_set.line_count(), 1);
     assert_eq!(new_set.column_count(), 3);
     // assert!(matches!(new_set_result, Ok(_new_set)));
 }

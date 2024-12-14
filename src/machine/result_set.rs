@@ -4,6 +4,9 @@ use std::vec::Vec;
 use crate::utils::execution_error::ExecutionError;
 use crate::storage::tuple::Tuple;
 use crate::machine::column::Column;
+use crate::machine::filter::Filter;
+use crate::machine::filter::Condition;
+use crate::machine::filter::ConditionType;
 
 #[derive(Debug)]
 pub struct ResultSet {
@@ -24,8 +27,6 @@ pub struct ResultSet {
  *   - cartesian product
  *   - union
  *   - diff 
- *   - rename
- *
  * 
  */
 
@@ -206,6 +207,23 @@ impl ResultSet {
         }
 
         return Ok(new_set);
+    }
+
+    pub fn selection(&self, filter: Filter) -> Result<ResultSet, ExecutionError> {
+        let mut columns: Vec<Column> = Vec::new();
+        let mut tuples: Vec<Tuple> = Vec::new();
+
+        for column in &self.columns {
+            columns.push(column.clone());
+        }
+
+        for tuple in &self.tuples {
+            if filter.filter(tuple, &self.columns) {
+                tuples.push(tuple.clone());
+            }
+        }
+
+        Ok(ResultSet::new_select(columns, tuples))
     }
 
     pub fn cartesian_product(&self, other_set: &ResultSet) -> ResultSet {

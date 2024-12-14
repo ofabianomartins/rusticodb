@@ -144,6 +144,14 @@ impl Tuple {
         self.append_cell(cell);
     }
 
+    pub fn get_vec_u8(&self, position: u16) -> Result<Vec<u8>, ExecutionError> {
+        if position >= self.cell_count() {
+            return Ok(Vec::new());
+        }
+
+        return self.get_cell(position).get_bin();
+    }
+
     pub fn get_string(&self, position: u16) -> Result<String, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(String::from(""));
