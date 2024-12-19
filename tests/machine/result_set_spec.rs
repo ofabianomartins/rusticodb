@@ -345,6 +345,38 @@ pub fn test_projection_in_two_columns() {
 }
 
 #[test]
+pub fn test_cartesian_product_between_a_empty_and_full_result_sets() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+    let empty_set = ResultSet::new_select(columns, tuples);
+
+    let mut columns1: Vec<Column> = Vec::new();
+    let mut tuples1: Vec<Tuple> = Vec::new();
+
+    columns1.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("database2"));
+    tuples1.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("database3"));
+    tuples1.push(tuple1);
+
+    let result_set = ResultSet::new_select(columns1, tuples1);
+    let new_set = result_set.cartesian_product(&empty_set);
+
+    assert_eq!(new_set.column_count(), 1);
+    assert_eq!(new_set.line_count(), 2);
+    assert!(
+        matches!(
+            new_set.get_string(0, &String::from("name")),
+            Ok(_)
+        )
+    );
+}
+
+#[test]
 pub fn test_cartesian_product_between_two_result_sets() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();

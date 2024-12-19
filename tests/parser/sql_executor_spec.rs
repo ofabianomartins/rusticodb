@@ -538,8 +538,11 @@ pub fn test_select_all_database_tables() {
 
     assert!(matches!(use_database, Ok(_result_set)));
     // assert!(matches!(result_set, Ok(ref result_sets)));
+    //
+    let rs = result_set.unwrap();
 
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+    assert_eq!(rs.get(0).unwrap().line_count(), 2);
+    assert!(matches!(rs.get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
@@ -723,6 +726,25 @@ pub fn test_select_with_all_and_more_one_attr() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 7);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 5);
+    assert_eq!(result_set.unwrap()[0].column_count(), 5);
+}
+
+#[test]
+pub fn test_select_with_all_where() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM columns WHERE table_name = 'tables' ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.unwrap()[0].column_count(), 4);
 }
 

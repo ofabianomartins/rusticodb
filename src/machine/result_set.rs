@@ -161,6 +161,14 @@ impl ResultSet {
         return self.columns.len(); 
     }
 
+    pub fn full(&self) -> bool {
+        return self.tuples.len() > 0; 
+    }
+
+    pub fn empty(&self) -> bool {
+        return self.tuples.len() == 0; 
+    }
+
     fn count_column_size(&self) -> Vec<u64> {
         let mut column_length: Vec<u64> = Vec::new();
         for column in &self.columns {
@@ -230,9 +238,9 @@ impl ResultSet {
         let new_columns: Vec<Column> = vec![self.columns.clone(), other_set.columns.clone()].concat();
         let mut new_set: ResultSet = ResultSet::new_select(new_columns, vec![]);
 
-        for (_idxr, partial) in self.tuples.iter().enumerate() {
+        if self.empty() && other_set.full() {
             for (_idx2, element) in other_set.tuples.iter().enumerate() {
-                let mut new_tuple: Tuple = partial.clone();
+                let mut new_tuple: Tuple = Tuple::new();
 
                 let mut cell_index = 0;
                 while cell_index < element.cell_count() {
@@ -242,6 +250,27 @@ impl ResultSet {
                 }
                 
                 new_set.tuples.push(new_tuple);
+            }
+        } else if self.full() && other_set.empty() {
+            for (_idxr, partial) in self.tuples.iter().enumerate() {
+                let new_tuple: Tuple = partial.clone();
+
+                new_set.tuples.push(new_tuple);
+            }
+        } else {
+            for (_idxr, partial) in self.tuples.iter().enumerate() {
+                for (_idx2, element) in other_set.tuples.iter().enumerate() {
+                    let mut new_tuple: Tuple = partial.clone();
+
+                    let mut cell_index = 0;
+                    while cell_index < element.cell_count() {
+                        let cell = element.get_cell(cell_index);
+                        new_tuple.append_cell(cell);
+                        cell_index += 1;
+                    }
+                    
+                    new_set.tuples.push(new_tuple);
+                }
             }
         }
 

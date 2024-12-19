@@ -252,8 +252,9 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
             }
         }
 
-        let tuples = machine.product_cartesian(&db_name, table_names);
-        return Ok(ResultSet::new_select(columns, tuples))
+        let result_set = machine.product_cartesian(&db_name, table_names);
+        let proj_result_set = result_set.projection(columns).unwrap();
+        return Ok(proj_result_set)
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
     }

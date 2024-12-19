@@ -232,6 +232,35 @@ impl Machine {
         return ResultSet::new_select(columns, tuples)
     }
 
+    pub fn get_columns(
+        &mut self,
+        db_name: &String,
+        table_name: &String
+    ) -> Vec<Column> {
+        let mut columns: Vec<Column> = Vec::new();
+
+        let tuples: Vec<Tuple> = self.read_tuples(
+            &Config::system_database(),
+            &Config::system_database_table_columns()
+        ).into_iter()
+            .filter(|tuple| {
+                return tuple.get_string(0).unwrap() == *db_name &&
+                    tuple.get_string(1).unwrap() == *table_name 
+            })
+            .collect();
+
+        for elem in tuples.into_iter() {
+            columns.push(
+                Column::new_column(
+                    elem.get_string(2).unwrap(),
+                    ColumnType::Varchar
+                )
+            );
+        }
+
+        return columns;
+    }
+
     pub fn insert_tuples(
         &mut self,
         database_name: &String, 
@@ -265,35 +294,20 @@ impl Machine {
         &mut self,
         db_name: &String,
         table_names: Vec<String>
-    ) -> Vec<Tuple> {
-        let mut list_tuples: Vec<Vec<Tuple>> = Vec::new();
+    ) -> ResultSet {
+        let columns = Vec::<Column>::new();
+        let tuples: Vec<Tuple> = Vec::new();
+        let mut result_set = ResultSet::new_select(columns, tuples);
+        
+        for (_dx, table_name) in table_names.iter().enumerate() {
+            let columns1 = self.get_columns(db_name, table_name);
+            let tuples1: Vec<Tuple> = self.read_tuples(db_name, &table_name);
+            let result_set1 = ResultSet::new_select(columns1, tuples1);
 
-        for table_name in table_names {
-            list_tuples.push(self.read_tuples(&db_name, &table_name));
+            result_set = result_set.cartesian_product(&result_set1);
         }
 
-        let mut result: Vec<Tuple> = vec![Tuple::new()]; 
-        for (_idx, array) in list_tuples.iter().enumerate() {
-            let mut temp: Vec<Tuple> = vec![];
-
-            for (_idxr, partial) in result.iter().enumerate() {
-                for (_idx2, element) in array.iter().enumerate() {
-                    let mut new_tuple: Tuple = partial.clone();
-
-                    let mut cell_index = 0;
-                    while cell_index < element.cell_count() {
-                        let cell = element.get_cell(cell_index);
-                        new_tuple.append_cell(cell);
-                        cell_index += 1;
-                    }
-                    
-                    temp.push(new_tuple);
-                }
-            }
-            result = temp;
-        }
-
-        return result;
+        return result_set;
     }
 
 }

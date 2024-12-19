@@ -80,7 +80,7 @@ impl Column {
 
 impl PartialEq for Column {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
+        self.name == other.name && self.table_name == other.table_name
     }
 }
 impl Eq for Column {}
