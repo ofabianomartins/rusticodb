@@ -234,6 +234,44 @@ impl ResultSet {
         Ok(ResultSet::new_select(columns, tuples))
     }
 
+    pub fn limit(&self, size: usize) -> ResultSet {
+        let mut columns: Vec<Column> = Vec::new();
+        let mut tuples: Vec<Tuple> = Vec::new();
+
+        for column in &self.columns {
+            columns.push(column.clone());
+        }
+
+        if size > self.tuples.len() {
+            for tuple in &self.tuples {
+                tuples.push(tuple.clone());
+            }
+        } else {
+            for index in 0..size {
+                let tuple: &Tuple = self.tuples.get(index).unwrap();
+                tuples.push(tuple.clone());
+            }
+        }
+
+        ResultSet::new_select(columns, tuples)
+    }
+
+    pub fn offset(&self, size: usize) -> ResultSet {
+        let mut columns: Vec<Column> = Vec::new();
+        let mut tuples: Vec<Tuple> = Vec::new();
+
+        for column in &self.columns {
+            columns.push(column.clone());
+        }
+
+        for index in size..self.tuples.len() {
+            let tuple: &Tuple = self.tuples.get(index).unwrap();
+            tuples.push(tuple.clone());
+        }
+
+        ResultSet::new_select(columns, tuples)
+    }
+
     pub fn cartesian_product(&self, other_set: &ResultSet) -> ResultSet {
         let new_columns: Vec<Column> = vec![self.columns.clone(), other_set.columns.clone()].concat();
         let mut new_set: ResultSet = ResultSet::new_select(new_columns, vec![]);

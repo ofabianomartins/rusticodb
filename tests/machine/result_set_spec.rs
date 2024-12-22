@@ -346,8 +346,8 @@ pub fn test_projection_in_two_columns() {
 
 #[test]
 pub fn test_cartesian_product_between_a_empty_and_full_result_sets() {
-    let mut columns: Vec<Column> = Vec::new();
-    let mut tuples: Vec<Tuple> = Vec::new();
+    let columns: Vec<Column> = Vec::new();
+    let tuples: Vec<Tuple> = Vec::new();
     let empty_set = ResultSet::new_select(columns, tuples);
 
     let mut columns1: Vec<Column> = Vec::new();
@@ -508,3 +508,149 @@ pub fn test_selection_of_two_result_set() {
     assert_eq!(new_set.column_count(), 3);
     // assert!(matches!(new_set_result, Ok(_new_set)));
 }
+
+#[test]
+pub fn test_limit_to_two_of_result_set() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("Renato"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+    let mut tuple2 = Tuple::new();
+    tuple2.push_string(&String::from("Renato"));
+    tuple2.push_string(&String::from("martins"));
+    tuple2.push_string(&String::from("United States"));
+    tuples.push(tuple2);
+
+    let result_set = ResultSet::new_select(columns.clone(), tuples);
+
+    let new_set = result_set.limit(1usize);
+
+    assert_eq!(new_set.line_count(), 1);
+    assert_eq!(new_set.column_count(), 3);
+}
+
+#[test]
+pub fn test_limit_bigger_than_of_result_set_size() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("Renato"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+    let mut tuple2 = Tuple::new();
+    tuple2.push_string(&String::from("Renato"));
+    tuple2.push_string(&String::from("martins"));
+    tuple2.push_string(&String::from("United States"));
+    tuples.push(tuple2);
+
+    let result_set = ResultSet::new_select(columns, tuples);
+
+    let new_set = result_set.limit(100usize);
+
+    assert_eq!(new_set.line_count(), 3);
+    assert_eq!(new_set.column_count(), 3);
+}
+
+#[test]
+pub fn test_offset_to_two_of_result_set_size() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("Renato"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+    let mut tuple2 = Tuple::new();
+    tuple2.push_string(&String::from("Renato"));
+    tuple2.push_string(&String::from("martins"));
+    tuple2.push_string(&String::from("United States"));
+    tuples.push(tuple2);
+
+    let result_set = ResultSet::new_select(columns.clone(), tuples);
+
+    let new_set = result_set.offset(1usize);
+
+    assert_eq!(new_set.line_count(), 2);
+    assert_eq!(new_set.column_count(), 3);
+
+    assert_eq!(
+      new_set.get_string(0, &String::from("name")).unwrap(),
+      String::from("Renato")
+    );
+}
+
+#[test]
+pub fn test_offset_bigger_of_result_set_size() {
+    let mut columns: Vec<Column> = Vec::new();
+    let mut tuples: Vec<Tuple> = Vec::new();
+
+    columns.push(Column::new_column(String::from("name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("last_name"), ColumnType::Varchar));
+    columns.push(Column::new_column(String::from("country"), ColumnType::Varchar));
+
+    let mut tuple = Tuple::new();
+    tuple.push_string(&String::from("fabiano"));
+    tuple.push_string(&String::from("martins"));
+    tuple.push_string(&String::from("Brazil"));
+    tuples.push(tuple);
+
+    let mut tuple1 = Tuple::new();
+    tuple1.push_string(&String::from("Renato"));
+    tuple1.push_string(&String::from("martins"));
+    tuple1.push_string(&String::from("Brazil"));
+    tuples.push(tuple1);
+
+    let mut tuple2 = Tuple::new();
+    tuple2.push_string(&String::from("Renato"));
+    tuple2.push_string(&String::from("martins"));
+    tuple2.push_string(&String::from("United States"));
+    tuples.push(tuple2);
+
+    let result_set = ResultSet::new_select(columns, tuples);
+
+    let new_set = result_set.offset(100usize);
+
+    assert_eq!(new_set.line_count(), 0);
+    assert_eq!(new_set.column_count(), 3);
+}
+
