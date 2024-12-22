@@ -30,29 +30,6 @@ fn get_order_by(order_by: Option<Vec<OrderByExpr>>) -> Result<Vec<(Expr, bool)>,
     Ok(order)
 }
 
-fn get_limit(limit: Option<ASTNode>) -> Result<u64, QueryError> {
-    match limit {
-        Some(ASTNode::Value(Value::Number(int, _))) => Ok(int.parse::<u64>().unwrap()),
-        None => Ok(u64::MAX),
-        _ => Err(QueryError::NotImplemented(format!(
-            "Invalid expression in limit clause: {:?}",
-            limit
-        ))),
-    }
-}
-
-fn get_offset(offset: Option<Offset>) -> Result<u64, QueryError> {
-    match offset {
-        None => Ok(0),
-        Some(offset) => match offset.value {
-            ASTNode::Value(Value::Number(rows, _)) => Ok(rows.parse::<u64>().unwrap()),
-            expr => Err(QueryError::ParseError(format!(
-                "Invalid expression in offset clause: Expected constant integer, got {:?}",
-                expr,
-            ))),
-        },
-    }
-}
 
 fn function_arg_to_expr(node: &FunctionArg) -> Result<&ASTNode, QueryError> {
     match node {
@@ -124,15 +101,6 @@ fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
 
 */
 
-#[derive(Debug)]
-pub struct Query {
-    pub select: Vec<Column>,
-    pub table: String,
-    // pub filter: Expr,
-    //  pub order_by: Vec<(Expr, bool)>,
-    //  pub limit: LimitClause,
-}
-
 #[derive(Fail, Debug)]
 pub enum QueryError {
     #[fail(display = "Failed to parse query. Chars remaining: {}", _0)]
@@ -151,13 +119,13 @@ pub enum QueryError {
     Overflow,
 }
 
-type QueryResult = (Vec<SelectItem>, Vec<TableWithJoins>, Option<ASTNode>);
+type QueryResult = (Vec<SelectItem>, Vec<TableWithJoins>, Option<ASTNode>, Option<Expr>, Option<Offset>);
 
 #[allow(clippy::type_complexity)]
 fn get_query_components(query: Box<Select>) -> Result<QueryResult, QueryError> {
     match *query.body {
         SetExpr::Select(select) => {
-            Ok((select.projection, select.from, select.selection))
+            Ok((select.projection, select.from, select.selection, query.limit, query.offset))
         },
         _ => Err(
             QueryError::NotImplemented(
@@ -180,9 +148,102 @@ fn get_table_name(relations: Vec<TableWithJoins>) -> Vec<String> {
     return result;
 }
 
+pub fn get_columns(
+    machine: &mut Machine,
+    projection: Vec<SelectItem>,
+    db_name: String,
+    table_names: Vec<String>
+) -> Vec<Column> {
+    let mut columns = Vec::<Column>::new();
+    for elem in &projection {
+        match elem {
+            SelectItem::UnnamedExpr(e) => {
+                columns.push(
+                    Column::new(
+                        db_name.clone(),
+                        String::from(""),
+                        e.to_string(),
+                        ColumnType::Varchar
+                    )
+                )
+            },
+            SelectItem::ExprWithAlias { expr, alias } => {
+                columns.push(
+                    Column::new_with_alias(
+                        db_name.clone(),
+                        String::from(""),
+                        expr.to_string(),
+                        alias.to_string(),
+                        ColumnType::Varchar
+                    )
+                )
+            },
+            SelectItem::Wildcard(_) => {
+                for table_name in &table_names {
+                    let list_column_from_table = machine.list_columns(
+                        db_name.clone(), 
+                        table_name.clone()
+                    );
+                    for line in list_column_from_table.tuples.clone().into_iter() {
+                        columns.push(
+                            Column::new(
+                                db_name.clone(),
+                                table_name.clone(),
+                                line.get_string(2).unwrap(),
+                                ColumnType::Varchar
+                            )
+                        )
+                    }
+                }
+            },
+            SelectItem::QualifiedWildcard(name, _options) => {
+                let list_column_from_table = machine.list_columns(
+                    db_name.clone(), 
+                    name.to_string()
+                );
+                for line in list_column_from_table.tuples.clone().into_iter() {
+                    columns.push(
+                        Column::new(
+                            db_name.clone(),
+                            name.to_string(),
+                            line.get_string(2).unwrap(),
+                            ColumnType::Varchar
+                        )
+                    )
+                }
+            },
+        }
+    }
+    return columns;
+}
+
+fn get_limit(limit: Option<ASTNode>) -> Result<u64, QueryError> {
+    match limit {
+        Some(ASTNode::Value(Value::Number(int, _))) => Ok(int.parse::<u64>().unwrap()),
+        None => Ok(u64::MAX),
+        _ => Err(QueryError::NotImplemented(format!(
+            "Invalid expression in limit clause: {:?}",
+            limit
+        ))),
+    }
+}
+
+fn get_offset(offset: Option<Offset>) -> Result<u64, QueryError> {
+    match offset {
+        None => Ok(0),
+        Some(offset) => match offset.value {
+            ASTNode::Value(Value::Number(rows, _)) => Ok(rows.parse::<u64>().unwrap()),
+            expr => Err(QueryError::ParseError(format!(
+                "Invalid expression in offset clause: Expected constant integer, got {:?}",
+                expr,
+            ))),
+        },
+    }
+}
+
 pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.context.actual_database.clone() {
-        let (projection, relations, _selection) = get_query_components(query).unwrap();
+        let (projection, relations, _selection, limit, offset) = get_query_components(query).unwrap();
         let table_names: Vec<String> = get_table_name(relations);
 
         for table_name in &table_names {
@@ -191,70 +252,20 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
             }
         }
 
-        let mut columns = Vec::<Column>::new();
-        for elem in &projection {
-            match elem {
-                SelectItem::UnnamedExpr(e) => {
-                    columns.push(
-                        Column::new(
-                            db_name.clone(),
-                            String::from(""),
-                            e.to_string(),
-                            ColumnType::Varchar
-                        )
-                    )
-                },
-                SelectItem::ExprWithAlias { expr, alias } => {
-                    columns.push(
-                        Column::new_with_alias(
-                            db_name.clone(),
-                            String::from(""),
-                            expr.to_string(),
-                            alias.to_string(),
-                            ColumnType::Varchar
-                        )
-                    )
-                },
-                SelectItem::Wildcard(_) => {
-                    for table_name in &table_names {
-                        let list_column_from_table = machine.list_columns(
-                            db_name.clone(), 
-                            table_name.clone()
-                        );
-                        for line in list_column_from_table.tuples.clone().into_iter() {
-                            columns.push(
-                                Column::new(
-                                    db_name.clone(),
-                                    table_name.clone(),
-                                    line.get_string(2).unwrap(),
-                                    ColumnType::Varchar
-                                )
-                            )
-                        }
-                    }
-                },
-                SelectItem::QualifiedWildcard(name, _options) => {
-                    let list_column_from_table = machine.list_columns(
-                        db_name.clone(), 
-                        name.to_string()
-                    );
-                    for line in list_column_from_table.tuples.clone().into_iter() {
-                        columns.push(
-                            Column::new(
-                                db_name.clone(),
-                                name.to_string(),
-                                line.get_string(2).unwrap(),
-                                ColumnType::Varchar
-                            )
-                        )
-                    }
-                },
-            }
+        let columns = get_columns(machine, projection, db_name.clone(), table_names.clone());
+
+        let mut result_set = machine.product_cartesian(&db_name, table_names);
+        result_set = result_set.projection(columns).unwrap();
+
+        if let Ok(limit_size) = get_limit(limit) {
+          result_set = result_set.limit(limit_size as usize);
         }
 
-        let result_set = machine.product_cartesian(&db_name, table_names);
-        let proj_result_set = result_set.projection(columns).unwrap();
-        return Ok(proj_result_set)
+        if let Ok(offset_size) = get_offset(offset) {
+          result_set = result_set.offset(offset_size as usize);
+        }
+        
+        return Ok(result_set)
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
     }

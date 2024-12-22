@@ -730,6 +730,25 @@ pub fn test_select_with_all_and_more_one_attr() {
 }
 
 #[test]
+pub fn test_select_with_limit_clause() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM columns LIMIT 2 ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.unwrap()[0].column_count(), 4);
+}
+
+#[test]
 pub fn test_select_with_all_where() {
     let context = Context::new();
     let pager = Pager::new();
