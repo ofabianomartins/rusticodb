@@ -10,6 +10,10 @@ use crate::machine::result_set::ResultSet;
 use crate::utils::execution_error::ExecutionError;
 use crate::machine::column::Column;
 use crate::machine::column::ColumnType;
+use crate::machine::raw_val::RawVal;
+use crate::machine::condition::Condition;
+use crate::machine::condition::Condition1Type;
+use crate::machine::condition::Condition2Type;
 
 fn strip_quotes(ident: &str) -> String {
     if ident.starts_with('`') || ident.starts_with('"') {
@@ -49,54 +53,6 @@ fn function_arg_to_expr(node: &FunctionArg) -> Result<&ASTNode, QueryError> {
 
 fn func_arg_to_native_expr(node: &FunctionArg) -> Result<Box<Expr>, QueryError> {
     convert_to_native_expr(function_arg_to_expr(node)?)
-}
-
-fn map_unary_operator(op: &UnaryOperator) -> Result<Func1Type, QueryError> {
-    Ok(match op {
-        UnaryOperator::Not => Func1Type::Not,
-        UnaryOperator::Minus => Func1Type::Negate,
-        _ => return Err(fatal!("Unexpected unary operator: {}", op)),
-    })
-}
-
-fn map_binary_operator(o: &BinaryOperator) -> Result<Func2Type, QueryError> {
-    Ok(match o {
-        BinaryOperator::And => Func2Type::And,
-        BinaryOperator::Plus => Func2Type::Add,
-        BinaryOperator::Minus => Func2Type::Subtract,
-        BinaryOperator::Multiply => Func2Type::Multiply,
-        BinaryOperator::Divide => Func2Type::Divide,
-        BinaryOperator::Modulo => Func2Type::Modulo,
-        BinaryOperator::Gt => Func2Type::GT,
-        BinaryOperator::GtEq => Func2Type::GTE,
-        BinaryOperator::Lt => Func2Type::LT,
-        BinaryOperator::LtEq => Func2Type::LTE,
-        BinaryOperator::Eq => Func2Type::Equals,
-        BinaryOperator::NotEq => Func2Type::NotEquals,
-        BinaryOperator::Or => Func2Type::Or,
-        _ => {
-            return Err(QueryError::NotImplemented(format!(
-                "Unsupported operator {:?}",
-                o
-            )))
-        }
-    })
-}
-
-// Fn to map sqlparser-rs `Value` to LocustDB's `RawVal`.
-fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
-    match constant {
-        Value::Number(num, _) => {
-            if num.parse::<i64>().is_ok() {
-                Ok(RawVal::Int(num.parse::<i64>().unwrap()))
-            } else {
-                Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
-            }
-        },
-        Value::SingleQuotedString(string) => Ok(RawVal::Str(string.to_string())),
-        Value::Null => Ok(RawVal::Null),
-        _ => Err(QueryError::NotImplemented(format!("{:?}", constant))),
-    }
 }
 
 */
@@ -241,9 +197,89 @@ fn get_offset(offset: Option<Offset>) -> Result<u64, QueryError> {
     }
 }
 
+fn map_binary_operator(o: &BinaryOperator) -> Result<Condition2Type, QueryError> {
+    Ok(match o {
+//        BinaryOperator::And => Func2Type::And,
+//        BinaryOperator::Plus => Func2Type::Add,
+//        BinaryOperator::Minus => Func2Type::Subtract,
+//        BinaryOperator::Multiply => Func2Type::Multiply,
+//        BinaryOperator::Divide => Func2Type::Divide,
+//        BinaryOperator::Modulo => Func2Type::Modulo,
+//        BinaryOperator::Gt => Func2Type::GT,
+//        BinaryOperator::GtEq => Func2Type::GTE,
+//        BinaryOperator::Lt => Func2Type::LT,
+//        BinaryOperator::LtEq => Func2Type::LTE,
+        BinaryOperator::Eq => Condition2Type::Equal,
+//        BinaryOperator::NotEq => Func2Type::NotEquals,
+//        BinaryOperator::Or => Func2Type::Or,
+        _ => {
+            return Err(QueryError::NotImplemented(format!(
+                "Unsupported operator {:?}",
+                o
+            )))
+        }
+    })
+}
+
+fn map_unary_operator(op: &UnaryOperator) -> Result<Condition1Type, QueryError> {
+    Ok(match op {
+        UnaryOperator::Not => Condition1Type::Not,
+        UnaryOperator::Minus => Condition1Type::Negate,
+        _ => {
+            return Err(QueryError::NotImplemented(format!(
+                "Unsupported operator {:?}",
+                op
+            )))
+        }
+    })
+}
+
+
+// Fn to map sqlparser-rs `Value` to LocustDB's `RawVal`.
+fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
+    match constant {
+        Value::Number(num, _) => {
+            if num.parse::<i64>().is_ok() {
+                Ok(RawVal::Int(num.parse::<i64>().unwrap()))
+            } else {
+                Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
+            }
+        },
+        Value::SingleQuotedString(string) => Ok(RawVal::Str(string.to_string())),
+        Value::Null => Ok(RawVal::Null),
+        _ => Err(QueryError::NotImplemented(format!("{:?}", constant))),
+    }
+}
+
+fn convert_to_native_expr(node: &ASTNode) -> Result<Condition, QueryError> {
+    Ok(match node {
+        ASTNode::BinaryOp {
+            ref left,
+            ref op,
+            ref right,
+        } => Condition::Func2(
+            map_binary_operator(op)?,
+            Box::new(convert_to_native_expr(left)?),
+            Box::new(convert_to_native_expr(right)?)
+        ),
+        ASTNode::UnaryOp {
+            ref op,
+            expr: ref expression,
+        } => Condition::Func1(map_unary_operator(op)?, Box::new(convert_to_native_expr(expression)?)),
+        ASTNode::Value(ref literal) => Condition::Const(get_raw_val(literal)?),
+        ASTNode::Identifier(ref identifier) => {
+            Condition::ColName(strip_quotes(identifier.value.as_ref()))
+        }
+        _ => {
+            println!("Parsing for this ASTNode not implemented: {:?}", node);
+            return Err(QueryError::NotImplemented(format!("Parsing for this ASTNode not implemented: {:?}", node)))
+        }
+    })
+}
+
 pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.context.actual_database.clone() {
-        let (projection, relations, _selection, limit, offset) = get_query_components(query).unwrap();
+        let (projection, relations, selection, limit, offset) = get_query_components(query).unwrap();
         let table_names: Vec<String> = get_table_name(relations);
 
         for table_name in &table_names {
@@ -263,6 +299,12 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
 
         if let Ok(offset_size) = get_offset(offset) {
           result_set = result_set.offset(offset_size as usize);
+        }
+
+        if let Some(selection_value) = &selection {
+            if let Ok(condition) = convert_to_native_expr(selection_value) {
+              result_set = result_set.selection(condition).unwrap();
+            }
         }
         
         return Ok(result_set)

@@ -1,8 +1,8 @@
 use rusticodb::machine::result_set::ResultSet;
 use rusticodb::machine::column::{Column, ColumnType};
-use rusticodb::machine::filter::Filter;
-use rusticodb::machine::filter::Condition;
-use rusticodb::machine::filter::ConditionType;
+use rusticodb::machine::condition::Condition;
+use rusticodb::machine::condition::Condition2Type;
+use rusticodb::machine::raw_val::RawVal;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::storage::tuple::Tuple;
 
@@ -492,21 +492,18 @@ pub fn test_selection_of_two_result_set() {
 
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
-    let mut conditions: Vec<Condition> = Vec::new();
+    let condition = Condition::Func2(
+        Condition2Type::Equal,
+        Box::new(Condition::ColName(String::from("name"))),
+        Box::new(Condition::Const(RawVal::Str(String::from("fabiano"))))
+    );
 
-    let value = String::from("fabiano");
-
-    conditions.push(Condition::new(String::from("name"), ConditionType::Equal, value.as_bytes().to_vec()));
-
-    let filters = Filter::new(conditions);
-
-    let new_set_result = result_set.selection(filters);
+    let new_set_result = result_set.selection(condition);
 
     let new_set = new_set_result.unwrap();
 
     assert_eq!(new_set.line_count(), 1);
     assert_eq!(new_set.column_count(), 3);
-    // assert!(matches!(new_set_result, Ok(_new_set)));
 }
 
 #[test]

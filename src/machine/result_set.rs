@@ -4,9 +4,7 @@ use std::vec::Vec;
 use crate::utils::execution_error::ExecutionError;
 use crate::storage::tuple::Tuple;
 use crate::machine::column::Column;
-use crate::machine::filter::Filter;
-use crate::machine::filter::Condition;
-use crate::machine::filter::ConditionType;
+use crate::machine::condition::Condition;
 
 #[derive(Debug)]
 pub struct ResultSet {
@@ -217,7 +215,7 @@ impl ResultSet {
         return Ok(new_set);
     }
 
-    pub fn selection(&self, filter: Filter) -> Result<ResultSet, ExecutionError> {
+    pub fn selection(&self, condition: Condition) -> Result<ResultSet, ExecutionError> {
         let mut columns: Vec<Column> = Vec::new();
         let mut tuples: Vec<Tuple> = Vec::new();
 
@@ -226,7 +224,7 @@ impl ResultSet {
         }
 
         for tuple in &self.tuples {
-            if filter.filter(tuple, &self.columns) {
+            if condition.evaluate(tuple, &self.columns) {
                 tuples.push(tuple.clone());
             }
         }
