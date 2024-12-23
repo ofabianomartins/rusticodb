@@ -362,6 +362,10 @@ impl Cell {
     }
 
     pub fn to_string(&self) -> String {
+        if self.data.len() == 0 {
+            return String::from("NULL");
+        }
+
         if self.data[0] == (CellType::Boolean as u8) {
             if let Ok(value) = self.bin_to_boolean() {
                 return value.to_string();
