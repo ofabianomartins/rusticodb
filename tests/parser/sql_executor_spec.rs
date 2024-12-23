@@ -767,3 +767,64 @@ pub fn test_select_with_all_where() {
     assert_eq!(result_set.unwrap()[0].column_count(), 4);
 }
 
+#[test]
+pub fn test_select_with_all_where_with_not_equal() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("SELECT * FROM columns WHERE table_name != 'tables' ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
+    assert_eq!(result_set.unwrap()[0].column_count(), 4);
+}
+
+#[test]
+pub fn test_select_with_all_where_with_and_conditions() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command(
+        "SELECT * FROM columns WHERE table_name = 'tables' and database_name = 'rusticodb'"
+    );
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.unwrap()[0].column_count(), 4);
+}
+
+#[test]
+pub fn test_select_with_all_where_with_or_conditions() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command(
+        "SELECT * FROM columns WHERE table_name = 'tables' or table_name = 'databases'"
+    );
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 3);
+    assert_eq!(result_set.unwrap()[0].column_count(), 4);
+}
+

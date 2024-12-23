@@ -199,7 +199,10 @@ fn get_offset(offset: Option<Offset>) -> Result<u64, QueryError> {
 
 fn map_binary_operator(o: &BinaryOperator) -> Result<Condition2Type, QueryError> {
     Ok(match o {
-//        BinaryOperator::And => Func2Type::And,
+        BinaryOperator::And => Condition2Type::And,
+        BinaryOperator::Or => Condition2Type::Or,
+        BinaryOperator::Eq => Condition2Type::Equal,
+        BinaryOperator::NotEq => Condition2Type::NotEqual,
 //        BinaryOperator::Plus => Func2Type::Add,
 //        BinaryOperator::Minus => Func2Type::Subtract,
 //        BinaryOperator::Multiply => Func2Type::Multiply,
@@ -209,9 +212,6 @@ fn map_binary_operator(o: &BinaryOperator) -> Result<Condition2Type, QueryError>
 //        BinaryOperator::GtEq => Func2Type::GTE,
 //        BinaryOperator::Lt => Func2Type::LT,
 //        BinaryOperator::LtEq => Func2Type::LTE,
-        BinaryOperator::Eq => Condition2Type::Equal,
-//        BinaryOperator::NotEq => Func2Type::NotEquals,
-//        BinaryOperator::Or => Func2Type::Or,
         _ => {
             return Err(QueryError::NotImplemented(format!(
                 "Unsupported operator {:?}",

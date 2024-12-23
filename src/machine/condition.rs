@@ -25,6 +25,7 @@ pub enum Condition2Type {
     In,
     Like,
     Equal,
+    NotEqual,
     Greather,
     GreatherThan,
     Less,
@@ -45,12 +46,13 @@ impl Condition {
                 }
             },
             Condition::Func2(operator, opr1, opr2) => {
+                let value_opr1 = opr1.evaluate_value(tuple, columns);
+                let value_opr2 = opr2.evaluate_value(tuple, columns);
                 match operator {
-                    Condition2Type::Equal => {
-                        let value_opr1 = opr1.evaluate_value(tuple, columns);
-                        let value_opr2 = opr2.evaluate_value(tuple, columns);
-                        return value_opr1 == value_opr2;
-                    },
+                    Condition2Type::And => value_opr1 == vec![1] && value_opr2 == vec![1],
+                    Condition2Type::Or => value_opr1 == vec![1] || value_opr2 == vec![1],
+                    Condition2Type::Equal => value_opr1 == value_opr2,
+                    Condition2Type::NotEqual => value_opr1 != value_opr2,
                     _ => false
                 }
             },
