@@ -10,3 +10,4 @@ pub mod drop_table;
 pub mod show_tables;
 
 pub mod query;
+pub mod insert;

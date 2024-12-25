@@ -16,6 +16,7 @@ use crate::parser::show_tables::show_tables;
 use crate::parser::create_table::create_table;
 use crate::parser::drop_table::drop_table;
 use crate::parser::query::query;
+use crate::parser::insert::insert;
 
 pub struct SqlExecutor {
     pub machine: Machine
@@ -76,6 +77,7 @@ impl SqlExecutor {
                     }
                 }
             },
+            Statement::Insert(statement) => insert(&mut self.machine, statement),
             Statement::Query(statement) => query(&mut self.machine, statement),
             Statement::ShowDatabases { .. } => show_databases(&mut self.machine),
             Statement::ShowTables { .. } => show_tables(&mut self.machine),
