@@ -1,5 +1,6 @@
 use sqlparser::ast::ColumnDef;
 use sqlparser::ast::ColumnOption;
+use sqlparser::ast::DataType;
 
 use crate::config::Config;
 use crate::storage::pager::Pager;
@@ -121,7 +122,14 @@ impl Machine {
                 ColumnType::Varchar
             );
 
+            let mut type_column: String = String::from("");
             let mut notnull_column: bool = false;
+
+            match column.data_type {
+                DataType::Integer(None) => { type_column = String::from("INTEGER") },
+                DataType::Varchar(None) => { type_column = String::from("VARCHAR") }
+                _ => {}
+            }
 
             for option in &column.options {
                 match option.option {
@@ -135,7 +143,7 @@ impl Machine {
             tuple.push_string(&database_name);
             tuple.push_string(&table_name);
             tuple.push_string(&column.name.to_string());
-            tuple.push_string(&column.name.to_string());
+            tuple.push_string(&type_column);
             tuple.push_boolean(notnull_column);
             tuples.push(tuple);
 

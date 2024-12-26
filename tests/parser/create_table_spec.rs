@@ -11,7 +11,7 @@ use rusticodb::storage::pager::Pager;
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
-pub fn test_create_table_metadata_file() {
+pub fn test_metadata_file() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -36,7 +36,7 @@ pub fn test_create_table_metadata_file() {
 }
 
 #[test]
-pub fn test_create_table_without_set_database() {
+pub fn test_without_set_database() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -67,7 +67,7 @@ pub fn test_create_table_without_set_database() {
 }
 
 #[test]
-pub fn test_create_table_that_already_exists() {
+pub fn test_that_already_exists() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -95,7 +95,7 @@ pub fn test_create_table_that_already_exists() {
 }
 
 #[test]
-pub fn test_create_table_with_if_not_exists() {
+pub fn test_with_if_not_exists() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -123,7 +123,7 @@ pub fn test_create_table_with_if_not_exists() {
 }
 
 #[test]
-pub fn test_create_table_with_two_columns() {
+pub fn test_with_two_columns() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -152,7 +152,7 @@ pub fn test_create_table_with_two_columns() {
 }
 
 #[test]
-pub fn test_create_table_with_two_columns_and_one_is_not_null() {
+pub fn test_with_two_columns_and_one_is_not_null() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -194,5 +194,53 @@ pub fn test_create_table_with_two_columns_and_one_is_not_null() {
     assert_eq!(
         result_set.unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
         true
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 INTEGER NOT NULL, name2 VARCHAR NOT NULL)");
+
+    let database_name = String::from("database1");
+    let table_name = String::from("table1");
+    let column_name1 = String::from("name1");
+    let column_name2 = String::from("name2");
+    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
+    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
+
+    let table_filename = format!("{}/database1/table1.db", Config::data_folder());
+    assert!(Path::new(&table_filename).exists());
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    println!("{}", result_set.as_ref().unwrap()[0]);
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 5);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
+        String::from("INTEGER")
+    );
+    assert_eq!(
+        result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("VARCHAR")
     );
 }
