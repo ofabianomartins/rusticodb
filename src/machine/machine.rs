@@ -124,8 +124,11 @@ impl Machine {
 
             let mut type_column: String = String::from("");
             let mut notnull_column: bool = false;
+            let mut unique_column: bool = false;
+            let mut primary_key_column: bool = false;
 
             match column.data_type {
+                DataType::BigInt(None) => { type_column = String::from("BIGINT") },
                 DataType::Integer(None) => { type_column = String::from("INTEGER") },
                 DataType::Varchar(None) => { type_column = String::from("VARCHAR") }
                 _ => {}
@@ -134,6 +137,11 @@ impl Machine {
             for option in &column.options {
                 match option.option {
                     ColumnOption::NotNull => { notnull_column = true }
+                    ColumnOption::Unique { is_primary, ..} => {
+                        notnull_column = true;
+                        unique_column = true;
+                        primary_key_column = is_primary;
+                    }
                     _ => {}
                 }
             }
@@ -145,6 +153,8 @@ impl Machine {
             tuple.push_string(&column.name.to_string());
             tuple.push_string(&type_column);
             tuple.push_boolean(notnull_column);
+            tuple.push_boolean(unique_column);
+            tuple.push_boolean(primary_key_column);
             tuples.push(tuple);
 
             self.insert_tuples(

@@ -185,7 +185,7 @@ pub fn test_with_two_columns_and_one_is_not_null() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 5);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 7);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -229,11 +229,9 @@ pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
-    println!("{}", result_set.as_ref().unwrap()[0]);
-
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 5);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 7);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -242,5 +240,50 @@ pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
     assert_eq!(
         result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
         String::from("VARCHAR")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key() {
+    let context = Context::new();
+    let pager = Pager::new();
+    let machine = Machine::new(pager, context);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
+
+    let table_filename = format!("{}/database1/table1.db", Config::data_folder());
+    assert!(Path::new(&table_filename).exists());
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 7);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
+        String::from("BIGINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("unique")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
+        true
     );
 }
