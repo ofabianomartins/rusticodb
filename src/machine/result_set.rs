@@ -71,6 +71,16 @@ impl ResultSet {
         }
     }
 
+    pub fn get_boolean(&self, index: usize, column_name: &String) -> Result<bool, ExecutionError> {
+        match &mut self.get_column_position(column_name) {
+            Some(position) => match self.tuples.get(index) {
+                Some(tuple) => tuple.get_boolean(*position as u16),
+                None => Err(ExecutionError::NoneExists)
+            },
+            None => Err(ExecutionError::NoneExists)
+        }
+    }
+
     pub fn get_unsigned_tinyint(&self, index: usize, column_name: &String) -> Result<u8, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {

@@ -168,6 +168,14 @@ impl Tuple {
         return self.get_cell(position).bin_to_text();
     }
 
+    pub fn get_boolean(&self, position: u16) -> Result<bool, ExecutionError> {
+        if position >= self.cell_count() {
+            return Ok(false);
+        }
+
+        return self.get_cell(position).bin_to_boolean();
+    }
+
     pub fn get_unsigned_tinyint(&self, position: u16) -> Result<u8, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(0);

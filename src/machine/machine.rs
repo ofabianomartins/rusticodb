@@ -1,4 +1,5 @@
 use sqlparser::ast::ColumnDef;
+use sqlparser::ast::ColumnOption;
 
 use crate::config::Config;
 use crate::storage::pager::Pager;
@@ -120,11 +121,22 @@ impl Machine {
                 ColumnType::Varchar
             );
 
+            let mut notnull_column: bool = false;
+
+            for option in &column.options {
+                match option.option {
+                    ColumnOption::NotNull => { notnull_column = true }
+                    _ => {}
+                }
+            }
+
             let mut tuples: Vec<Tuple> = Vec::new();
             let mut tuple: Tuple = Tuple::new();
             tuple.push_string(&database_name);
             tuple.push_string(&table_name);
             tuple.push_string(&column.name.to_string());
+            tuple.push_string(&column.name.to_string());
+            tuple.push_boolean(notnull_column);
             tuples.push(tuple);
 
             self.insert_tuples(

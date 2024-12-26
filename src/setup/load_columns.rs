@@ -14,6 +14,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_databases());
     tuple.push_string(&String::from("name"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
@@ -21,6 +22,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_tables());
     tuple.push_string(&String::from("database_name"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
@@ -28,6 +30,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_tables());
     tuple.push_string(&String::from("name"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
@@ -35,6 +38,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_columns());
     tuple.push_string(&String::from("database_name"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
@@ -42,6 +46,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_columns());
     tuple.push_string(&String::from("table_name"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
@@ -49,6 +54,7 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_columns());
     tuple.push_string(&String::from("name"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
@@ -56,6 +62,15 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_string(&Config::system_database_table_columns());
     tuple.push_string(&String::from("type"));
     tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::system_database_table_columns());
+    tuple.push_string(&String::from("not_null"));
+    tuple.push_string(&String::from("TINYINT"));
+    tuple.push_boolean(true);
     tuples.push(tuple);
 
     OsInterface::create_file(

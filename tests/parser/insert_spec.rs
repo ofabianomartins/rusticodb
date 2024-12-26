@@ -1,7 +1,5 @@
-use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
-use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::pager::Pager;
