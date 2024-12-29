@@ -194,8 +194,8 @@ pub fn test_select_with_two_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 100);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 14);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 361);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 16);
 }
 
 #[test]
@@ -213,8 +213,8 @@ pub fn test_select_with_three_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b, columns c");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 1000);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 21);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 6859);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 24);
 }
 
 #[test]
@@ -232,8 +232,8 @@ pub fn test_select_with_all_and_more_one_attr() {
     let result_set = sql_executor.parse_command("SELECT *, name FROM columns");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 10);
-    assert_eq!(result_set.unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 19);
+    assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
 #[test]
@@ -252,11 +252,11 @@ pub fn test_select_with_limit_clause() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 
 #[test]
-pub fn test_select_with_all_where() {
+pub fn test_select_with_all_where_equal() {
     let context = Context::new();
     let pager = Pager::new();
     let machine = Machine::new(pager, context);
@@ -270,8 +270,8 @@ pub fn test_select_with_all_where() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns WHERE table_name = 'tables' ");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 3);
+    assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 
 #[test]
@@ -288,9 +288,10 @@ pub fn test_select_with_all_where_with_not_equal() {
     let _ = sql_executor.parse_command("USE rusticodb;");
     let result_set = sql_executor.parse_command("SELECT * FROM columns WHERE table_name != 'tables' ");
 
+
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 8);
-    assert_eq!(result_set.unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 16);
+    assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 
 #[test]
@@ -310,8 +311,8 @@ pub fn test_select_with_all_where_with_and_conditions() {
     );
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 3);
+    assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 
 
@@ -332,6 +333,6 @@ pub fn test_select_with_all_where_with_or_conditions() {
     );
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 3);
-    assert_eq!(result_set.unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
+    assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }

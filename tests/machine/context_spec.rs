@@ -1,4 +1,5 @@
 use rusticodb::machine::{column::ColumnType, context::Context};
+use rusticodb::machine::table::Table;
 
 #[test]
 pub fn test_if_actual_database_exists_on_system_to_context() {
@@ -49,7 +50,8 @@ pub fn test_if_table_is_add_to_context() {
     let mut context = Context::new();
 
     assert!(context.add_table(database1.clone(), table1.clone()));
-    assert!(context.check_table_exists(&database1, &table1));
+    let table = Table::new(database1.clone(), table1.clone());
+    assert!(context.check_table_exists(&table));
 }
 
 #[test]
@@ -59,7 +61,8 @@ pub fn test_if_table_of_the_same_database_is_add_twice_failed_on_second() {
     let mut context = Context::new();
 
     assert!(context.add_table(database1.clone(), table1.clone()));
-    assert!(context.check_table_exists(&database1, &table1));
+    let table = Table::new(database1.clone(), table1.clone());
+    assert!(context.check_table_exists(&table));
     assert_eq!(context.add_table(database1, table1), false);
 }
 

@@ -1,5 +1,5 @@
 use sqlparser::ast::ObjectType;
-use sqlparser::dialect::GenericDialect;
+use sqlparser::dialect::PostgreSqlDialect;
 use sqlparser::parser::Parser;
 use sqlparser::parser::ParserError;
 use sqlparser::ast::Statement;
@@ -10,12 +10,17 @@ use crate::utils::execution_error::ExecutionError;
 
 use crate::parser::use_database::use_database;
 use crate::parser::show_databases::show_databases;
-use crate::parser::create_database::create_database;
-use crate::parser::drop_database::drop_database;
 use crate::parser::show_tables::show_tables;
+
+use crate::parser::create_database::create_database;
 use crate::parser::create_table::create_table;
+use crate::parser::create_sequence::create_sequence;
+
+use crate::parser::drop_database::drop_database;
 use crate::parser::drop_table::drop_table;
+
 use crate::parser::query::query;
+
 use crate::parser::insert::insert;
 
 pub struct SqlExecutor {
@@ -36,7 +41,7 @@ impl SqlExecutor {
     }
 
     pub fn parse_command(&mut self, sql_command: &str) -> Result<Vec<ResultSet>, ExecutionError> { 
-        let dialect = GenericDialect {};
+        let dialect = PostgreSqlDialect {};
 
         match Parser::parse_sql(&dialect, sql_command) {
             Ok(commands) => {
@@ -67,6 +72,16 @@ impl SqlExecutor {
                 create_database(&mut self.machine, db_name.to_string(), if_not_exists)
             },
             Statement::CreateTable(statement) => create_table(&mut self.machine, statement),
+            Statement::CreateSequence { name, data_type, sequence_options, owned_by, if_not_exists, .. } => { 
+                create_sequence(
+                    &mut self.machine,
+                    name,
+                    data_type,
+                    owned_by,
+                    if_not_exists,
+                    sequence_options
+                )
+            },
             Statement::Drop { object_type, if_exists, names, .. } => {
                 match object_type {
                     ObjectType::Database => drop_database(&mut self.machine, names, if_exists),

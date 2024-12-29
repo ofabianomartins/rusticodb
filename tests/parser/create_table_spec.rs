@@ -3,6 +3,7 @@ use std::path::Path;
 use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
+use rusticodb::machine::table::Table;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -28,7 +29,8 @@ pub fn test_metadata_file() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    let table = Table::new(database_name, table_name);
+    assert!(sql_executor.machine.context.check_table_exists(&table));
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
@@ -59,7 +61,8 @@ pub fn test_without_set_database() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert_eq!(sql_executor.machine.context.check_table_exists(&database_name, &table_name), false);
+    let table = Table::new(database_name, table_name);
+    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
     assert!(matches!(sql_executor.machine.context.actual_database, None));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
@@ -87,7 +90,8 @@ pub fn test_that_already_exists() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    let table = Table::new(database_name, table_name);
+    assert!(sql_executor.machine.context.check_table_exists(&table));
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
@@ -115,7 +119,8 @@ pub fn test_with_if_not_exists() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    let table = Table::new(database_name, table_name);
+    assert!(sql_executor.machine.context.check_table_exists(&table));
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
@@ -142,7 +147,8 @@ pub fn test_with_two_columns() {
     let column_name1 = String::from("name1");
     let column_name2 = String::from("name2");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    let table = Table::new(database_name.clone(), table_name.clone());
+    assert!(sql_executor.machine.context.check_table_exists(&table));
     assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
     assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
@@ -171,7 +177,8 @@ pub fn test_with_two_columns_and_one_is_not_null() {
     let column_name1 = String::from("name1");
     let column_name2 = String::from("name2");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    let table = Table::new(database_name.clone(), table_name.clone());
+    assert!(sql_executor.machine.context.check_table_exists(&table));
     assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
     assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
 
@@ -185,7 +192,7 @@ pub fn test_with_two_columns_and_one_is_not_null() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -217,7 +224,8 @@ pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
     let column_name1 = String::from("name1");
     let column_name2 = String::from("name2");
     assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert!(sql_executor.machine.context.check_table_exists(&database_name, &table_name));
+    let table = Table::new(database_name.clone(), table_name.clone());
+    assert!(sql_executor.machine.context.check_table_exists(&table));
     assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
     assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
 
@@ -231,7 +239,7 @@ pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -268,7 +276,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 7);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),

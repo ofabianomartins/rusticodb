@@ -213,7 +213,7 @@ impl ResultSet {
         let mut new_set: ResultSet = ResultSet::new_select(projection_columns, vec![]);
 
         for (_idxr, partial) in self.tuples.iter().enumerate() {
-            let mut new_tuple: Tuple = partial.clone();
+            let mut new_tuple: Tuple = Tuple::new();
 
             for (_idxr, cell_index) in column_indexes.iter().enumerate() {
                 new_tuple.append_cell(partial.get_cell(*cell_index));
@@ -372,7 +372,7 @@ impl fmt::Display for ResultSet {
 
                 let _ = write!(f, "|");
                 for (cell_index, column) in self.columns.iter().enumerate() {
-                    let _ = write!(f, " {}", column);
+                    let _ = write!(f, " {}", column.alias);
 
                     let adjust_column_size = column_length.get(cell_index as usize).unwrap() - (column.name.len() as u64);
                     print_complete_cell(f, adjust_column_size);

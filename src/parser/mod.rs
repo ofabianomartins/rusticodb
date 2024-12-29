@@ -9,5 +9,7 @@ pub mod create_table;
 pub mod drop_table;
 pub mod show_tables;
 
+pub mod create_sequence;
+
 pub mod query;
 pub mod insert;

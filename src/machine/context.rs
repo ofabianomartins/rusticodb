@@ -58,25 +58,27 @@ impl Context {
     }
 
     pub fn add_table(&mut self, database_name: String, name: String) -> bool {
-        if self.check_table_exists(&database_name, &name) == true {
+        let table = Table::new(database_name, name);
+        if self.check_table_exists(&table) == true {
             return false
         }
-        self.tables.push(Table::new(database_name, name));
+        self.tables.push(table);
         return true;
     }
 
     pub fn remove_table(&mut self, database_name: String, name: String) -> bool {
-        if let Some(index) = self.tables.iter().position(|x| x.check_name(&database_name, &name)) {
+        let table = Table::new(database_name, name);
+        if let Some(index) = self.tables.iter().position(|x| *x == table) {
             self.tables.remove(index);
             return true;
         }
         return false;
     }
 
-    pub fn check_table_exists(&self, database_name: &String, name: &String) -> bool {
+    pub fn check_table_exists(&self, table: &Table) -> bool {
         let mut found = false;
         for elem in &self.tables {
-            if elem.check_name(database_name, name) == true {
+            if elem == table {
                 found = true;
                 break;
             }

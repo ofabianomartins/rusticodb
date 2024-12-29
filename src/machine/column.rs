@@ -3,7 +3,9 @@ use std::fmt;
 #[derive(Debug, Clone)]
 pub struct Column {
     pub database_name: String,
+    pub database_alias: String,
     pub table_name: String,
+    pub table_alias: String,
     pub name: String,
     pub alias: String,
     pub column_type: ColumnType
@@ -33,8 +35,10 @@ impl Column {
         column_type: ColumnType
     ) -> Self {
         Column { 
-            database_name, 
-            table_name, 
+            database_name: database_name.clone(), 
+            database_alias: database_name,
+            table_name: table_name.clone(), 
+            table_alias: table_name, 
             name: name.clone(), 
             alias: name, 
             column_type 
@@ -43,27 +47,21 @@ impl Column {
 
     pub fn new_with_alias(
         database_name: String,
+        database_alias: String,
         table_name: String,
+        table_alias: String,
         name: String,
         alias: String,
         column_type: ColumnType
     ) -> Self {
         Column { 
             database_name, 
+            database_alias, 
             table_name, 
+            table_alias, 
             name, 
             alias, 
             column_type 
-        }
-    }
-
-    pub fn new_column(name: String, column_type: ColumnType) -> Self {
-        Column {
-            database_name: String::from(""), 
-            table_name: String::from(""), 
-            name: name.clone(),
-            alias: name,
-            column_type
         }
     }
 
@@ -80,14 +78,14 @@ impl Column {
 
 impl PartialEq for Column {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name && self.table_name == other.table_name
+        self.name == other.name && self.table_alias == other.table_alias
     }
 }
 impl Eq for Column {}
 
 impl fmt::Display for Column {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.alias)
+        write!(f, "{} {} {} {}", self.table_alias, self.table_name, self.name, self.alias)
     }
 }
 

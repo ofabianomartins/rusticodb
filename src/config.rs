@@ -23,6 +23,10 @@ impl Config {
         return String::from("columns");
     }
 
+    pub fn system_database_table_sequences() -> String {
+        return String::from("sequences");
+    }
+
     pub fn log_mode() -> u8 {
         match env::var("LOG_MODE") {
             Ok(value) => match value.parse::<u8>() {

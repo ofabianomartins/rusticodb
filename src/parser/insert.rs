@@ -7,6 +7,7 @@ use sqlparser::ast::SetExpr;
 use sqlparser::ast::Expr;
 
 use crate::machine::machine::Machine;
+use crate::machine::table::Table;
 use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ResultSetType;
 use crate::storage::tuple::Tuple;
@@ -43,13 +44,14 @@ pub fn insert(machine: &mut Machine, insert: Insert) -> Result<ResultSet, Execut
     if let Some(db_name) = machine.context.actual_database.clone() {
         let table_name = insert.table_name.to_string();
 
-        if machine.context.check_table_exists(&db_name, &table_name.clone()) == false {
+        let table = Table::new(db_name.clone(), table_name.clone());
+        if machine.context.check_table_exists(&table) == false {
             return Err(ExecutionError::TableNotExists(table_name.to_string()));
         }
 
         let mut tuples = get_tuples(insert.columns, insert.source);
 
-        machine.insert_tuples(&db_name, &table_name, &mut tuples);
+        machine.insert_tuples(&table, &mut tuples);
 
         return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
     } else {

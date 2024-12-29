@@ -3,6 +3,7 @@ use std::path::Path;
 use rusticodb::config::Config;
 use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
+use rusticodb::machine::table::Table;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -34,7 +35,8 @@ pub fn test_drop_table_metadata_file_table1() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert_eq!(sql_executor.machine.context.check_table_exists(&database_name, &table_name), false);
+    let table = Table::new(database_name, table_name);
+    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 
     assert_eq!(Path::new(&metadata_filename).exists(), false);
@@ -63,7 +65,8 @@ pub fn test_drop_table_metadata_that_not_exists() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert_eq!(sql_executor.machine.context.check_table_exists(&database_name, &table_name), false);
+    let table = Table::new(database_name, table_name);
+    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 
     assert_eq!(Path::new(&metadata_filename).exists(), false);
@@ -92,7 +95,8 @@ pub fn test_drop_table_if_exists() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert_eq!(sql_executor.machine.context.check_table_exists(&database_name, &table_name), false);
+    let table = Table::new(database_name, table_name);
+    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
     assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
 
     assert_eq!(Path::new(&metadata_filename).exists(), false);

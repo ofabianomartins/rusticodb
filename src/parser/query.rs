@@ -8,6 +8,7 @@ use sqlparser::ast::{Expr as ASTNode, *};
 use crate::machine::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::utils::execution_error::ExecutionError;
+use crate::machine::table::Table;
 use crate::machine::column::Column;
 use crate::machine::column::ColumnType;
 use crate::machine::raw_val::RawVal;
@@ -91,12 +92,26 @@ fn get_query_components(query: Box<Select>) -> Result<QueryResult, QueryError> {
     }
 }
 
-fn get_table_name(relations: Vec<TableWithJoins>) -> Vec<String> {
-    let mut result: Vec<String> = Vec::new();
+fn get_table_name(db_name: String, relations: Vec<TableWithJoins>) -> Vec<Table> {
+    let mut result: Vec<Table> = Vec::new();
     for relation in relations {
         match relation.relation {
-            TableFactor::Table { name, .. } => {
-                result.push(strip_quotes(&name.to_string().leak()))
+            TableFactor::Table { name, alias, .. } => {
+                let table: Table;
+                if let Some(alias_name) = alias {
+                    table = Table::new_with_alias(
+                        db_name.clone(),
+                        db_name.clone(),
+                        strip_quotes(&name.to_string().leak()),
+                        strip_quotes(&alias_name.to_string().leak())
+                    )
+                } else {
+                    table = Table::new(
+                        db_name.clone(),
+                        strip_quotes(&name.to_string().leak())
+                    )
+                }
+                result.push(table)
             },
             _ => {}
         }
@@ -107,8 +122,7 @@ fn get_table_name(relations: Vec<TableWithJoins>) -> Vec<String> {
 pub fn get_columns(
     machine: &mut Machine,
     projection: Vec<SelectItem>,
-    db_name: String,
-    table_names: Vec<String>
+    tables: Vec<Table>
 ) -> Vec<Column> {
     let mut columns = Vec::<Column>::new();
     for elem in &projection {
@@ -116,7 +130,7 @@ pub fn get_columns(
             SelectItem::UnnamedExpr(e) => {
                 columns.push(
                     Column::new(
-                        db_name.clone(),
+                        tables[0].database_name.clone(),
                         String::from(""),
                         e.to_string(),
                         ColumnType::Varchar
@@ -126,8 +140,10 @@ pub fn get_columns(
             SelectItem::ExprWithAlias { expr, alias } => {
                 columns.push(
                     Column::new_with_alias(
-                        db_name.clone(),
-                        String::from(""),
+                        tables[0].database_name.clone(),
+                        tables[0].database_alias.clone(),
+                        tables[0].name.clone(),
+                        tables[0].alias.clone(),
                         expr.to_string(),
                         alias.to_string(),
                         ColumnType::Varchar
@@ -135,37 +151,20 @@ pub fn get_columns(
                 )
             },
             SelectItem::Wildcard(_) => {
-                for table_name in &table_names {
-                    let list_column_from_table = machine.list_columns(
-                        db_name.clone(), 
-                        table_name.clone()
-                    );
-                    for line in list_column_from_table.tuples.clone().into_iter() {
-                        columns.push(
-                            Column::new(
-                                db_name.clone(),
-                                table_name.clone(),
-                                line.get_string(2).unwrap(),
-                                ColumnType::Varchar
-                            )
-                        )
+                for table in &tables {
+                    let table_columns = machine.get_columns(table);
+                    for column in table_columns {
+                        columns.push(column);
                     }
                 }
             },
             SelectItem::QualifiedWildcard(name, _options) => {
-                let list_column_from_table = machine.list_columns(
-                    db_name.clone(), 
-                    name.to_string()
-                );
-                for line in list_column_from_table.tuples.clone().into_iter() {
-                    columns.push(
-                        Column::new(
-                            db_name.clone(),
-                            name.to_string(),
-                            line.get_string(2).unwrap(),
-                            ColumnType::Varchar
-                        )
-                    )
+                for table in &tables {
+                    if table.name == name.to_string() || table.alias == name.to_string() { 
+                        for line in machine.get_columns(&tables[0]){ 
+                            columns.push(line);
+                        }
+                    }
                 }
             },
         }
@@ -280,17 +279,17 @@ fn convert_to_native_expr(node: &ASTNode) -> Result<Condition, QueryError> {
 pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.context.actual_database.clone() {
         let (projection, relations, selection, limit, offset) = get_query_components(query).unwrap();
-        let table_names: Vec<String> = get_table_name(relations);
+        let tables: Vec<Table> = get_table_name(db_name, relations);
 
-        for table_name in &table_names {
-            if machine.context.check_table_exists(&db_name, &table_name.clone()) == false {
-                return Err(ExecutionError::TableNotExists(table_name.to_string()));
+        for table in &tables {
+            if machine.context.check_table_exists(&table) == false {
+                return Err(ExecutionError::TableNotExists(table.name.to_string()));
             }
         }
 
-        let columns = get_columns(machine, projection, db_name.clone(), table_names.clone());
+        let columns = get_columns(machine, projection, tables.clone());
 
-        let mut result_set = machine.product_cartesian(&db_name, table_names);
+        let mut result_set = machine.product_cartesian(tables);
         result_set = result_set.projection(columns).unwrap();
 
         if let Ok(limit_size) = get_limit(limit) {
@@ -306,7 +305,7 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
               result_set = result_set.selection(condition).unwrap();
             }
         }
-        
+
         return Ok(result_set)
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
