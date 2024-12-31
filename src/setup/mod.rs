@@ -9,16 +9,9 @@ use crate::storage::os_interface::OsInterface;
 use crate::utils::logger::Logger;
 
 use crate::setup::load_databases::setup_databases_table;
-use crate::setup::load_databases::load_databases_table;
-
 use crate::setup::load_tables::setup_tables_table;
-use crate::setup::load_tables::load_tables_table;
-
 use crate::setup::load_columns::setup_columns_table;
-use crate::setup::load_columns::load_columns_table;
-
 use crate::setup::load_sequences::setup_sequences_table;
-use crate::setup::load_sequences::load_sequences_table;
 
 pub fn setup_system(machine: &mut Machine) {
     OsInterface::create_folder_if_not_exists(&Config::data_folder());
@@ -69,9 +62,4 @@ pub fn load_context(machine: &mut Machine) {
     ) == false{
         setup_sequences_table(machine);
     }
-
-    load_databases_table(machine);
-    load_tables_table(machine);
-    load_columns_table(machine);
-    load_sequences_table(machine);
 }

@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::machine::table::Table;
 use rusticodb::utils::execution_error::ExecutionError;
@@ -13,9 +12,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_drop_table_metadata_file_table1() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -36,17 +34,16 @@ pub fn test_drop_table_metadata_file_table1() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     let table = Table::new(database_name, table_name);
-    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert_eq!(sql_executor.machine.check_table_exists(&table), false);
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     assert_eq!(Path::new(&metadata_filename).exists(), false);
 }
 
 #[test]
 pub fn test_drop_table_metadata_that_not_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -66,17 +63,16 @@ pub fn test_drop_table_metadata_that_not_exists() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     let table = Table::new(database_name, table_name);
-    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert_eq!(sql_executor.machine.check_table_exists(&table), false);
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     assert_eq!(Path::new(&metadata_filename).exists(), false);
 }
 
 #[test]
 pub fn test_drop_table_if_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -96,8 +92,8 @@ pub fn test_drop_table_if_exists() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
     let table = Table::new(database_name, table_name);
-    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert_eq!(sql_executor.machine.check_table_exists(&table), false);
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     assert_eq!(Path::new(&metadata_filename).exists(), false);
 }

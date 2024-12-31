@@ -13,3 +13,4 @@ pub mod create_sequence;
 
 pub mod query;
 pub mod insert;
+pub mod delete;

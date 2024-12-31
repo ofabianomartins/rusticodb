@@ -72,7 +72,13 @@ impl Pager {
     }
 
     pub fn read_data(&self, database_name: &String, table_name: &String, pos: u64) -> [u8; BLOCK_SIZE] {
-        return OsInterface::read_data(&self.format_table_name(database_name, table_name), pos);
+
+        if OsInterface::path_exists(&self.format_table_name(database_name, table_name)) {
+             return OsInterface::read_data(&self.format_table_name(database_name, table_name), pos);
+        }
+        let mut empty = [0; BLOCK_SIZE];
+        empty[3] = 4u8;
+        return empty;
     }
 
     pub fn format_database_name(&self, database_name: &String) -> String{

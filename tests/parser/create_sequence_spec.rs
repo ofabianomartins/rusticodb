@@ -1,4 +1,3 @@
-use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::machine::table::Table;
 use rusticodb::parser::sql_executor::SqlExecutor;
@@ -9,9 +8,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_sequence_creation() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -25,9 +23,9 @@ pub fn test_sequence_creation() {
 
     let database_name = String::from("rusticodb");
     let table_name = String::from("sequences");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(sql_executor.machine.context.check_table_exists(&table));
+    assert!(sql_executor.machine.check_table_exists(&table));
 
     let _ = sql_executor.parse_command("USE rusticodb");
     let result_set = sql_executor.parse_command("SELECT * FROM sequences");

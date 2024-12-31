@@ -7,7 +7,7 @@ use crate::machine::condition::Condition;
 use crate::machine::condition::Condition2Type;
 
 pub fn show_tables(machine: &mut Machine) -> Result<ResultSet, ExecutionError> { 
-    if let Some(db_name) = machine.context.actual_database.clone() {
+    if let Some(db_name) = machine.actual_database.clone() {
         let table = Table::new(
             String::from("rusticodb"),
             String::from("tables")

@@ -47,6 +47,15 @@ impl ResultSet {
         }
     }
 
+    pub fn new_empty() -> Self {
+        ResultSet { 
+            set_type: ResultSetType::Select, 
+            message: String::from(""), 
+            columns: Vec::new(), 
+            tuples: Vec::new() 
+        }
+    }
+
     fn get_column_position(&self, column_name: &String) -> Option<usize> {
         return self.columns.iter().position(|elem| elem.check_column_name(column_name) )
     }

@@ -1,4 +1,3 @@
-use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
@@ -9,9 +8,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_select_database_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -28,16 +26,15 @@ pub fn test_select_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
 
 #[test]
 pub fn test_select_all_database_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -59,9 +56,8 @@ pub fn test_select_all_database_tables() {
 
 #[test]
 pub fn test_select_with_alias_database_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -78,16 +74,15 @@ pub fn test_select_with_alias_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
 
 #[test]
 pub fn test_select_with_defined_wizard_database_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -104,16 +99,15 @@ pub fn test_select_with_defined_wizard_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
 
 #[test]
 pub fn test_select_with_defined_wizard_and_alias_database_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -130,16 +124,15 @@ pub fn test_select_with_defined_wizard_and_alias_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
 
 #[test]
 pub fn test_select_with_defined_attr_and_alias_database_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -156,16 +149,15 @@ pub fn test_select_with_defined_attr_and_alias_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
 
 #[test]
 pub fn test_select_with_wrong_database_that_not_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -181,9 +173,8 @@ pub fn test_select_with_wrong_database_that_not_exists() {
 
 #[test]
 pub fn test_select_with_two_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -200,9 +191,8 @@ pub fn test_select_with_two_tables() {
 
 #[test]
 pub fn test_select_with_three_tables() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -219,9 +209,8 @@ pub fn test_select_with_three_tables() {
 
 #[test]
 pub fn test_select_with_all_and_more_one_attr() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -238,9 +227,8 @@ pub fn test_select_with_all_and_more_one_attr() {
 
 #[test]
 pub fn test_select_with_limit_clause() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -257,9 +245,8 @@ pub fn test_select_with_limit_clause() {
 
 #[test]
 pub fn test_select_with_all_where_equal() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -276,9 +263,8 @@ pub fn test_select_with_all_where_equal() {
 
 #[test]
 pub fn test_select_with_all_where_with_not_equal() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -296,9 +282,8 @@ pub fn test_select_with_all_where_with_not_equal() {
 
 #[test]
 pub fn test_select_with_all_where_with_and_conditions() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -318,9 +303,8 @@ pub fn test_select_with_all_where_with_and_conditions() {
 
 #[test]
 pub fn test_select_with_all_where_with_or_conditions() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();

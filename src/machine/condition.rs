@@ -9,7 +9,8 @@ pub enum Condition {
     ColName(String),
     Const(RawVal),
     Func1(Condition1Type, Box<Condition>),
-    Func2(Condition2Type, Box<Condition>, Box<Condition>)
+    Func2(Condition2Type, Box<Condition>, Box<Condition>),
+    Empty
 }
 
 #[derive(Debug)]
@@ -36,6 +37,7 @@ impl Condition {
     pub fn evaluate(&self, tuple: &Tuple, columns: &Vec<Column>) -> bool {
 //        return self.evaluate_value(tuple, columns)[0] == 1u8
         match self {
+            Condition::Empty => true,
             Condition::Func1(operator, opr1) => { 
                 match operator {
                     Condition1Type::Not => {
@@ -62,6 +64,7 @@ impl Condition {
 
     fn evaluate_value(&self, tuple: &Tuple, columns: &Vec<Column>) -> Vec<u8> {
         match self {
+            Condition::Empty => vec![1],
             Condition::ColName(colname)=> {
                 let mut value: Vec<u8> = Vec::new();
 
@@ -99,6 +102,7 @@ impl Condition {
 
     fn to_str(&self) -> String {
         match self {
+            Condition::Empty => String::from(""),
             Condition::ColName(colname) => colname.to_string(),
             Condition::Const(value) => value.to_string(),
             Condition::Func1(operator, opr1) => { 

@@ -13,3 +13,4 @@ pub mod create_sequence_spec;
 pub mod query_spec;
 
 pub mod insert_spec;
+pub mod delete_spec;

@@ -41,11 +41,11 @@ fn get_tuples(_columns: Vec<Ident>, source: Option<Box<Query>>) -> Vec<Tuple> {
 }
 
 pub fn insert(machine: &mut Machine, insert: Insert) -> Result<ResultSet, ExecutionError> { 
-    if let Some(db_name) = machine.context.actual_database.clone() {
+    if let Some(db_name) = machine.actual_database.clone() {
         let table_name = insert.table_name.to_string();
 
         let table = Table::new(db_name.clone(), table_name.clone());
-        if machine.context.check_table_exists(&table) == false {
+        if machine.check_table_exists(&table) == false {
             return Err(ExecutionError::TableNotExists(table_name.to_string()));
         }
 

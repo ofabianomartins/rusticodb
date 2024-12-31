@@ -277,12 +277,12 @@ fn convert_to_native_expr(node: &ASTNode) -> Result<Condition, QueryError> {
 }
 
 pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, ExecutionError> { 
-    if let Some(db_name) = machine.context.actual_database.clone() {
+    if let Some(db_name) = machine.actual_database.clone() {
         let (projection, relations, selection, limit, offset) = get_query_components(query).unwrap();
-        let tables: Vec<Table> = get_table_name(db_name, relations);
+        let tables: Vec<Table> = get_table_name(db_name.clone(), relations);
 
         for table in &tables {
-            if machine.context.check_table_exists(&table) == false {
+            if machine.check_table_exists(&table) == false {
                 return Err(ExecutionError::TableNotExists(table.name.to_string()));
             }
         }

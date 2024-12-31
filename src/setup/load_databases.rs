@@ -27,18 +27,3 @@ pub fn setup_databases_table(machine: &mut Machine) {
     );
     machine.insert_tuples(&table, &mut tuples);
 }
-
-pub fn load_databases_table(machine: &mut Machine) {
-    Logger::info("loading databases table");
-
-    let table = Table::new(
-        Config::system_database(),
-        Config::system_database_table_databases()
-    );
-
-    let mut tuples: Vec<Tuple> = machine.read_tuples(&table);
-
-    for tuple in tuples.iter_mut() {
-        machine.context.add_database(tuple.get_string(1).unwrap());
-    }
-}

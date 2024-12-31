@@ -1,5 +1,4 @@
 use crate::config::Config;
-use crate::machine::column::ColumnType;
 use crate::machine::machine::Machine;
 use crate::machine::table::Table;
 use crate::storage::tuple::Tuple;
@@ -226,24 +225,4 @@ pub fn setup_columns_table(machine: &mut Machine) {
 
     OsInterface::create_file(&machine.pager.format_table_name(&table.database_name, &table.name));
     machine.insert_tuples(&table, &mut tuples);
-}
-
-pub fn load_columns_table(machine: &mut Machine) {
-    Logger::info("loading columns table");
-
-    let table = Table::new(
-        Config::system_database(),
-        Config::system_database_table_columns()
-    );
-
-    let mut tuples: Vec<Tuple> = machine.read_tuples(&table);
-
-    for tuple in tuples.iter_mut() {
-        machine.context.add_column(
-            tuple.get_string(1).unwrap(), 
-            tuple.get_string(2).unwrap(),
-            tuple.get_string(3).unwrap(),
-            ColumnType::Varchar
-        );
-    }
 }

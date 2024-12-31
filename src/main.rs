@@ -10,15 +10,13 @@ use std::io::Write;
 
 use crate::setup::setup_system;
 use crate::machine::machine::Machine;
-use crate::machine::context::Context;
 use crate::storage::pager::Pager;
 
 use crate::parser::sql_executor::SqlExecutor;
 
 fn main() {
     let pager = Pager::new();
-    let context = Context::new();
-    let mut machine = Machine::new(pager, context);
+    let mut machine = Machine::new(pager);
 
     setup_system(&mut machine);
 

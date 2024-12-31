@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::machine::table::Table;
 use rusticodb::utils::execution_error::ExecutionError;
@@ -13,9 +12,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_metadata_file() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -28,10 +26,10 @@ pub fn test_metadata_file() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name, table_name);
-    assert!(sql_executor.machine.context.check_table_exists(&table));
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(sql_executor.machine.check_table_exists(&table));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -39,9 +37,8 @@ pub fn test_metadata_file() {
 
 #[test]
 pub fn test_without_set_database() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -60,10 +57,10 @@ pub fn test_without_set_database() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name, table_name);
-    assert_eq!(sql_executor.machine.context.check_table_exists(&table), false);
-    assert!(matches!(sql_executor.machine.context.actual_database, None));
+    assert_eq!(sql_executor.machine.check_table_exists(&table), false);
+    assert!(matches!(sql_executor.machine.actual_database, None));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert_eq!(Path::new(&table_filename).exists(), false);
@@ -71,9 +68,8 @@ pub fn test_without_set_database() {
 
 #[test]
 pub fn test_that_already_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -89,10 +85,10 @@ pub fn test_that_already_exists() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name, table_name);
-    assert!(sql_executor.machine.context.check_table_exists(&table));
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(sql_executor.machine.check_table_exists(&table));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -100,9 +96,8 @@ pub fn test_that_already_exists() {
 
 #[test]
 pub fn test_with_if_not_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -118,10 +113,10 @@ pub fn test_with_if_not_exists() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name, table_name);
-    assert!(sql_executor.machine.context.check_table_exists(&table));
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(sql_executor.machine.check_table_exists(&table));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -129,9 +124,8 @@ pub fn test_with_if_not_exists() {
 
 #[test]
 pub fn test_with_two_columns() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -144,14 +138,10 @@ pub fn test_with_two_columns() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    let column_name1 = String::from("name1");
-    let column_name2 = String::from("name2");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(sql_executor.machine.context.check_table_exists(&table));
-    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
-    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
-    assert!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)));
+    assert!(sql_executor.machine.check_table_exists(&table));
+    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -159,9 +149,8 @@ pub fn test_with_two_columns() {
 
 #[test]
 pub fn test_with_two_columns_and_one_is_not_null() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -174,13 +163,9 @@ pub fn test_with_two_columns_and_one_is_not_null() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    let column_name1 = String::from("name1");
-    let column_name2 = String::from("name2");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(sql_executor.machine.context.check_table_exists(&table));
-    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
-    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
+    assert!(sql_executor.machine.check_table_exists(&table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -206,9 +191,8 @@ pub fn test_with_two_columns_and_one_is_not_null() {
 
 #[test]
 pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -221,13 +205,9 @@ pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    let column_name1 = String::from("name1");
-    let column_name2 = String::from("name2");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(sql_executor.machine.context.check_table_exists(&table));
-    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name1));
-    assert!(sql_executor.machine.context.check_column_exists(&database_name, &table_name, &column_name2));
+    assert!(sql_executor.machine.check_table_exists(&table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -253,9 +233,8 @@ pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
 
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();

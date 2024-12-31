@@ -22,6 +22,7 @@ use crate::parser::drop_table::drop_table;
 use crate::parser::query::query;
 
 use crate::parser::insert::insert;
+use crate::parser::delete::delete;
 
 pub struct SqlExecutor {
     pub machine: Machine
@@ -34,7 +35,7 @@ impl SqlExecutor {
     }
 
     pub fn get_database_name(&self) -> String {
-        match &self.machine.context.actual_database {
+        match &self.machine.actual_database {
             Some(database_name) => database_name.clone(),
             None => String::from("<no-database>")
         }
@@ -92,6 +93,7 @@ impl SqlExecutor {
                     }
                 }
             },
+            Statement::Delete(statement) => delete(&mut self.machine, statement),
             Statement::Insert(statement) => insert(&mut self.machine, statement),
             Statement::Query(statement) => query(&mut self.machine, statement),
             Statement::ShowDatabases { .. } => show_databases(&mut self.machine),

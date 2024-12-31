@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
@@ -12,9 +11,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_create_database_metadata_file_database1() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -26,8 +24,8 @@ pub fn test_create_database_metadata_file_database1() {
     assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert_eq!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)), false);
+    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
@@ -35,9 +33,8 @@ pub fn test_create_database_metadata_file_database1() {
 
 #[test]
 pub fn test_create_database_with_if_not_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -50,8 +47,8 @@ pub fn test_create_database_with_if_not_exists() {
     assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert_eq!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)), false);
+    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
@@ -59,9 +56,8 @@ pub fn test_create_database_with_if_not_exists() {
 
 #[test]
 pub fn test_create_database_with_if_not_exists_in_wrong_order() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -79,8 +75,8 @@ pub fn test_create_database_with_if_not_exists_in_wrong_order() {
     );
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert_eq!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)), false);
+    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
@@ -88,9 +84,8 @@ pub fn test_create_database_with_if_not_exists_in_wrong_order() {
 
 #[test]
 pub fn test_create_two_databases() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -102,12 +97,12 @@ pub fn test_create_two_databases() {
     assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
     let database_name = String::from("database2");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
+    assert!(sql_executor.machine.check_database_exists(&database_name));
 
-    assert_eq!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)), false);
+    assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
@@ -115,9 +110,8 @@ pub fn test_create_two_databases() {
 
 #[test]
 pub fn test_create_database_that_already_exists() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();
@@ -130,8 +124,8 @@ pub fn test_create_database_that_already_exists() {
     assert!(matches!(error_parse, Err(ExecutionError::DatabaseExists(_result_set))));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.context.check_database_exists(&database_name));
-    assert_eq!(matches!(sql_executor.machine.context.actual_database, Some(_database_name)), false);
+    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());

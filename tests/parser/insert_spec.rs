@@ -1,4 +1,3 @@
-use rusticodb::machine::context::Context;
 use rusticodb::machine::machine::Machine;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -8,9 +7,8 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_in_two_columns_varchar() {
-    let context = Context::new();
     let pager = Pager::new();
-    let machine = Machine::new(pager, context);
+    let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
 
     create_tmp_test_folder();

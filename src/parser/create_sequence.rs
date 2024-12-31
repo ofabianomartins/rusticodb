@@ -14,7 +14,7 @@ pub fn create_sequence(
     if_not_exists: bool,
     sequence_options: Vec<SequenceOptions>
 ) -> Result<ResultSet, ExecutionError> { 
-    if let Some(db_name) = machine.context.actual_database.clone() {
+    if let Some(db_name) = machine.actual_database.clone() {
         let mut table_name = String::from("");
         let mut column_name = String::from("");
 

@@ -47,21 +47,3 @@ pub fn setup_tables_table(machine: &mut Machine) {
     );
     machine.insert_tuples(&table, &mut tuples);
 }
-
-pub fn load_tables_table(machine: &mut Machine) {
-    Logger::info("loading tables table");
-
-    let table = Table::new(
-        Config::system_database(),
-        Config::system_database_table_tables()
-    );
-
-    let mut tuples: Vec<Tuple> = machine.read_tuples(&table);
-
-    for tuple in tuples.iter_mut() {
-        machine.context.add_table(
-            tuple.get_string(1).unwrap(),
-            tuple.get_string(2).unwrap()
-        );
-    }
-}
