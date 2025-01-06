@@ -1,6 +1,6 @@
 
 use crate::config::Config;
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::machine::table::Table;
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;

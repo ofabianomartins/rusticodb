@@ -2,7 +2,7 @@ use sqlparser::ast::ObjectName;
 use sqlparser::ast::DataType;
 use sqlparser::ast::SequenceOptions;
 
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::utils::execution_error::ExecutionError;
 

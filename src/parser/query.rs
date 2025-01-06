@@ -5,7 +5,7 @@ use failure::Fail;
 use sqlparser::ast::Query as Select;
 use sqlparser::ast::{Expr as ASTNode, *};
 
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::utils::execution_error::ExecutionError;
 use crate::machine::table::Table;
@@ -133,7 +133,10 @@ pub fn get_columns(
                         tables[0].database_name.clone(),
                         String::from(""),
                         e.to_string(),
-                        ColumnType::Varchar
+                        ColumnType::Varchar,
+                        false,
+                        false,
+                        false,
                     )
                 )
             },
@@ -146,7 +149,10 @@ pub fn get_columns(
                         tables[0].alias.clone(),
                         expr.to_string(),
                         alias.to_string(),
-                        ColumnType::Varchar
+                        ColumnType::Varchar,
+                        false,
+                        false,
+                        false
                     )
                 )
             },

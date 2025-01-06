@@ -8,7 +8,10 @@ pub struct Column {
     pub table_alias: String,
     pub name: String,
     pub alias: String,
-    pub column_type: ColumnType
+    pub column_type: ColumnType,
+    pub not_null: bool,
+    pub unique: bool,
+    pub primary_key: bool
 }
 
 #[derive(Debug, Clone)]
@@ -32,7 +35,10 @@ impl Column {
         database_name: String,
         table_name: String,
         name: String,
-        column_type: ColumnType
+        column_type: ColumnType,
+        not_null: bool,
+        unique: bool,
+        primary_key: bool
     ) -> Self {
         Column { 
             database_name: database_name.clone(), 
@@ -41,7 +47,10 @@ impl Column {
             table_alias: table_name, 
             name: name.clone(), 
             alias: name, 
-            column_type 
+            column_type,
+            not_null,
+            unique,
+            primary_key
         }
     }
 
@@ -52,7 +61,10 @@ impl Column {
         table_alias: String,
         name: String,
         alias: String,
-        column_type: ColumnType
+        column_type: ColumnType,
+        not_null: bool,
+        unique: bool,
+        primary_key: bool
     ) -> Self {
         Column { 
             database_name, 
@@ -61,7 +73,10 @@ impl Column {
             table_alias, 
             name, 
             alias, 
-            column_type 
+            column_type,
+            not_null,
+            unique,
+            primary_key
         }
     }
 

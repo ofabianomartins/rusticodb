@@ -1,4 +1,4 @@
-use rusticodb::machine::machine::Machine;
+use rusticodb::machine::Machine;
 use rusticodb::machine::table::Table;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -28,7 +28,7 @@ pub fn test_sequence_creation() {
     assert!(sql_executor.machine.check_table_exists(&table));
 
     let _ = sql_executor.parse_command("USE rusticodb");
-    let result_set = sql_executor.parse_command("SELECT * FROM sequences");
+    let result_set = sql_executor.parse_command("SELECT * FROM sequences WHERE name = 'sequence1'");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 1);

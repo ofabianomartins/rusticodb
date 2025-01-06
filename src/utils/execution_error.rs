@@ -16,6 +16,8 @@ pub enum ExecutionError {
     TableNotExists(String),
     TableExists(String),
     ColumnNotExists(String),
+    WrongTupleSize(usize, usize),
+    
     TupleNotExists(usize),
     NotImplementedYet
 }

@@ -6,14 +6,15 @@ use sqlparser::ast::Query;
 use sqlparser::ast::SetExpr;
 use sqlparser::ast::Expr;
 
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::machine::table::Table;
 use crate::machine::result_set::ResultSet;
-use crate::machine::result_set::ResultSetType;
+use crate::machine::Column;
+use crate::machine::ColumnType;
 use crate::storage::tuple::Tuple;
 use crate::utils::execution_error::ExecutionError;
 
-fn get_tuples(_columns: Vec<Ident>, source: Option<Box<Query>>) -> Vec<Tuple> {
+fn get_tuples(_columns: &Vec<Column>, source: Option<Box<Query>>) -> Vec<Tuple> {
     let mut tuples: Vec<Tuple> = Vec::new();
 
     if let Some(query) = source {
@@ -40,20 +41,43 @@ fn get_tuples(_columns: Vec<Ident>, source: Option<Box<Query>>) -> Vec<Tuple> {
     return tuples; 
 }
 
+pub fn get_columns(
+    _machine: &mut Machine,
+    query_columns: Vec<Ident>,
+    table: &Table
+) -> Vec<Column> {
+    let mut columns = Vec::<Column>::new();
+
+    for ident in &query_columns {
+        columns.push(
+            Column::new(
+                table.database_name.clone(),
+                table.name.clone(),
+                ident.value.clone(),
+                ColumnType::Varchar,
+                false,
+                false,
+                false
+            )
+        )
+    }
+    return columns;
+}
+
 pub fn insert(machine: &mut Machine, insert: Insert) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.actual_database.clone() {
         let table_name = insert.table_name.to_string();
-
         let table = Table::new(db_name.clone(), table_name.clone());
+
+        let columns = get_columns(machine, insert.columns, &table);
+
         if machine.check_table_exists(&table) == false {
             return Err(ExecutionError::TableNotExists(table_name.to_string()));
         }
 
-        let mut tuples = get_tuples(insert.columns, insert.source);
+        let mut tuples = get_tuples(&columns, insert.source);
 
-        machine.insert_tuples(&table, &mut tuples);
-
-        return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
+        return machine.insert_row(&table, &columns, &mut tuples);
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
     }

@@ -1,4 +1,4 @@
-use rusticodb::machine::machine::Machine;
+use rusticodb::machine::Machine;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;

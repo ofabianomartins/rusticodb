@@ -5,3 +5,5 @@ pub mod tuple;
 
 pub mod os_interface;
 
+pub use self::tuple::Tuple;
+

@@ -4,7 +4,7 @@ mod load_columns;
 mod load_sequences;
 
 use crate::config::Config;
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::storage::os_interface::OsInterface;
 use crate::utils::logger::Logger;
 

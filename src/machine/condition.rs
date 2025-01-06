@@ -35,7 +35,6 @@ pub enum Condition2Type {
 
 impl Condition {
     pub fn evaluate(&self, tuple: &Tuple, columns: &Vec<Column>) -> bool {
-//        return self.evaluate_value(tuple, columns)[0] == 1u8
         match self {
             Condition::Empty => true,
             Condition::Func1(operator, opr1) => { 
@@ -91,6 +90,9 @@ impl Condition {
                 let value_opr1 = opr1.evaluate_value(tuple, columns);
                 let value_opr2 = opr2.evaluate_value(tuple, columns);
                 match operator {
+                    Condition2Type::And => {
+                        return if value_opr1 == vec![1] && value_opr2 == vec![1] { vec![1] } else { vec![0] };
+                    },
                     Condition2Type::Equal => {
                         return if value_opr1 == value_opr2 { vec![1] } else { vec![0] };
                     },
@@ -113,7 +115,8 @@ impl Condition {
             },
             Condition::Func2(operator, opr1, opr2) => {
                 match operator {
-                    Condition2Type::Equal => format!("{} AND {}", opr1, opr2),
+                    Condition2Type::Equal => format!("{} == {}", opr1, opr2),
+                    Condition2Type::And => format!("{} && ({})", opr1, opr2),
                     _ => String::from("")
                 }
             }

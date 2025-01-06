@@ -9,7 +9,7 @@ use std::io;
 use std::io::Write;
 
 use crate::setup::setup_system;
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::storage::pager::Pager;
 
 use crate::parser::sql_executor::SqlExecutor;

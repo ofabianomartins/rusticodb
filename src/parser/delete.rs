@@ -5,7 +5,7 @@ use failure::Fail;
 use sqlparser::ast::Delete;
 use sqlparser::ast::{Expr as ASTNode, *};
 
-use crate::machine::machine::Machine;
+use crate::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::machine::result_set::ResultSetType;
 use crate::utils::execution_error::ExecutionError;
