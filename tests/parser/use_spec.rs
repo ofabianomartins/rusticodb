@@ -2,6 +2,8 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::machine::Machine;
+use rusticodb::machine::check_database_exists;
+
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -31,7 +33,7 @@ pub fn test_use_database_that_not_exists() {
     );
 
     assert!(matches!(sql_executor.machine.actual_database, None));
-    assert_eq!(sql_executor.machine.check_database_exists(&database_name), false);
+    assert_eq!(check_database_exists(&mut sql_executor.machine, &database_name), false);
 }
 
 #[test]
@@ -50,7 +52,7 @@ pub fn test_use_database_set_in_context() {
     assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
     assert!(matches!(sql_executor.machine.actual_database,Some(_database_name)));
 
     let metadata_foldername = format!("{}/{}", Config::data_folder(), database_name);

@@ -13,11 +13,15 @@ pub enum ExecutionError {
     DatabaseNotExists(String),
     DatabaseExists(String),
     DatabaseNotSetted, 
+
     TableNotExists(String),
     TableExists(String),
+
     ColumnNotExists(String),
+    ColumnCantBeNull(String, String, String),
+
     WrongTupleSize(usize, usize),
-    
     TupleNotExists(usize),
+
     NotImplementedYet
 }

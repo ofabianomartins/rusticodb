@@ -16,6 +16,7 @@ pub struct Column {
 
 #[derive(Debug, Clone)]
 pub enum ColumnType {
+    Undefined = 0,
     Null = 1,
     Boolean = 2,
     UnsignedTinyint = 3,

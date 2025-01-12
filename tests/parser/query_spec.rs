@@ -1,4 +1,5 @@
 use rusticodb::machine::Machine;
+use rusticodb::machine::check_database_exists;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -26,7 +27,7 @@ pub fn test_select_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
 
     assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
@@ -74,7 +75,7 @@ pub fn test_select_with_alias_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
 
     assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
@@ -99,7 +100,7 @@ pub fn test_select_with_defined_wizard_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
 
     assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
@@ -124,7 +125,7 @@ pub fn test_select_with_defined_wizard_and_alias_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
 
     assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }
@@ -149,7 +150,7 @@ pub fn test_select_with_defined_attr_and_alias_database_tables() {
     assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
 
     assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
 }

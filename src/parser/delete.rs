@@ -6,14 +6,18 @@ use sqlparser::ast::Delete;
 use sqlparser::ast::{Expr as ASTNode, *};
 
 use crate::machine::Machine;
-use crate::machine::result_set::ResultSet;
-use crate::machine::result_set::ResultSetType;
-use crate::utils::execution_error::ExecutionError;
-use crate::machine::table::Table;
+use crate::machine::ResultSet;
+use crate::machine::ResultSetType;
+use crate::machine::Table;
 use crate::machine::raw_val::RawVal;
-use crate::machine::condition::Condition;
-use crate::machine::condition::Condition1Type;
-use crate::machine::condition::Condition2Type;
+use crate::machine::Condition;
+use crate::machine::Condition1Type;
+use crate::machine::Condition2Type;
+use crate::machine::get_columns;
+use crate::machine::check_table_exists;
+use crate::machine::drop_tuples;
+
+use crate::utils::execution_error::ExecutionError;
 
 fn strip_quotes(ident: &str) -> String {
     if ident.starts_with('`') || ident.starts_with('"') {
@@ -178,11 +182,11 @@ pub fn delete(machine: &mut Machine, query: Delete) -> Result<ResultSet, Executi
             Err(err) => { return Err(err) }
         }
 
-        if machine.check_table_exists(&table) == false {
+        if check_table_exists(machine, &table) == false {
             return Err(ExecutionError::TableNotExists(table.name.to_string()));
         }
 
-        let columns = machine.get_columns(&table);
+        let columns = get_columns(machine, &table);
 
         let mut condition: Condition = Condition::Empty;
 
@@ -190,7 +194,7 @@ pub fn delete(machine: &mut Machine, query: Delete) -> Result<ResultSet, Executi
             condition = convert_to_native_expr(&selection).unwrap();
         }
 
-        let _result_set = machine.drop_tuples(&table, columns, &condition);
+        let _result_set = drop_tuples(machine, &table, columns, &condition);
 
         return Ok(ResultSet::new_command(ResultSetType::Change, String::from("DELETE ROWS")));
     } else {

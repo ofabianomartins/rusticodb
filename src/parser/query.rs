@@ -7,14 +7,18 @@ use sqlparser::ast::{Expr as ASTNode, *};
 
 use crate::machine::Machine;
 use crate::machine::result_set::ResultSet;
-use crate::utils::execution_error::ExecutionError;
-use crate::machine::table::Table;
-use crate::machine::column::Column;
-use crate::machine::column::ColumnType;
+use crate::machine::Table;
+use crate::machine::Column;
+use crate::machine::ColumnType;
 use crate::machine::raw_val::RawVal;
-use crate::machine::condition::Condition;
-use crate::machine::condition::Condition1Type;
-use crate::machine::condition::Condition2Type;
+use crate::machine::Condition;
+use crate::machine::Condition1Type;
+use crate::machine::Condition2Type;
+use crate::machine::get_columns as machine_get_columns;
+use crate::machine::check_table_exists;
+use crate::machine::product_cartesian;
+
+use crate::utils::execution_error::ExecutionError;
 
 fn strip_quotes(ident: &str) -> String {
     if ident.starts_with('`') || ident.starts_with('"') {
@@ -133,7 +137,7 @@ pub fn get_columns(
                         tables[0].database_name.clone(),
                         String::from(""),
                         e.to_string(),
-                        ColumnType::Varchar,
+                        ColumnType::Undefined,
                         false,
                         false,
                         false,
@@ -149,7 +153,7 @@ pub fn get_columns(
                         tables[0].alias.clone(),
                         expr.to_string(),
                         alias.to_string(),
-                        ColumnType::Varchar,
+                        ColumnType::Undefined,
                         false,
                         false,
                         false
@@ -158,7 +162,7 @@ pub fn get_columns(
             },
             SelectItem::Wildcard(_) => {
                 for table in &tables {
-                    let table_columns = machine.get_columns(table);
+                    let table_columns = machine_get_columns(machine, table);
                     for column in table_columns {
                         columns.push(column);
                     }
@@ -167,7 +171,7 @@ pub fn get_columns(
             SelectItem::QualifiedWildcard(name, _options) => {
                 for table in &tables {
                     if table.name == name.to_string() || table.alias == name.to_string() { 
-                        for line in machine.get_columns(&tables[0]){ 
+                        for line in machine_get_columns(machine, &tables[0]) { 
                             columns.push(line);
                         }
                     }
@@ -288,14 +292,14 @@ pub fn query(machine: &mut Machine, query: Box<Select>) -> Result<ResultSet, Exe
         let tables: Vec<Table> = get_table_name(db_name.clone(), relations);
 
         for table in &tables {
-            if machine.check_table_exists(&table) == false {
+            if check_table_exists(machine, &table) == false {
                 return Err(ExecutionError::TableNotExists(table.name.to_string()));
             }
         }
 
         let columns = get_columns(machine, projection, tables.clone());
 
-        let mut result_set = machine.product_cartesian(tables);
+        let mut result_set = product_cartesian(machine, tables);
         result_set = result_set.projection(columns).unwrap();
 
         if let Ok(limit_size) = get_limit(limit) {

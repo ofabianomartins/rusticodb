@@ -7,11 +7,15 @@ use sqlparser::ast::SetExpr;
 use sqlparser::ast::Expr;
 
 use crate::machine::Machine;
-use crate::machine::table::Table;
-use crate::machine::result_set::ResultSet;
+use crate::machine::Table;
+use crate::machine::ResultSet;
 use crate::machine::Column;
 use crate::machine::ColumnType;
+use crate::machine::check_table_exists;
+use crate::machine::insert_row;
+
 use crate::storage::tuple::Tuple;
+
 use crate::utils::execution_error::ExecutionError;
 
 fn get_tuples(_columns: &Vec<Column>, source: Option<Box<Query>>) -> Vec<Tuple> {
@@ -71,13 +75,13 @@ pub fn insert(machine: &mut Machine, insert: Insert) -> Result<ResultSet, Execut
 
         let columns = get_columns(machine, insert.columns, &table);
 
-        if machine.check_table_exists(&table) == false {
+        if check_table_exists(machine, &table) == false {
             return Err(ExecutionError::TableNotExists(table_name.to_string()));
         }
 
         let mut tuples = get_tuples(&columns, insert.source);
 
-        return machine.insert_row(&table, &columns, &mut tuples);
+        return insert_row(machine, &table, &columns, &mut tuples);
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
     }

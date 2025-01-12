@@ -2,6 +2,7 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::machine::Machine;
+use rusticodb::machine::create_database;
 use rusticodb::storage::pager::Pager;
 use rusticodb::setup::setup_system;
 
@@ -17,7 +18,7 @@ pub fn test_if_database_exists_is_true() {
 
     setup_system(&mut machine);
 
-    let _ = machine.create_database(database1.clone(), false);
+    let _ = create_database(&mut machine, database1.clone(), false);
     assert!(machine.database_exists(&database1));
 }
 
@@ -44,7 +45,7 @@ pub fn test_create_database_metadata_file_database1() {
 
     setup_system(&mut machine);
 
-    let _ = machine.create_database(database1.clone(), false);
+    let _ = create_database(&mut machine, database1.clone(), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());

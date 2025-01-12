@@ -2,7 +2,9 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::machine::Machine;
-use rusticodb::machine::table::Table;
+use rusticodb::machine::Table;
+use rusticodb::machine::create_database;
+use rusticodb::machine::create_table;
 use rusticodb::storage::pager::Pager;
 use rusticodb::setup::setup_system;
 
@@ -18,7 +20,7 @@ pub fn test_if_database_exists_is_true() {
 
     setup_system(&mut machine);
 
-    let _ = machine.create_database(database1.clone(), false);
+    let _ = create_database(&mut machine, database1.clone(), false);
     assert!(machine.database_exists(&database1));
 }
 
@@ -47,8 +49,8 @@ pub fn test_if_table_exists_is_true() {
     setup_system(&mut machine);
 
     let table = Table::new(database1.clone(), String::from("table1"));
-    let _ = machine.create_database(database1.clone(), false);
-    let _ = machine.create_table(&table, false, Vec::new());
+    let _ = create_database(&mut machine, database1.clone(), false);
+    let _ = create_table(&mut machine, &table, false, Vec::new());
     assert!(machine.table_exists(&database1, &table1));
 }
 
@@ -63,7 +65,7 @@ pub fn test_if_table_exists_is_false() {
 
     setup_system(&mut machine);
 
-    let _ = machine.create_database(database1.clone(), false);
+    let _ = create_database(&mut machine, database1.clone(), false);
     assert_eq!(machine.table_exists(&database1, &table1), false);
 }
 
@@ -77,7 +79,7 @@ pub fn test_create_database_metadata_file_database1() {
 
     setup_system(&mut machine);
 
-    let _ = machine.create_database(database1.clone(), false);
+    let _ = create_database(&mut machine, database1.clone(), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
     assert!(Path::new(&metadata_foldername).exists());
@@ -94,8 +96,8 @@ pub fn test_create_table_metadata_file() {
     setup_system(&mut machine);
 
     let table = Table::new(database1.clone(), String::from("table1"));
-    let _ = machine.create_database(database1.clone(), false);
-    let _ = machine.create_table(&table, false, Vec::new());
+    let _ = create_database(&mut machine, database1.clone(), false);
+    let _ = create_table(&mut machine, &table, false, Vec::new());
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());

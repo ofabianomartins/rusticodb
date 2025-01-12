@@ -2,6 +2,7 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::machine::Machine;
+use rusticodb::machine::check_database_exists;
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
@@ -30,7 +31,7 @@ pub fn test_drop_database_metadata_file_database1() {
     assert!(matches!(drop_database, Ok(_result_set)));
 
     let database_name = String::from("database1");
-    assert_eq!(sql_executor.machine.check_database_exists(&database_name), false);
+    assert_eq!(check_database_exists(&mut sql_executor.machine, &database_name), false);
     assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     assert_eq!(Path::new(&metadata_foldername).exists(), false);
@@ -51,7 +52,7 @@ pub fn test_drop_database_does_not_exists() {
     assert!(matches!(drop_database, Err(ExecutionError::DatabaseNotExists(_))));
 
     let database_name = String::from("database1");
-    assert_eq!(sql_executor.machine.check_database_exists(&database_name), false);
+    assert_eq!(check_database_exists(&mut sql_executor.machine, &database_name), false);
     assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());
@@ -73,7 +74,7 @@ pub fn test_drop_database_does_not_exists_but_use_if_exists() {
     assert!(matches!(drop_database, Ok(_)));
 
     let database_name = String::from("database1");
-    assert_eq!(sql_executor.machine.check_database_exists(&database_name), false);
+    assert_eq!(check_database_exists(&mut sql_executor.machine, &database_name), false);
     assert_eq!(matches!(sql_executor.machine.actual_database, Some(_database_name)), false);
 
     let metadata_foldername = format!("{}/database1/", Config::data_folder());

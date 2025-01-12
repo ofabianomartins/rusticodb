@@ -1,9 +1,13 @@
 
 use crate::config::Config;
+
 use crate::machine::Machine;
-use crate::machine::table::Table;
+use crate::machine::Table;
+use crate::machine::insert_tuples;
+
 use crate::storage::tuple::Tuple;
 use crate::storage::os_interface::OsInterface;
+
 use crate::utils::logger::Logger;
 
 
@@ -23,5 +27,5 @@ pub fn setup_sequences_table(machine: &mut Machine) {
         Config::system_database(),
         Config::system_database_table_sequences()
     );
-    machine.insert_tuples(&table, &mut tuples);
+    insert_tuples(machine, &table, &mut tuples);
 }

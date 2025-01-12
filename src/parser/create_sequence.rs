@@ -3,7 +3,8 @@ use sqlparser::ast::DataType;
 use sqlparser::ast::SequenceOptions;
 
 use crate::machine::Machine;
-use crate::machine::result_set::ResultSet;
+use crate::machine::ResultSet;
+use crate::machine::create_sequence as machine_create_sequence;
 use crate::utils::execution_error::ExecutionError;
 
 pub fn create_sequence(
@@ -24,7 +25,8 @@ pub fn create_sequence(
                 column_name = name_list[1].to_string();
             }
         }
-        return machine.create_sequence(
+        return machine_create_sequence(
+            machine,
             &db_name,
             &table_name,
             &column_name,

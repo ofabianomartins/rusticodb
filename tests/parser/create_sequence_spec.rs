@@ -1,5 +1,8 @@
 use rusticodb::machine::Machine;
-use rusticodb::machine::table::Table;
+use rusticodb::machine::Table;
+use rusticodb::machine::check_database_exists;
+use rusticodb::machine::check_table_exists;
+
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::pager::Pager;
@@ -23,9 +26,9 @@ pub fn test_sequence_creation() {
 
     let database_name = String::from("rusticodb");
     let table_name = String::from("sequences");
-    assert!(sql_executor.machine.check_database_exists(&database_name));
+    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(sql_executor.machine.check_table_exists(&table));
+    assert!(check_table_exists(&mut sql_executor.machine, &table));
 
     let _ = sql_executor.parse_command("USE rusticodb");
     let result_set = sql_executor.parse_command("SELECT * FROM sequences WHERE name = 'sequence1'");

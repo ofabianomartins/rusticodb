@@ -5,6 +5,7 @@ mod load_sequences;
 
 use crate::config::Config;
 use crate::machine::Machine;
+use crate::machine::create_database;
 use crate::storage::os_interface::OsInterface;
 use crate::utils::logger::Logger;
 
@@ -24,7 +25,7 @@ pub fn setup_system(machine: &mut Machine) {
 pub fn load_context(machine: &mut Machine) {
     if machine.database_exists(&Config::system_database()) == false {
         Logger::warn("rusticodb does not exists");
-        let _ = machine.create_database(Config::system_database(), true);
+        let _ = create_database(machine, Config::system_database(), true);
     }
 
     if OsInterface::path_exists(
