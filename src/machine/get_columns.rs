@@ -91,8 +91,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
 
 pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
     let table_columns = Table::new(
-        Config::system_database(),
-        Config::system_database_table_columns()
+        Config::sysdb(),
+        Config::sysdb_table_columns()
     );
 
     let condition = Condition::Func2(

@@ -1,7 +1,7 @@
 use std::fmt;
 use std::string::ToString;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 #[derive(Debug)]
 pub struct Cell {

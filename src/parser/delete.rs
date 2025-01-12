@@ -17,7 +17,7 @@ use crate::machine::get_columns;
 use crate::machine::check_table_exists;
 use crate::machine::drop_tuples;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 fn strip_quotes(ident: &str) -> String {
     if ident.starts_with('`') || ident.starts_with('"') {

@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
 use crate::config::Config;
-use crate::storage::tuple::Tuple;
-use crate::storage::page::Page;
-use crate::storage::os_interface::OsInterface;
-use crate::storage::os_interface::BLOCK_SIZE;
 
-use crate::utils::logger::Logger;
+use crate::storage::Tuple;
+use crate::storage::Page;
+use crate::storage::OsInterface;
+use crate::storage::BLOCK_SIZE;
+
+use crate::utils::Logger;
 
 #[derive(Debug)]
 pub struct Pager { 

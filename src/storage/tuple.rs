@@ -1,10 +1,10 @@
 use std::fmt;
 
-use crate::storage::cell::Cell;
-use crate::utils::execution_error::ExecutionError;
-use crate::storage::os_interface::BLOCK_SIZE;
+use crate::storage::Cell;
+use crate::storage::CellType;
+use crate::storage::BLOCK_SIZE;
 
-use super::cell::CellType;
+use crate::utils::ExecutionError;
 
 #[derive(Debug, Clone)]
 pub struct Tuple {

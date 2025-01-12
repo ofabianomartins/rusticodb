@@ -14,8 +14,8 @@ use crate::storage::tuple::Tuple;
 
 pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u64> {
     let table_sequences = Table::new(
-        Config::system_database(),
-        Config::system_database_table_sequences()
+        Config::sysdb(),
+        Config::sysdb_table_sequences()
     );
     let condition = Condition::Func2(
         Condition2Type::And,

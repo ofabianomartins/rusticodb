@@ -1,29 +1,27 @@
 use std::env;
 
 #[derive(Debug)]
-pub struct Config {
-
-}
+pub struct Config {}
 
 impl Config {
 
-    pub fn system_database() -> String {
+    pub fn sysdb() -> String {
         return String::from("rusticodb");
     }
 
-    pub fn system_database_table_databases() -> String {
+    pub fn sysdb_table_databases() -> String {
         return String::from("databases");
     }
 
-    pub fn system_database_table_tables() -> String {
+    pub fn sysdb_table_tables() -> String {
         return String::from("tables");
     }
 
-    pub fn system_database_table_columns() -> String {
+    pub fn sysdb_table_columns() -> String {
         return String::from("columns");
     }
 
-    pub fn system_database_table_sequences() -> String {
+    pub fn sysdb_table_sequences() -> String {
         return String::from("sequences");
     }
 

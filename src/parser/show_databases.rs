@@ -3,7 +3,7 @@ use crate::machine::Table;
 use crate::machine::ResultSet;
 use crate::machine::product_cartesian;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 pub fn show_databases(machine: &mut Machine) -> Result<ResultSet, ExecutionError> { 
     let table = Table::new(String::from("rusticodb"), String::from("tables"));

@@ -1,9 +1,13 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
+
 use rusticodb::machine::Machine;
 use rusticodb::machine::create_database;
-use rusticodb::storage::pager::Pager;
+use rusticodb::machine::database_exists;
+use rusticodb::machine::check_table_exists;
+
+use rusticodb::storage::Pager;
 use rusticodb::setup::setup_system;
 
 use crate::test_utils::create_tmp_test_folder;
@@ -19,7 +23,7 @@ pub fn test_if_database_exists_is_true() {
     setup_system(&mut machine);
 
     let _ = create_database(&mut machine, database1.clone(), false);
-    assert!(machine.database_exists(&database1));
+    assert_eq!(database_exists(&mut machine, &database1), true);
 }
 
 #[test]
@@ -32,7 +36,7 @@ pub fn test_if_database_exists_is_false() {
 
     setup_system(&mut machine);
 
-    assert_eq!(machine.database_exists(&database1), false);
+    assert_eq!(database_exists(&mut machine, &database1), false);
 }
 
 #[test]

@@ -12,8 +12,8 @@ use crate::machine::get_columns::get_columns_table_definition;
 
 pub fn drop_columns(machine: &mut Machine, table: &Table) {
     let table_columns = Table::new(
-        Config::system_database(),
-        Config::system_database_table_columns()
+        Config::sysdb(),
+        Config::sysdb_table_columns()
     );
 
     let condition = Condition::Func2(

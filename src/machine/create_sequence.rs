@@ -11,7 +11,7 @@ use crate::machine::insert_tuples;
 
 use crate::storage::Tuple;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 pub fn create_sequence(
     machine: &mut Machine, 
@@ -34,10 +34,7 @@ pub fn create_sequence(
     tuple.push_unsigned_bigint(1u64);
     tuples.push(tuple);
 
-    let table = Table::new(
-        Config::system_database(),
-        Config::system_database_table_sequences()
-    );
+    let table = Table::new(Config::sysdb(), Config::sysdb_table_sequences());
 
     insert_tuples(machine, &table, &mut tuples);
 

@@ -1,7 +1,4 @@
 use crate::machine::Machine;
-
-use crate::storage::os_interface::OsInterface;
-
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
 use crate::machine::get_tables;
@@ -10,7 +7,9 @@ use crate::machine::drop_table_ref;
 use crate::machine::drop_database_ref;
 use crate::machine::check_database_exists;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::storage::OsInterface;
+
+use crate::utils::ExecutionError;
 
 pub fn drop_database(machine: &mut Machine, database_name: String, if_exists: bool) -> Result<ResultSet, ExecutionError>{
     if check_database_exists(machine, &database_name) == false && if_exists {

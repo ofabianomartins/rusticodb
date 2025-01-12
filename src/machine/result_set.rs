@@ -1,10 +1,12 @@
 use std::fmt;
 use std::vec::Vec;
 
-use crate::utils::execution_error::ExecutionError;
-use crate::storage::tuple::Tuple;
-use crate::machine::column::Column;
-use crate::machine::condition::Condition;
+use crate::machine::Column;
+use crate::machine::Condition;
+
+use crate::storage::Tuple;
+
+use crate::utils::ExecutionError;
 
 #[derive(Debug)]
 pub struct ResultSet {

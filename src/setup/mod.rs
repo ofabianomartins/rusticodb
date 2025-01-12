@@ -4,15 +4,22 @@ mod load_columns;
 mod load_sequences;
 
 use crate::config::Config;
-use crate::machine::Machine;
-use crate::machine::create_database;
-use crate::storage::os_interface::OsInterface;
-use crate::utils::logger::Logger;
 
 use crate::setup::load_databases::setup_databases_table;
 use crate::setup::load_tables::setup_tables_table;
 use crate::setup::load_columns::setup_columns_table;
 use crate::setup::load_sequences::setup_sequences_table;
+
+use crate::machine::Machine;
+use crate::machine::create_database;
+use crate::machine::path_exists;
+use crate::machine::check_database_exists;
+
+use crate::storage::OsInterface;
+
+use crate::sys_db::SysDb;
+
+use crate::utils::Logger;
 
 pub fn setup_system(machine: &mut Machine) {
     OsInterface::create_folder_if_not_exists(&Config::data_folder());
@@ -23,44 +30,24 @@ pub fn setup_system(machine: &mut Machine) {
 }
 
 pub fn load_context(machine: &mut Machine) {
-    if machine.database_exists(&Config::system_database()) == false {
+    if check_database_exists(machine, &Config::sysdb()) == false {
         Logger::warn("rusticodb does not exists");
-        let _ = create_database(machine, Config::system_database(), true);
+        let _ = create_database(machine, Config::sysdb(), true);
     }
 
-    if OsInterface::path_exists(
-        &machine.pager.format_table_name(
-            &Config::system_database(),
-            &Config::system_database_table_databases()
-        )
-    ) == false {
+    if path_exists(machine,&SysDb::table_databases()) == false {
         setup_databases_table(machine);
     }
 
-    if OsInterface::path_exists(
-        &machine.pager.format_table_name(
-            &Config::system_database(),
-            &Config::system_database_table_tables()
-        )
-    ) == false{
+    if path_exists(machine,&SysDb::table_tables()) == false {
         setup_tables_table(machine);
     }
 
-    if OsInterface::path_exists(
-        &machine.pager.format_table_name(
-            &Config::system_database(),
-            &Config::system_database_table_columns()
-        )
-    ) == false{
+    if path_exists(machine,&SysDb::table_columns()) == false {
         setup_columns_table(machine);
     }
 
-    if OsInterface::path_exists(
-        &machine.pager.format_table_name(
-            &Config::system_database(),
-            &Config::system_database_table_sequences()
-        )
-    ) == false{
+    if path_exists(machine,&SysDb::table_sequences()) == false {
         setup_sequences_table(machine);
     }
 }

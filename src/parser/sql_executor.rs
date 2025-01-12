@@ -4,10 +4,6 @@ use sqlparser::parser::Parser;
 use sqlparser::parser::ParserError;
 use sqlparser::ast::Statement;
 
-use crate::machine::Machine;
-use crate::machine::result_set::ResultSet;
-use crate::utils::execution_error::ExecutionError;
-
 use crate::parser::use_database::use_database;
 use crate::parser::show_databases::show_databases;
 use crate::parser::show_tables::show_tables;
@@ -23,6 +19,11 @@ use crate::parser::query::query;
 
 use crate::parser::insert::insert;
 use crate::parser::delete::delete;
+
+use crate::machine::Machine;
+use crate::machine::result_set::ResultSet;
+use crate::utils::ExecutionError;
+
 
 pub struct SqlExecutor {
     pub machine: Machine

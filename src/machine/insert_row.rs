@@ -10,7 +10,7 @@ use crate::machine::get_columns;
 use crate::storage::Tuple;
 use crate::storage::CellType;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 pub fn insert_row(
     machine: &mut Machine,

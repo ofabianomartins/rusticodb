@@ -11,11 +11,10 @@ use crate::machine::ResultSetType;
 use crate::machine::check_table_exists;
 use crate::machine::insert_tuples;
 
-use crate::storage::os_interface::OsInterface;
+use crate::storage::OsInterface;
 use crate::storage::Tuple;
 
-
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 pub fn create_table(
     machine: &mut Machine, 
@@ -45,8 +44,8 @@ pub fn create_table(
     tuples.push(tuple);
 
     let table_tables = Table::new(
-        Config::system_database(),
-        Config::system_database_table_tables()
+        Config::sysdb(),
+        Config::sysdb_table_tables()
     );
 
     insert_tuples(machine, &table_tables, &mut tuples);
@@ -89,8 +88,8 @@ pub fn create_table(
         tuples.push(tuple);
 
         let table_columns = Table::new(
-            Config::system_database(),
-            Config::system_database_table_columns()
+            Config::sysdb(),
+            Config::sysdb_table_columns()
         );
 
         insert_tuples(machine, &table_columns, &mut tuples);
@@ -114,8 +113,8 @@ pub fn create_table(
             tuples.push(tuple);
 
             let table_sequences = Table::new(
-                Config::system_database(),
-                Config::system_database_table_sequences()
+                Config::sysdb(),
+                Config::sysdb_table_sequences()
             );
 
             insert_tuples(machine, &table_sequences, &mut tuples);

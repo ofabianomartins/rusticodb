@@ -14,8 +14,8 @@ pub fn get_tables(machine: &mut Machine, database_name: &String) -> Vec<Table> {
     let mut tables: Vec<Table> = Vec::new();
 
     let table_tables = Table::new(
-        Config::system_database(),
-        Config::system_database_table_tables()
+        Config::sysdb(),
+        Config::sysdb_table_tables()
     );
 
     let condition = Condition::Func2(

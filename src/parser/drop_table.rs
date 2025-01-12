@@ -4,7 +4,8 @@ use crate::machine::Machine;
 use crate::machine::Table;
 use crate::machine::ResultSet;
 use crate::machine::drop_table as machine_drop_table;
-use crate::utils::execution_error::ExecutionError;
+
+use crate::utils::ExecutionError;
 
 pub fn drop_table(machine: &mut Machine, names: Vec<ObjectName>, if_exists: bool) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.actual_database.clone() {

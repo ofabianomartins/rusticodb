@@ -4,7 +4,8 @@ use crate::machine::Machine;
 use crate::machine::Table;
 use crate::machine::ResultSet;
 use crate::machine::create_table as machine_create_table;
-use crate::utils::execution_error::ExecutionError;
+
+use crate::utils::ExecutionError;
 
 pub fn create_table(machine: &mut Machine, create_table: CreateTable) -> Result<ResultSet, ExecutionError> { 
 

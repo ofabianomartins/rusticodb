@@ -5,7 +5,8 @@ use sqlparser::ast::SequenceOptions;
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::create_sequence as machine_create_sequence;
-use crate::utils::execution_error::ExecutionError;
+
+use crate::utils::ExecutionError;
 
 pub fn create_sequence(
     machine: &mut Machine,

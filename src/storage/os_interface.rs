@@ -6,7 +6,7 @@ use std::fs::remove_file;
 use std::fs::OpenOptions;
 use std::io::{Read, Seek, SeekFrom, Write};
 
-use crate::utils::logger::Logger;
+use crate::utils::Logger;
 
 pub const BLOCK_SIZE: usize = 4096;
 

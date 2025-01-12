@@ -1,13 +1,13 @@
 use crate::config::Config;
 
 use crate::machine::Machine;
-use crate::machine::Table;
 use crate::machine::insert_tuples;
+use crate::machine::create_file;
 
-use crate::storage::tuple::Tuple;
-use crate::storage::os_interface::OsInterface;
+use crate::storage::Tuple;
 
-use crate::utils::logger::Logger;
+use crate::sys_db::SysDb;
+use crate::utils::Logger;
 
 pub fn setup_databases_table(machine: &mut Machine) {
     Logger::info("setup databases table");
@@ -15,19 +15,9 @@ pub fn setup_databases_table(machine: &mut Machine) {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
     tuple.push_unsigned_bigint(1u64);
-    tuple.push_string(&Config::system_database());
+    tuple.push_string(&Config::sysdb());
     tuples.push(tuple);
 
-    let table = Table::new(
-        Config::system_database(),
-        Config::system_database_table_databases()
-    );
-
-    OsInterface::create_file(
-        &machine.pager.format_table_name(
-            &table.database_name,
-            &table.name
-        )
-    );
-    insert_tuples(machine, &table, &mut tuples);
+    create_file(machine, &SysDb::table_databases());
+    insert_tuples(machine, &SysDb::table_databases(), &mut tuples);
 }

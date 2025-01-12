@@ -6,7 +6,7 @@ use crate::machine::Condition;
 use crate::machine::Condition2Type;
 use crate::machine::product_cartesian;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 pub fn show_tables(machine: &mut Machine) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.actual_database.clone() {

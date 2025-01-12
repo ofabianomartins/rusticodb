@@ -15,9 +15,9 @@ use crate::machine::ColumnType;
 use crate::machine::check_table_exists;
 use crate::machine::insert_row;
 
-use crate::storage::tuple::Tuple;
+use crate::storage::Tuple;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 fn get_tuples(_columns: &Vec<Column>, source: Option<Box<Query>>) -> Vec<Tuple> {
     let mut tuples: Vec<Tuple> = Vec::new();

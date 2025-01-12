@@ -2,7 +2,8 @@ use sqlparser::ast::Use;
 
 use crate::machine::Machine;
 use crate::machine::result_set::ResultSet;
-use crate::utils::execution_error::ExecutionError;
+
+use crate::utils::ExecutionError;
 
 pub fn use_database(machine: &mut Machine, statement: Use) -> Result<ResultSet, ExecutionError> { 
     match statement {

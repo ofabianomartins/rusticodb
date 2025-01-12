@@ -10,8 +10,8 @@ use crate::machine::drop_tuples;
 
 pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
     let table_databases = Table::new(
-        Config::system_database(),
-        Config::system_database_table_databases()
+        Config::sysdb(),
+        Config::sysdb_table_databases()
     );
 
     let columns = get_columns(machine, &table_databases);

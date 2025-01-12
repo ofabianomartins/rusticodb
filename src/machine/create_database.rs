@@ -7,10 +7,10 @@ use crate::machine::ResultSetType;
 use crate::machine::check_database_exists;
 use crate::machine::insert_tuples;
 
-use crate::storage::os_interface::OsInterface;
-use crate::storage::tuple::Tuple;
+use crate::storage::OsInterface;
+use crate::storage::Tuple;
 
-use crate::utils::execution_error::ExecutionError;
+use crate::utils::ExecutionError;
 
 pub fn create_database(machine: &mut Machine, database_name: String, if_not_exists: bool) -> Result<ResultSet, ExecutionError>{
     if check_database_exists(machine, &database_name) && if_not_exists {
@@ -27,7 +27,7 @@ pub fn create_database(machine: &mut Machine, database_name: String, if_not_exis
     tuple.push_string(&database_name);
     tuples.push(tuple);
 
-    let table = Table::new(Config::system_database(), Config::system_database_table_databases());
+    let table = Table::new(Config::sysdb(), Config::sysdb_table_databases());
 
     insert_tuples(machine, &table, &mut tuples);
 

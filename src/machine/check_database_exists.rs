@@ -13,8 +13,8 @@ use crate::storage::Tuple;
 
 pub fn check_database_exists(machine: &mut Machine, database_name: &String) -> bool {
     let table_databases = Table::new(
-        Config::system_database(),
-        Config::system_database_table_databases()
+        Config::sysdb(),
+        Config::sysdb_table_databases()
     );
 
     let condition = Condition::Func2(
