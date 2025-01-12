@@ -35,7 +35,7 @@ pub fn insert_row(
     return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
 }
 
-pub fn validate_tuples(
+fn validate_tuples(
     machine: &mut Machine, 
     table: &Table,
     columns: &Vec<Column>, 
@@ -76,12 +76,12 @@ fn adjust_tuples(
             for (_idx, column) in table_columns.iter().enumerate() {
                 let index_result = columns.iter().position(|e| e == column);
                 if let Some(index) = index_result {
-                    if column.primary_key == true {
+                    if column.primary_key != true {
                        new_tuple.append_cell(tuple.get_cell(index as u16));
-                    } else {
-                        if let Some(next_id) = get_sequence_next_id(machine, column) {
-                            new_tuple.push_unsigned_bigint(next_id);
-                        }
+                    }
+                } else {
+                    if let Some(next_id) = get_sequence_next_id(machine, column) {
+                        new_tuple.push_unsigned_bigint(next_id);
                     }
                 }
             }

@@ -338,7 +338,7 @@ impl Cell {
             cell_type == (CellType::SignedBigint as u8) {
             return 9;
         }
-        return 0
+        return 1
     }
 
     pub fn data_size(&mut self) -> u32 {
@@ -363,6 +363,10 @@ impl Cell {
 
     pub fn to_string(&self) -> String {
         if self.data.len() == 0 {
+            return String::from("NULL");
+        }
+
+        if self.data[0] == (CellType::Null as u8) {
             return String::from("NULL");
         }
 

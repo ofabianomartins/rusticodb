@@ -5,6 +5,7 @@ use sqlparser::ast::Ident;
 use sqlparser::ast::Query;
 use sqlparser::ast::SetExpr;
 use sqlparser::ast::Expr;
+use sqlparser::ast::Value;
 
 use crate::machine::Machine;
 use crate::machine::Table;
@@ -31,6 +32,14 @@ fn get_tuples(_columns: &Vec<Column>, source: Option<Box<Query>>) -> Vec<Tuple> 
                     match item {
                         Expr::Identifier(value) => {
                            tuple.push_string(&value.value);
+                        },
+                        Expr::Value(value) => {
+                           match value {
+                               Value::Null => {
+                                   tuple.push_null();
+                               },
+                               _ => {}
+                           }
                         },
                         _ => {}
                     }

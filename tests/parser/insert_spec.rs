@@ -2,6 +2,7 @@ use rusticodb::machine::Machine;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::pager::Pager;
+use rusticodb::utils::ExecutionError;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -87,7 +88,7 @@ pub fn test_in_two_rows_with_null_value() {
     let _ = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name1 VARCHAR NOT NULL, name2 VARCHAR)");
     let result_set = sql_executor.parse_command("INSERT table1(name1, name2) VALUES (NULL, \"martins\")");
 
-    assert!(matches!(result_set, Err(_result_set)));
+    assert!(matches!(result_set, Err(ExecutionError::ColumnCantBeNull(_result_set, _, _))));
 
     let result_set_select = sql_executor.parse_command("SELECT * FROM table1");
 
@@ -97,20 +98,5 @@ pub fn test_in_two_rows_with_null_value() {
 
     assert_eq!(rs[0].tuples.len(), 0);
     assert_eq!(rs[0].column_count(), 3);
-
-    assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
-    );
-
-    assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name1")).unwrap(),
-        String::from("fabiano")
-    );
-
-    assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
-    );
 }
 

@@ -7,7 +7,7 @@ pub fn test_tuple_push_null() {
     let mut buffer: Vec<u8> = Vec::new();
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
-    buffer.append(&mut 4u16.to_be_bytes().to_vec());
+    buffer.append(&mut 5u16.to_be_bytes().to_vec());
     buffer.push(CellType::Null as u8);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];

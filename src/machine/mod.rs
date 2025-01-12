@@ -71,7 +71,6 @@ pub use drop_tuples::drop_tuples;
 
 use crate::storage::pager::Pager;
 use crate::storage::os_interface::OsInterface;
-use crate::storage::tuple::Tuple;
 
 use crate::utils::execution_error::ExecutionError;
 
