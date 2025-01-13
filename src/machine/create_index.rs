@@ -1,6 +1,3 @@
-use sqlparser::ast::DataType;
-use sqlparser::ast::SequenceOptions;
-
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
@@ -12,14 +9,14 @@ use crate::sys_db::SysDb;
 
 use crate::utils::ExecutionError;
 
-pub fn create_sequence(
+pub fn create_index(
     machine: &mut Machine, 
     database_name: &String, 
     table_name: &String,
     column_name: &String,
     sequence_name: &String,
-    _data_type: Option<DataType>,
-    _sequence_options: Vec<SequenceOptions>
+    index_type: &String,
+    _if_not_exists: bool
 ) -> Result<ResultSet, ExecutionError>{
 
     let mut tuples: Vec<Tuple> = Vec::new();
@@ -29,10 +26,10 @@ pub fn create_sequence(
     tuple.push_string(&table_name);
     tuple.push_string(&column_name);
     tuple.push_string(&sequence_name);
-    tuple.push_unsigned_bigint(1u64);
+    tuple.push_string(&index_type);
     tuples.push(tuple);
 
-    insert_tuples(machine, &SysDb::table_sequences(), &mut tuples);
+    insert_tuples(machine, &SysDb::table_indexes(), &mut tuples);
 
-    Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE SEQUENCE")))
+    Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE INDEX")))
 }

@@ -23,4 +23,8 @@ impl SysDb {
         return Table::new(Config::sysdb(), Config::sysdb_table_sequences());
     }
 
+    pub fn table_indexes() -> Table {
+        return Table::new(Config::sysdb(), Config::sysdb_table_indexes());
+    }
+
 }

@@ -4,7 +4,9 @@ use sqlparser::ast::SequenceOptions;
 
 use crate::machine::Machine;
 use crate::machine::ResultSet;
+use crate::machine::ResultSetType;
 use crate::machine::create_sequence as machine_create_sequence;
+use crate::machine::check_sequence_exists;
 
 use crate::utils::ExecutionError;
 
@@ -17,6 +19,12 @@ pub fn create_sequence(
     sequence_options: Vec<SequenceOptions>
 ) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.actual_database.clone() {
+        if check_sequence_exists(machine, &db_name, &name.to_string()) && if_not_exists {
+            return Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE SEQUENCE")));
+        }
+        if check_sequence_exists(machine, &db_name, &name.to_string()) {
+            return Err(ExecutionError::DatabaseExists(db_name));
+        }
         let mut table_name = String::from("");
         let mut column_name = String::from("");
 
@@ -33,7 +41,6 @@ pub fn create_sequence(
             &column_name,
             &name.to_string(),
             data_type,
-            if_not_exists,
             sequence_options
         )
     } else {

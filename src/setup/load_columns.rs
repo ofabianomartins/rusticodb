@@ -223,6 +223,72 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuple.push_boolean(false);
     tuples.push(tuple);
 
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(20u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
+    tuple.push_string(&String::from("id"));
+    tuple.push_string(&String::from("BIGINT"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(true);
+    tuple.push_boolean(true);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(21u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
+    tuple.push_string(&String::from("database_name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(22u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
+    tuple.push_string(&String::from("table_name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(23u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
+    tuple.push_string(&String::from("column_name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(24u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
+    tuple.push_string(&String::from("name"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(25u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
+    tuple.push_string(&String::from("type"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
     create_file(machine, &SysDb::table_columns());
     insert_tuples(machine, &SysDb::table_columns(), &mut tuples);
 }

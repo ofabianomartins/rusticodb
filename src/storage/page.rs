@@ -1,7 +1,7 @@
 use std::usize;
 
-use crate::storage::os_interface::BLOCK_SIZE;
-use crate::storage::tuple::Tuple;
+use crate::storage::BLOCK_SIZE;
+use crate::storage::Tuple;
 
 #[derive(Debug)]
 pub struct Page { 

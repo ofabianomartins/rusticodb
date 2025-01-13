@@ -10,7 +10,7 @@ use crate::machine::get_columns;
 use crate::machine::read_tuples;
 use crate::machine::update_tuples;
 
-use crate::storage::tuple::Tuple;
+use crate::storage::Tuple;
 
 pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u64> {
     let table_sequences = Table::new(

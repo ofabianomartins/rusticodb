@@ -25,6 +25,10 @@ impl Config {
         return String::from("sequences");
     }
 
+    pub fn sysdb_table_indexes() -> String {
+        return String::from("indexes");
+    }
+
     pub fn log_mode() -> u8 {
         match env::var("LOG_MODE") {
             Ok(value) => match value.parse::<u8>() {

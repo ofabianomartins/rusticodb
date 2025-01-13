@@ -186,7 +186,7 @@ pub fn test_select_with_two_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 361);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 625);
     assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 16);
 }
 
@@ -204,7 +204,7 @@ pub fn test_select_with_three_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b, columns c");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 6859);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 15625);
     assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 24);
 }
 
@@ -222,7 +222,7 @@ pub fn test_select_with_all_and_more_one_attr() {
     let result_set = sql_executor.parse_command("SELECT *, name FROM columns");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 19);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 25);
     assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
@@ -277,7 +277,7 @@ pub fn test_select_with_all_where_with_not_equal() {
 
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 16);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 22);
     assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 

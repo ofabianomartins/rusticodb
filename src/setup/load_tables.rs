@@ -1,7 +1,6 @@
 use crate::config::Config;
 
 use crate::machine::Machine;
-use crate::machine::Table;
 use crate::machine::insert_tuples;
 use crate::machine::create_file;
 
@@ -37,6 +36,12 @@ pub fn setup_tables_table(machine: &mut Machine) {
     tuple.push_unsigned_bigint(4u64);
     tuple.push_string(&Config::sysdb());
     tuple.push_string(&Config::sysdb_table_sequences());
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(5u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_indexes());
     tuples.push(tuple);
 
     create_file(machine, &SysDb::table_tables());

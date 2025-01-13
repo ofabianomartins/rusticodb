@@ -1,4 +1,4 @@
-use crate::machine::Table;
+use crate::machine::Index;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
 use crate::machine::Condition;
@@ -10,8 +10,8 @@ use crate::sys_db::SysDb;
 
 use crate::storage::Tuple;
 
-pub fn get_tables(machine: &mut Machine, database_name: &String) -> Vec<Table> {
-    let mut tables: Vec<Table> = Vec::new();
+pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> {
+    let mut sequences: Vec<Index> = Vec::new();
 
     let condition = Condition::Func2(
         Condition2Type::Equal,
@@ -19,23 +19,16 @@ pub fn get_tables(machine: &mut Machine, database_name: &String) -> Vec<Table> {
         Box::new(Condition::Const(RawVal::Str(database_name.clone())))
     );
 
-    let columns = get_columns(machine, &SysDb::table_tables());
+    let columns = get_columns(machine, &SysDb::table_indexes());
 
-    let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_tables())
+    let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_indexes())
         .into_iter()
         .filter(|tuple| condition.evaluate(tuple, &columns))
         .collect();
 
     for elem in tuples.into_iter() {
-        tables.push(
-            Table::new_with_alias(
-                database_name.clone(),
-                database_name.clone(),
-                elem.get_string(2).unwrap(),
-                elem.get_string(2).unwrap()
-            )
-        );
+        sequences.push(Index::new(elem.get_string(4).unwrap()));
     }
 
-    return tables;
+    return sequences;
 }

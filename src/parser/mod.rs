@@ -11,6 +11,8 @@ pub mod show_tables;
 
 pub mod create_sequence;
 
+pub mod create_index;
+
 pub mod query;
 pub mod insert;
 pub mod delete;

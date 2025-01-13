@@ -1,8 +1,9 @@
 use std::fmt;
 
-use crate::machine::column::Column;
+use crate::machine::Column;
 use crate::machine::raw_val::RawVal;
-use crate::storage::tuple::Tuple;
+
+use crate::storage::Tuple;
 
 #[derive(Debug)]
 pub enum Condition {

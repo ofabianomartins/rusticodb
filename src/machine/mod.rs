@@ -1,4 +1,3 @@
-
 // OBJECTS AND MESSAGES
 pub mod database;
 pub mod table;
@@ -30,8 +29,18 @@ pub mod drop_columns;
 pub mod get_columns;
 
 // SEQUENCE FUNCTIONS
+pub mod sequence;
 pub mod create_sequence;
 pub mod get_sequence_next_id;
+pub mod check_sequence_exists;
+pub mod get_sequences;
+
+// INDEX FUNCTIONS
+pub mod index;
+pub mod create_index;
+pub mod check_index_exists;
+pub mod get_indexes;
+
 
 // TUPLE FUNCTIONS
 pub mod read_tuples;
@@ -48,6 +57,8 @@ pub use self::result_set::ResultSetType;
 pub use self::condition::{ Condition, Condition1Type, Condition2Type };
 pub use self::table::Table;
 pub use self::column::{ Column, ColumnType };
+pub use self::sequence::Sequence;
+pub use self::index::Index;
 
 pub use create_file::create_file;
 pub use path_exists::path_exists;
@@ -69,6 +80,12 @@ pub use get_columns::get_columns;
 
 pub use create_sequence::create_sequence;
 pub use get_sequence_next_id::get_sequence_next_id;
+pub use get_sequences::get_sequences;
+pub use check_sequence_exists::check_sequence_exists;
+
+pub use create_index::create_index;
+pub use get_indexes::get_indexes;
+pub use check_index_exists::check_index_exists;
 
 pub use product_cartesian::product_cartesian;
 

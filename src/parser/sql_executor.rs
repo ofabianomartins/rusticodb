@@ -11,6 +11,7 @@ use crate::parser::show_tables::show_tables;
 use crate::parser::create_database::create_database;
 use crate::parser::create_table::create_table;
 use crate::parser::create_sequence::create_sequence;
+use crate::parser::create_index::create_index;
 
 use crate::parser::drop_database::drop_database;
 use crate::parser::drop_table::drop_table;
@@ -84,6 +85,7 @@ impl SqlExecutor {
                     sequence_options
                 )
             },
+            Statement::CreateIndex(statement) => create_index(&mut self.machine, statement),
             Statement::Drop { object_type, if_exists, names, .. } => {
                 match object_type {
                     ObjectType::Database => drop_database(&mut self.machine, names, if_exists),
