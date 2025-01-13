@@ -17,6 +17,12 @@ pub enum ExecutionError {
     TableNotExists(String),
     TableExists(String),
 
+    SequenceNotExists(String),
+    SequenceExists(String),
+
+    IndexNotExists(String),
+    IndexExists(String),
+
     ColumnNotExists(String),
     ColumnCantBeNull(String, String, String),
 

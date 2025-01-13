@@ -23,7 +23,7 @@ pub fn create_sequence(
             return Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE SEQUENCE")));
         }
         if check_sequence_exists(machine, &db_name, &name.to_string()) {
-            return Err(ExecutionError::DatabaseExists(db_name));
+            return Err(ExecutionError::SequenceExists(db_name));
         }
         let mut table_name = String::from("");
         let mut column_name = String::from("");

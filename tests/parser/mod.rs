@@ -9,8 +9,10 @@ pub mod create_table_spec;
 pub mod drop_table_spec;
 
 pub mod create_sequence_spec;
+pub mod drop_sequence_spec;
 
 pub mod create_index_spec;
+pub mod drop_index_spec;
 
 pub mod query_spec;
 

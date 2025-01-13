@@ -11,7 +11,7 @@ use crate::sys_db::SysDb;
 use crate::storage::Tuple;
 
 pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> {
-    let mut sequences: Vec<Index> = Vec::new();
+    let mut indexes: Vec<Index> = Vec::new();
 
     let condition = Condition::Func2(
         Condition2Type::Equal,
@@ -27,8 +27,8 @@ pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> 
         .collect();
 
     for elem in tuples.into_iter() {
-        sequences.push(Index::new(elem.get_string(4).unwrap()));
+        indexes.push(Index::new(elem.get_string(4).unwrap()));
     }
 
-    return sequences;
+    return indexes;
 }

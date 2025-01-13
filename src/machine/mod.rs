@@ -34,13 +34,14 @@ pub mod create_sequence;
 pub mod get_sequence_next_id;
 pub mod check_sequence_exists;
 pub mod get_sequences;
+pub mod drop_sequence;
 
 // INDEX FUNCTIONS
 pub mod index;
 pub mod create_index;
 pub mod check_index_exists;
 pub mod get_indexes;
-
+pub mod drop_index;
 
 // TUPLE FUNCTIONS
 pub mod read_tuples;
@@ -82,10 +83,12 @@ pub use create_sequence::create_sequence;
 pub use get_sequence_next_id::get_sequence_next_id;
 pub use get_sequences::get_sequences;
 pub use check_sequence_exists::check_sequence_exists;
+pub use drop_sequence::drop_sequence;
 
 pub use create_index::create_index;
 pub use get_indexes::get_indexes;
 pub use check_index_exists::check_index_exists;
+pub use drop_index::drop_index;
 
 pub use product_cartesian::product_cartesian;
 

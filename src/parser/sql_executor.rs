@@ -9,12 +9,16 @@ use crate::parser::show_databases::show_databases;
 use crate::parser::show_tables::show_tables;
 
 use crate::parser::create_database::create_database;
-use crate::parser::create_table::create_table;
-use crate::parser::create_sequence::create_sequence;
-use crate::parser::create_index::create_index;
-
 use crate::parser::drop_database::drop_database;
+
+use crate::parser::create_table::create_table;
 use crate::parser::drop_table::drop_table;
+
+use crate::parser::create_sequence::create_sequence;
+use crate::parser::drop_sequence::drop_sequence;
+
+use crate::parser::create_index::create_index;
+use crate::parser::drop_index::drop_index;
 
 use crate::parser::query::query;
 
@@ -90,6 +94,8 @@ impl SqlExecutor {
                 match object_type {
                     ObjectType::Database => drop_database(&mut self.machine, names, if_exists),
                     ObjectType::Table => drop_table(&mut self.machine, names, if_exists),
+                    ObjectType::Index => drop_index(&mut self.machine, names, if_exists),
+                    ObjectType::Sequence => drop_sequence(&mut self.machine, names, if_exists),
                     value => { 
                         println!("DROP {:?}", value);
                         Err(ExecutionError::NotImplementedYet)

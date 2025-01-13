@@ -8,7 +8,6 @@ use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
-use crate::machine::check_table_exists;
 use crate::machine::insert_tuples;
 
 use crate::storage::OsInterface;
@@ -19,19 +18,8 @@ use crate::utils::ExecutionError;
 pub fn create_table(
     machine: &mut Machine, 
     table: &Table, 
-    if_not_exists: bool,
     columns: Vec<ColumnDef>
 ) -> Result<ResultSet, ExecutionError>{
-    if check_table_exists(machine, &table) && if_not_exists {
-        return Ok(
-            ResultSet::new_command(
-                ResultSetType::Change, String::from("CREATE TABLE")
-            )
-        );
-    }
-    if check_table_exists(machine, &table) {
-        return Err(ExecutionError::DatabaseExists(table.database_name.to_string()));
-    }
     OsInterface::create_file(
         &machine.pager.format_table_name(&table.database_name, &table.name)
     );

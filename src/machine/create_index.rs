@@ -15,8 +15,7 @@ pub fn create_index(
     table_name: &String,
     column_name: &String,
     sequence_name: &String,
-    index_type: &String,
-    _if_not_exists: bool
+    index_type: &String
 ) -> Result<ResultSet, ExecutionError>{
 
     let mut tuples: Vec<Tuple> = Vec::new();

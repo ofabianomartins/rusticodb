@@ -5,7 +5,6 @@ use rusticodb::config::Config;
 use rusticodb::machine::Machine;
 use rusticodb::machine::create_database;
 use rusticodb::machine::database_exists;
-use rusticodb::machine::check_table_exists;
 
 use rusticodb::storage::Pager;
 use rusticodb::setup::setup_system;

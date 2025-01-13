@@ -55,7 +55,7 @@ pub fn test_if_table_exists_is_true() {
 
     let _ = create_database(&mut machine, database1.clone(), false);
     let table = Table::new(database1.clone(), table1.clone());
-    let _ = create_table(&mut machine, &table, false, Vec::new());
+    let _ = create_table(&mut machine, &table, Vec::new());
     assert_eq!(check_table_exists(&mut machine, &table), true);
 }
 
@@ -103,7 +103,7 @@ pub fn test_create_table_metadata_file() {
 
     let table = Table::new(database1.clone(), String::from("table1"));
     let _ = create_database(&mut machine, database1.clone(), false);
-    let _ = create_table(&mut machine, &table, false, Vec::new());
+    let _ = create_table(&mut machine, &table, Vec::new());
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());

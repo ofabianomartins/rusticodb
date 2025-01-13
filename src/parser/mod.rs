@@ -10,8 +10,10 @@ pub mod drop_table;
 pub mod show_tables;
 
 pub mod create_sequence;
+pub mod drop_sequence;
 
 pub mod create_index;
+pub mod drop_index;
 
 pub mod query;
 pub mod insert;
