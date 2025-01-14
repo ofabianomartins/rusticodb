@@ -53,7 +53,7 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         let next_id_value = elem.get_unsigned_bigint(5).unwrap();
 
         new_elem.push_unsigned_bigint(next_id_value);
-        update_tuples(machine, &table_sequences, &mut  vec![new_elem]);
+        update_tuples(machine, &table_sequences, &mut vec![new_elem]);
         next_id = Some(elem.get_unsigned_bigint(5).unwrap());
 
         break;

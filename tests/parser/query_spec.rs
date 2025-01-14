@@ -186,7 +186,7 @@ pub fn test_select_with_two_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 625);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 729);
     assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 16);
 }
 
@@ -204,7 +204,7 @@ pub fn test_select_with_three_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b, columns c");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 15625);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 19683);
     assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 24);
 }
 
@@ -222,7 +222,7 @@ pub fn test_select_with_all_and_more_one_attr() {
     let result_set = sql_executor.parse_command("SELECT *, name FROM columns");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 25);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 27);
     assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
@@ -258,7 +258,7 @@ pub fn test_select_with_all_where_equal() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns WHERE table_name = 'tables' ");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 3);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
     assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 
@@ -297,7 +297,7 @@ pub fn test_select_with_all_where_with_and_conditions() {
     );
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 3);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
     assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }
 
@@ -318,6 +318,6 @@ pub fn test_select_with_all_where_with_or_conditions() {
     );
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 7);
     assert_eq!(result_set.unwrap()[0].column_count(), 8);
 }

@@ -43,6 +43,10 @@ pub mod check_index_exists;
 pub mod get_indexes;
 pub mod drop_index;
 
+// VIEW FUNCTIONS
+pub mod create_view;
+pub mod check_view_exists;
+
 // TUPLE FUNCTIONS
 pub mod read_tuples;
 pub mod insert_row;
@@ -89,6 +93,9 @@ pub use create_index::create_index;
 pub use get_indexes::get_indexes;
 pub use check_index_exists::check_index_exists;
 pub use drop_index::drop_index;
+
+pub use create_view::create_view;
+pub use check_view_exists::check_view_exists;
 
 pub use product_cartesian::product_cartesian;
 

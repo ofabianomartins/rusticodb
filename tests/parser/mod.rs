@@ -14,6 +14,8 @@ pub mod drop_sequence_spec;
 pub mod create_index_spec;
 pub mod drop_index_spec;
 
+pub mod create_view_spec;
+
 pub mod query_spec;
 
 pub mod insert_spec;

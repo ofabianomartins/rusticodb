@@ -70,6 +70,29 @@ pub fn setup_columns_table(machine: &mut Machine) {
     tuples.push(tuple);
 
     let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(5u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_tables());
+    tuple.push_string(&String::from("type"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(true);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(5u64);
+    tuple.push_string(&Config::sysdb());
+    tuple.push_string(&Config::sysdb_table_tables());
+    tuple.push_string(&String::from("query"));
+    tuple.push_string(&String::from("VARCHAR"));
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuple.push_boolean(false);
+    tuples.push(tuple);
+
+
+    let mut tuple: Tuple = Tuple::new();
     tuple.push_unsigned_bigint(6u64);
     tuple.push_string(&Config::sysdb());
     tuple.push_string(&Config::sysdb_table_columns());

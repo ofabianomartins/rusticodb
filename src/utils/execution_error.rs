@@ -23,6 +23,9 @@ pub enum ExecutionError {
     IndexNotExists(String),
     IndexExists(String),
 
+    ViewNotExists(String),
+    ViewExists(String),
+
     ColumnNotExists(String),
     ColumnCantBeNull(String, String, String),
 

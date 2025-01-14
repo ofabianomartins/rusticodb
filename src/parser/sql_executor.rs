@@ -20,6 +20,8 @@ use crate::parser::drop_sequence::drop_sequence;
 use crate::parser::create_index::create_index;
 use crate::parser::drop_index::drop_index;
 
+use crate::parser::create_view::create_view;
+
 use crate::parser::query::query;
 
 use crate::parser::insert::insert;
@@ -90,6 +92,15 @@ impl SqlExecutor {
                 )
             },
             Statement::CreateIndex(statement) => create_index(&mut self.machine, statement),
+            Statement::CreateView { name, query, if_not_exists, or_replace, .. } => {
+                create_view(
+                    &mut self.machine,
+                    &name.to_string(),
+                    query,
+                    or_replace,
+                    if_not_exists
+                )
+            },
             Statement::Drop { object_type, if_exists, names, .. } => {
                 match object_type {
                     ObjectType::Database => drop_database(&mut self.machine, names, if_exists),

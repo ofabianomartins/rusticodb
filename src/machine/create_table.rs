@@ -15,6 +15,8 @@ use crate::storage::Tuple;
 
 use crate::utils::ExecutionError;
 
+use crate::sys_db::SysDb;
+
 pub fn create_table(
     machine: &mut Machine, 
     table: &Table, 
@@ -29,14 +31,11 @@ pub fn create_table(
     tuple.push_unsigned_bigint(1u64);
     tuple.push_string(&table.database_name);
     tuple.push_string(&table.name);
+    tuple.push_string(&String::from("table"));
+    tuple.push_null();
     tuples.push(tuple);
 
-    let table_tables = Table::new(
-        Config::sysdb(),
-        Config::sysdb_table_tables()
-    );
-
-    insert_tuples(machine, &table_tables, &mut tuples);
+    insert_tuples(machine, &SysDb::table_tables(), &mut tuples);
 
     for column in columns.iter() {
         let mut type_column: String = String::from("");

@@ -15,6 +15,8 @@ pub mod drop_sequence;
 pub mod create_index;
 pub mod drop_index;
 
+pub mod create_view;
+
 pub mod query;
 pub mod insert;
 pub mod delete;

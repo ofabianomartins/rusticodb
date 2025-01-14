@@ -279,7 +279,6 @@ impl fmt::Display for Tuple {
         let cell_count = self.cell_count();
         let mut cell_index = 0;
 
-        let _ = write!(f, "[{:?}]\n", self.data);
         let _ = write!(f, "[{}, (", cell_count);
 
         while cell_index < cell_count {
