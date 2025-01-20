@@ -105,3 +105,82 @@ impl fmt::Display for Column {
     }
 }
 
+pub fn get_columns_table_definition() -> Vec<Column> {
+    return vec![
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("id"),
+            ColumnType::UnsignedBigint,
+            true,
+            true,
+            true
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("database_name"),
+            ColumnType::Varchar,
+            true,
+            false,
+            false
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("table_name"),
+            ColumnType::Varchar,
+            true,
+            false,
+            false
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("name"),
+            ColumnType::Varchar,
+            true,
+            false,
+            false
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("type"),
+            ColumnType::Varchar,
+            true,
+            false,
+            false
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("not_null"),
+            ColumnType::Boolean,
+            true,
+            false,
+            false
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("primary_key"),
+            ColumnType::Boolean,
+            true,
+            false,
+            false
+        ),
+        Column::new(
+            String::from("rusitcodb"),
+            String::from("columns"),
+            String::from("unique"),
+            ColumnType::Boolean,
+            true,
+            false,
+            false
+
+        ),
+    ];
+}
+
+

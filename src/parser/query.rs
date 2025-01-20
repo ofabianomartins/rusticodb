@@ -11,12 +11,12 @@ use crate::machine::Table;
 use crate::machine::Column;
 use crate::machine::ColumnType;
 use crate::machine::raw_val::RawVal;
-use crate::machine::Condition;
-use crate::machine::Condition1Type;
-use crate::machine::Condition2Type;
 use crate::machine::get_columns as machine_get_columns;
 use crate::machine::check_table_exists;
 use crate::machine::product_cartesian;
+use crate::machine::Expression;
+use crate::machine::Expression1Type;
+use crate::machine::Expression2Type;
 
 use crate::utils::ExecutionError;
 
@@ -206,12 +206,12 @@ fn get_offset(offset: Option<Offset>) -> Result<u64, QueryError> {
     }
 }
 
-fn map_binary_operator(o: &BinaryOperator) -> Result<Condition2Type, QueryError> {
+fn map_binary_operator(o: &BinaryOperator) -> Result<Expression2Type, QueryError> {
     Ok(match o {
-        BinaryOperator::And => Condition2Type::And,
-        BinaryOperator::Or => Condition2Type::Or,
-        BinaryOperator::Eq => Condition2Type::Equal,
-        BinaryOperator::NotEq => Condition2Type::NotEqual,
+        BinaryOperator::And => Expression2Type::And,
+        BinaryOperator::Or => Expression2Type::Or,
+        BinaryOperator::Eq => Expression2Type::Equal,
+        BinaryOperator::NotEq => Expression2Type::NotEqual,
 //        BinaryOperator::Plus => Func2Type::Add,
 //        BinaryOperator::Minus => Func2Type::Subtract,
 //        BinaryOperator::Multiply => Func2Type::Multiply,
@@ -230,10 +230,10 @@ fn map_binary_operator(o: &BinaryOperator) -> Result<Condition2Type, QueryError>
     })
 }
 
-fn map_unary_operator(op: &UnaryOperator) -> Result<Condition1Type, QueryError> {
+fn map_unary_operator(op: &UnaryOperator) -> Result<Expression1Type, QueryError> {
     Ok(match op {
-        UnaryOperator::Not => Condition1Type::Not,
-        UnaryOperator::Minus => Condition1Type::Negate,
+        UnaryOperator::Not => Expression1Type::Not,
+        UnaryOperator::Minus => Expression1Type::Negate,
         _ => {
             return Err(QueryError::NotImplemented(format!(
                 "Unsupported operator {:?}",
@@ -248,8 +248,8 @@ fn map_unary_operator(op: &UnaryOperator) -> Result<Condition1Type, QueryError> 
 fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
     match constant {
         Value::Number(num, _) => {
-            if num.parse::<i64>().is_ok() {
-                Ok(RawVal::Int(num.parse::<i64>().unwrap()))
+            if num.parse::<u64>().is_ok() {
+                Ok(RawVal::Int(num.parse::<u64>().unwrap()))
             } else {
                 Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
             }
@@ -260,13 +260,13 @@ fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
     }
 }
 
-fn convert_to_native_expr(node: &ASTNode) -> Result<Condition, QueryError> {
+fn convert_to_native_expr(node: &ASTNode) -> Result<Expression, QueryError> {
     Ok(match node {
         ASTNode::BinaryOp {
             ref left,
             ref op,
             ref right,
-        } => Condition::Func2(
+        } => Expression::Func2(
             map_binary_operator(op)?,
             Box::new(convert_to_native_expr(left)?),
             Box::new(convert_to_native_expr(right)?)
@@ -274,10 +274,10 @@ fn convert_to_native_expr(node: &ASTNode) -> Result<Condition, QueryError> {
         ASTNode::UnaryOp {
             ref op,
             expr: ref expression,
-        } => Condition::Func1(map_unary_operator(op)?, Box::new(convert_to_native_expr(expression)?)),
-        ASTNode::Value(ref literal) => Condition::Const(get_raw_val(literal)?),
+        } => Expression::Func1(map_unary_operator(op)?, Box::new(convert_to_native_expr(expression)?)),
+        ASTNode::Value(ref literal) => Expression::Const(get_raw_val(literal)?),
         ASTNode::Identifier(ref identifier) => {
-            Condition::ColName(strip_quotes(identifier.value.as_ref()))
+            Expression::ColName(strip_quotes(identifier.value.as_ref()))
         }
         _ => {
             println!("Parsing for this ASTNode not implemented: {:?}", node);

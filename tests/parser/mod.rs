@@ -19,4 +19,7 @@ pub mod create_view_spec;
 pub mod query_spec;
 
 pub mod insert_spec;
+
+pub mod update_spec;
+
 pub mod delete_spec;

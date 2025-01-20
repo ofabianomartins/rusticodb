@@ -3,10 +3,10 @@ use crate::config::Config;
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
-use crate::machine::Condition;
-use crate::machine::Condition2Type;
 use crate::machine::get_columns;
 use crate::machine::drop_tuples;
+use crate::machine::Expression;
+use crate::machine::Expression2Type;
 
 pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
     let table_databases = Table::new(
@@ -16,10 +16,10 @@ pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
 
     let columns = get_columns(machine, &table_databases);
 
-    let condition = Condition::Func2(
-        Condition2Type::Equal,
-        Box::new(Condition::ColName(String::from("name"))),
-        Box::new(Condition::Const(RawVal::Str(database_name.clone())))
+    let condition = Expression::Func2(
+        Expression2Type::Equal,
+        Box::new(Expression::ColName(String::from("name"))),
+        Box::new(Expression::Const(RawVal::Str(database_name.clone())))
     );
 
     drop_tuples(machine, &table_databases, columns, &condition);

@@ -52,7 +52,7 @@ impl Tuple {
                     self.data[position_index + 1], self.data[position_index + 2],
                     self.data[position_index + 3], self.data[position_index + 4]
                 ];
-                cell_size = u32::from_be_bytes(byte_array) + 5u32; // or use `from_be_bytes` for big-endian
+                cell_size = u32::from_be_bytes(byte_array) + 6u32; // or use `from_be_bytes` for big-endian
             } else {
                 cell_size = Cell::count_data_size(self.data[position_index as usize]);
             }

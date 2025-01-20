@@ -1,4 +1,6 @@
 use std::fmt;
+use std::ops;
+use std::cmp::Ordering;
 use std::string::ToString;
 
 use crate::utils::ExecutionError;
@@ -9,6 +11,7 @@ pub struct Cell {
 }
 
 // Should be save in one byte
+#[derive(Debug,Eq, PartialEq, Ord, PartialOrd)]
 pub enum CellType {
     Null = 1,
     Boolean = 2,
@@ -28,6 +31,22 @@ impl Cell {
 
     pub fn new() -> Self {
         Cell { data: Vec::new() }
+    }
+
+    pub fn new_null() -> Self {
+        Cell { data: vec![1u8] }
+    }
+
+    pub fn new_true() -> Self {
+        Cell { data: vec![2u8, 1u8] }
+    }
+
+    pub fn new_false() -> Self {
+        Cell { data: vec![2u8, 0u8] }
+    }
+
+    pub fn new_type(cell_type: CellType, values: Vec<u8>) -> Self {
+        Cell { data: [vec![cell_type as u8], values].concat() }
     }
 
     pub fn load_cell(data: Vec<u8>) -> Self {
@@ -431,6 +450,104 @@ impl Cell {
         }
 
         return String::from("");
+    }
+
+    pub fn get_type(&self) -> CellType {
+        if self.data.len() == 0 {
+            return CellType::Null;
+        }
+
+        match self.data[0] {
+            1 => CellType::Null,
+            2 => CellType::Boolean,
+            3 => CellType::UnsignedTinyint,
+            4 => CellType::UnsignedSmallint,
+            5 => CellType::UnsignedInt,
+            6 => CellType::UnsignedBigint,
+            7 => CellType::SignedTinyint,
+            8 => CellType::SignedSmallint,
+            9 => CellType::SignedInt,
+            10 => CellType::SignedBigint,
+            11 => CellType::String,
+            12 => CellType::Text,
+            _ => CellType::Null
+        }
+
+    }
+}
+
+impl PartialEq for Cell {
+    fn eq(&self, other: &Self) -> bool {
+        if self.data.len() == 0 || other.data.len() == 0 {
+            return false;
+        }
+        if self.data[0] != other.data[0] {
+            return false;
+        }
+        return self.data == other.data;
+    }
+}
+impl Eq for Cell {}
+
+impl PartialOrd for Cell {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self.data.len() == 0 || other.data.len() == 0 {
+            return None;
+        }
+        if self.data[0] != other.data[0] {
+            return None;
+        }
+        if self.bin_to_unsigned_bigint().unwrap() > other.bin_to_unsigned_bigint().unwrap() {
+            return Some(Ordering::Greater);
+        }
+        if self.bin_to_unsigned_bigint().unwrap() < other.bin_to_unsigned_bigint().unwrap() {
+            return Some(Ordering::Less); 
+        }
+        if self.data == other.data {
+            return Some(Ordering::Equal);
+        }
+        return None;
+    }
+}
+//impl Ord for Cell {}
+
+impl ops::Add<Cell> for Cell {
+    type Output = Cell;
+
+    fn add(self, other: Cell) -> Cell {
+        let result = self.bin_to_unsigned_bigint().unwrap() + other.bin_to_unsigned_bigint().unwrap();
+
+        return Cell::new_type(CellType::UnsignedBigint, result.to_be_bytes().to_vec());
+    }
+}
+
+impl ops::Sub<Cell> for Cell {
+    type Output = Cell;
+
+    fn sub(self, other: Cell) -> Cell {
+        let result = self.bin_to_unsigned_bigint().unwrap() - other.bin_to_unsigned_bigint().unwrap();
+
+        return Cell::new_type(CellType::UnsignedBigint, result.to_be_bytes().to_vec());
+    }
+}
+
+impl ops::Mul<Cell> for Cell {
+    type Output = Cell;
+
+    fn mul(self, other: Cell) -> Cell {
+        let result = self.bin_to_unsigned_bigint().unwrap() * other.bin_to_unsigned_bigint().unwrap();
+
+        return Cell::new_type(CellType::UnsignedBigint, result.to_be_bytes().to_vec());
+    }
+}
+
+impl ops::Div<Cell> for Cell {
+    type Output = Cell;
+
+    fn div(self, other: Cell) -> Cell {
+        let result = self.bin_to_unsigned_bigint().unwrap() / other.bin_to_unsigned_bigint().unwrap();
+
+        return Cell::new_type(CellType::UnsignedBigint, result.to_be_bytes().to_vec());
     }
 }
 

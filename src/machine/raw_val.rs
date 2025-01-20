@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
 pub enum RawVal {
-    Int(i64),
+    Int(u64),
     Float(OrderedFloat<f64>),
     Str(String),
     Null,
@@ -90,8 +90,8 @@ impl<'a> From<&'a str> for RawVal {
     }
 }
 
-impl From<i64> for RawVal {
-    fn from(val: i64) -> RawVal {
+impl From<u64> for RawVal {
+    fn from(val: u64) -> RawVal {
         RawVal::Int(val)
     }
 }

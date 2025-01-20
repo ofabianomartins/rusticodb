@@ -2,7 +2,7 @@ use std::fmt;
 use std::vec::Vec;
 
 use crate::machine::Column;
-use crate::machine::Condition;
+use crate::machine::Expression;
 
 use crate::storage::Tuple;
 
@@ -236,7 +236,7 @@ impl ResultSet {
         return Ok(new_set);
     }
 
-    pub fn selection(&self, condition: Condition) -> Result<ResultSet, ExecutionError> {
+    pub fn selection(&self, condition: Expression) -> Result<ResultSet, ExecutionError> {
         let mut columns: Vec<Column> = Vec::new();
         let mut tuples: Vec<Tuple> = Vec::new();
 

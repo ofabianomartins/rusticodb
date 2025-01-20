@@ -3,7 +3,6 @@ pub mod database;
 pub mod table;
 pub mod column;
 pub mod result_set;
-pub mod condition;
 pub mod raw_val;
 
 // FILE FUNCTIONS
@@ -53,15 +52,18 @@ pub mod insert_row;
 pub mod insert_tuples;
 pub mod update_tuples;
 pub mod drop_tuples;
+pub mod expression;
 
 // SELECT FUNCTIONS
 pub mod product_cartesian;
 
+pub use self::expression::{ Expression, Expression1Type, Expression2Type };
+pub use self::raw_val::{ RawVal };
+
 pub use self::result_set::ResultSet;
 pub use self::result_set::ResultSetType;
-pub use self::condition::{ Condition, Condition1Type, Condition2Type };
 pub use self::table::Table;
-pub use self::column::{ Column, ColumnType };
+pub use self::column::{ Column, ColumnType, get_columns_table_definition };
 pub use self::sequence::Sequence;
 pub use self::index::Index;
 

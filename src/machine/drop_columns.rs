@@ -1,26 +1,25 @@
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
-use crate::machine::Condition;
-use crate::machine::Condition2Type;
+use crate::machine::get_columns_table_definition;
 use crate::machine::drop_tuples;
-
-use crate::machine::get_columns::get_columns_table_definition;
+use crate::machine::Expression;
+use crate::machine::Expression2Type;
 
 use crate::sys_db::SysDb;
 
 pub fn drop_columns(machine: &mut Machine, table: &Table) {
-    let condition = Condition::Func2(
-        Condition2Type::And,
-        Box::new(Condition::Func2(
-            Condition2Type::Equal,
-            Box::new(Condition::ColName(String::from("database_name"))),
-            Box::new(Condition::Const(RawVal::Str(table.database_name.clone())))
+    let condition = Expression::Func2(
+        Expression2Type::And,
+        Box::new(Expression::Func2(
+            Expression2Type::Equal,
+            Box::new(Expression::ColName(String::from("database_name"))),
+            Box::new(Expression::Const(RawVal::Str(table.database_name.clone())))
         )),
-        Box::new(Condition::Func2(
-            Condition2Type::Equal,
-            Box::new(Condition::ColName(String::from("table_name"))),
-            Box::new(Condition::Const(RawVal::Str(table.name.clone())))
+        Box::new(Expression::Func2(
+            Expression2Type::Equal,
+            Box::new(Expression::ColName(String::from("table_name"))),
+            Box::new(Expression::Const(RawVal::Str(table.name.clone())))
         ))
     );
 

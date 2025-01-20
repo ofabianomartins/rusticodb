@@ -25,6 +25,7 @@ use crate::parser::create_view::create_view;
 use crate::parser::query::query;
 
 use crate::parser::insert::insert;
+use crate::parser::update::update;
 use crate::parser::delete::delete;
 
 use crate::machine::Machine;
@@ -115,6 +116,15 @@ impl SqlExecutor {
             },
             Statement::Delete(statement) => delete(&mut self.machine, statement),
             Statement::Insert(statement) => insert(&mut self.machine, statement),
+            Statement::Update { table, assignments, selection, returning, .. }  => { 
+                update(
+                    &mut self.machine, 
+                    table,
+                    assignments,
+                    selection,
+                    returning
+                )
+            },
             Statement::Query(statement) => query(&mut self.machine, statement),
             Statement::ShowDatabases { .. } => show_databases(&mut self.machine),
             Statement::ShowTables { .. } => show_tables(&mut self.machine),

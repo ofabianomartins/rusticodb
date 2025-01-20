@@ -4,11 +4,11 @@ use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
-use crate::machine::Condition;
-use crate::machine::Condition2Type;
 use crate::machine::get_columns;
 use crate::machine::read_tuples;
 use crate::machine::update_tuples;
+use crate::machine::Expression;
+use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
 
@@ -17,24 +17,24 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         Config::sysdb(),
         Config::sysdb_table_sequences()
     );
-    let condition = Condition::Func2(
-        Condition2Type::And,
-        Box::new(Condition::Func2(
-            Condition2Type::Equal,
-            Box::new(Condition::ColName(String::from("database_name"))),
-            Box::new(Condition::Const(RawVal::Str(column.database_name.clone())))
+    let condition = Expression::Func2(
+        Expression2Type::And,
+        Box::new(Expression::Func2(
+            Expression2Type::Equal,
+            Box::new(Expression::ColName(String::from("database_name"))),
+            Box::new(Expression::Const(RawVal::Str(column.database_name.clone())))
         )),
-        Box::new(Condition::Func2(
-            Condition2Type::And,
-            Box::new(Condition::Func2(
-                Condition2Type::Equal,
-                Box::new(Condition::ColName(String::from("table_name"))),
-                Box::new(Condition::Const(RawVal::Str(column.table_name.clone())))
+        Box::new(Expression::Func2(
+            Expression2Type::And,
+            Box::new(Expression::Func2(
+                Expression2Type::Equal,
+                Box::new(Expression::ColName(String::from("table_name"))),
+                Box::new(Expression::Const(RawVal::Str(column.table_name.clone())))
             )),
-            Box::new(Condition::Func2(
-                Condition2Type::Equal,
-                Box::new(Condition::ColName(String::from("column_name"))),
-                Box::new(Condition::Const(RawVal::Str(column.name.clone())))
+            Box::new(Expression::Func2(
+                Expression2Type::Equal,
+                Box::new(Expression::ColName(String::from("column_name"))),
+                Box::new(Expression::Const(RawVal::Str(column.name.clone())))
             ))
         ))
     );

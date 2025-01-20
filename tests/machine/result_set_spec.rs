@@ -1,10 +1,12 @@
-use rusticodb::machine::result_set::ResultSet;
+use rusticodb::machine::ResultSet;
 use rusticodb::machine::column::{Column, ColumnType};
-use rusticodb::machine::condition::Condition;
-use rusticodb::machine::condition::Condition2Type;
 use rusticodb::machine::raw_val::RawVal;
-use rusticodb::utils::execution_error::ExecutionError;
-use rusticodb::storage::tuple::Tuple;
+use rusticodb::machine::Expression;
+use rusticodb::machine::Expression2Type;
+
+use rusticodb::storage::Tuple;
+
+use rusticodb::utils::ExecutionError;
 
 #[test]
 pub fn test_check_string_line_on_result_set() {
@@ -492,10 +494,10 @@ pub fn test_selection_of_two_result_set() {
 
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
-    let condition = Condition::Func2(
-        Condition2Type::Equal,
-        Box::new(Condition::ColName(String::from("name"))),
-        Box::new(Condition::Const(RawVal::Str(String::from("fabiano"))))
+    let condition = Expression::Func2(
+        Expression2Type::Equal,
+        Box::new(Expression::ColName(String::from("name"))),
+        Box::new(Expression::Const(RawVal::Str(String::from("fabiano"))))
     );
 
     let new_set_result = result_set.selection(condition);
