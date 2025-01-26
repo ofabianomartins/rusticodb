@@ -53,47 +53,38 @@ fn get_type(column_type: ColumnType) -> CellType {
    }
 }
 
+fn logic_result(result: bool) -> Cell {
+    return if result { Cell::new_true() } else { Cell::new_false() };
+}
+
+fn compare_func1(operator: &Expression1Type, opr1: Cell) -> Cell {
+    match operator {
+        // Logic implementation
+        Expression1Type::Not => !opr1,
+        Expression1Type::Negate => -opr1,
+    }
+}
 
 fn compare_func2(operator: &Expression2Type, opr1: Cell, opr2: Cell) -> Cell {
-    return match operator {
-        Expression2Type::And => {
-            return if opr1 == Cell::new_true() && opr2 == Cell::new_true() { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::Or => {
-            return if opr1 == Cell::new_true() || opr2 == Cell::new_true() { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::GreatherOrEqual => {
-            return if opr1 >= opr2 { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::GreatherThan => {
-            return if opr1 > opr2 { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::LessOrEqual => {
-            return if opr1 <= opr2 { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::LessThan => {
-            return if opr1 < opr2 { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::Equal => {
-            return if opr1 == opr2 { Cell::new_true() } else { Cell::new_false() };
-        },
-        Expression2Type::Add => {
-            return opr1 + opr2;
-        },
-        Expression2Type::Sub => {
-            return opr1 - opr2;
-        },
-        Expression2Type::Mul => {
-            return opr1 * opr2;
-        },
-        Expression2Type::Div => {
-            return opr1 / opr2;
-        },
-        Expression2Type::NotEqual => {
-            return if opr1 != opr2 { Cell::new_true() } else { Cell::new_false() };
-        },
-        _ => Cell::new_null()
-    };
+    match operator {
+        // Logic implementation
+        Expression2Type::And => logic_result(opr1.is_true() && opr2.is_true()),
+        Expression2Type::Or => logic_result(opr1.is_true() || opr2.is_true()),
+
+        // Comparison implementation
+        Expression2Type::GreatherOrEqual => logic_result(opr1 >= opr2),
+        Expression2Type::GreatherThan => logic_result(opr1 > opr2),
+        Expression2Type::LessOrEqual => logic_result(opr1 <= opr2),
+        Expression2Type::LessThan => logic_result(opr1 < opr2),
+        Expression2Type::Equal => logic_result(opr1 == opr2),
+        Expression2Type::NotEqual => logic_result(opr1 != opr2),
+
+        // Aritmetic implementation
+        Expression2Type::Add => opr1 + opr2, 
+        Expression2Type::Sub => opr1 - opr2,
+        Expression2Type::Mul => opr1 * opr2,
+        Expression2Type::Div => opr1 / opr2
+    }
 }
 
 impl Expression {
@@ -181,17 +172,12 @@ impl Expression {
                     &RawVal::Int(number) => {
                         return Cell::new_type(CellType::UnsignedBigint, number.to_be_bytes().to_vec())
                     },
-                    &RawVal::Float(_) | &RawVal::Str(_) | &RawVal::Null => return Cell::new_null()
+                    RawVal::Str(value) => { return Cell::new_string(value) },
+                    &RawVal::Float(_) | &RawVal::Null => return Cell::new_null()
                 };
             },
             Expression::Func1(operator, opr1) => { 
-                return match operator {
-                    Expression1Type::Not => {
-                        let value_opr1 = opr1.result(tuple, columns);
-                        return if value_opr1 == Cell::new_false() { Cell::new_false() } else { Cell::new_true() };
-                    },
-                    _ => Cell::new_null()
-                };
+                return compare_func1(operator, opr1.result(tuple, columns));
             },
             Expression::Func2(operator, opr1, opr2) => {
                 let value_opr1 = opr1.result(tuple, columns);

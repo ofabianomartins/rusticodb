@@ -49,6 +49,12 @@ impl Cell {
         Cell { data: [vec![cell_type as u8], values].concat() }
     }
 
+    pub fn new_string(value: &String) -> Self {
+        let mut cell = Cell { data: Vec::new() };
+        cell.string_to_bin(value);
+        cell
+    }
+
     pub fn load_cell(data: Vec<u8>) -> Self {
         Cell { data }
     }
@@ -124,6 +130,10 @@ impl Cell {
     pub fn signed_bigint_to_bin(&mut self, value: i64) {
         self.data.push(CellType::SignedBigint as u8);
         self.data.append(&mut value.to_be_bytes().to_vec());
+    }
+    
+    pub fn is_true(&self) -> bool {
+        self.data[0] == (CellType::Boolean as u8) && self.data[1] == 1
     }
 
     pub fn get_bin(&self) -> Result<Vec<u8>, ExecutionError> {
@@ -548,6 +558,26 @@ impl ops::Div<Cell> for Cell {
         let result = self.bin_to_unsigned_bigint().unwrap() / other.bin_to_unsigned_bigint().unwrap();
 
         return Cell::new_type(CellType::UnsignedBigint, result.to_be_bytes().to_vec());
+    }
+}
+
+impl ops::Not for Cell {
+    type Output = Cell;
+
+    fn not(self) -> Cell {
+        let result = if self.bin_to_unsigned_bigint().unwrap() != 0 { 0u8 } else { 1u8 };
+
+        return Cell::new_type(CellType::Boolean, vec![result]);
+    }
+}
+
+impl ops::Neg for Cell {
+    type Output = Cell;
+
+    fn neg(self) -> Cell {
+        let result: i64 = (-1 * (self.bin_to_unsigned_bigint().unwrap() as i64)).into();
+
+        return Cell::new_type(CellType::SignedBigint, result.to_le_bytes().to_vec());
     }
 }
 

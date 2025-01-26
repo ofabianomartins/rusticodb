@@ -3,7 +3,7 @@ use rusticodb::machine::Machine;
 use rusticodb::parser::sql_executor::SqlExecutor;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::pager::Pager;
-use rusticodb::utils::ExecutionError;
+// use rusticodb::utils::ExecutionError;
 
 use crate::test_utils::create_tmp_test_folder;
 

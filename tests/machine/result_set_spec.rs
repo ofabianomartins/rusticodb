@@ -31,7 +31,17 @@ pub fn test_check_text_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"), 
+            String::from("databases"), 
+            String::from("name"), 
+            ColumnType::Varchar, 
+            false, 
+            false, 
+            false
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_text(&String::from("database1"));
@@ -67,7 +77,17 @@ pub fn test_check_unsigned_smallint_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"), 
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_unsigned_smallint(8u16);

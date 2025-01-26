@@ -49,6 +49,14 @@ impl Tuple {
                 cell_size = (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
             } else if self.data[position_index as usize] == (CellType::Text as u8) {
                 let byte_array: [u8; 4] = [
+                    self.data[position_index + 1],
+                    self.data[position_index + 2],
+                    self.data[position_index + 3],
+                    self.data[position_index + 4]
+                ];
+                cell_size = (u32::from_be_bytes(byte_array) as u32) + 5u32; // or use `from_be_bytes` for big-endian
+            } else if self.data[position_index as usize] == (CellType::Text as u8) {
+                let byte_array: [u8; 4] = [
                     self.data[position_index + 1], self.data[position_index + 2],
                     self.data[position_index + 3], self.data[position_index + 4]
                 ];
@@ -64,7 +72,6 @@ impl Tuple {
             cell_index += 1;
             position_index += cell_size as usize;
         }
-
         let mut buffer_array: Vec<u8> = Vec::new();
         for n in position_index..(position_index + (cell_size as usize)) {
             buffer_array.push(self.data[n as usize]);
