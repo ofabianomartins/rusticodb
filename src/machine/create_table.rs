@@ -44,9 +44,14 @@ pub fn create_table(
         let mut primary_key_column: bool = false;
 
         match column.data_type {
-            DataType::BigInt(None) => { type_column = String::from("BIGINT") },
-            DataType::Integer(None) => { type_column = String::from("INTEGER") },
-            DataType::Varchar(None) => { type_column = String::from("VARCHAR") }
+            DataType::TinyInt(_) => { type_column = String::from("TINYINT") },
+            DataType::SmallInt(_) => { type_column = String::from("SMALLINT") },
+            DataType::MediumInt(_) => { type_column = String::from("INT") },
+            DataType::BigInt(_) => { type_column = String::from("BIGINT") },
+            DataType::Integer(_) => { type_column = String::from("INT") },
+            DataType::Varchar(_) => { type_column = String::from("VARCHAR") }
+            DataType::Text => { type_column = String::from("TEXT") }
+            DataType::Boolean => { type_column = String::from("TINYINT") }
             _ => {}
         }
 

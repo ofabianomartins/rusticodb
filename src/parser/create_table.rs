@@ -10,7 +10,6 @@ use crate::machine::check_table_exists;
 use crate::utils::ExecutionError;
 
 pub fn create_table(machine: &mut Machine, create_table: CreateTable) -> Result<ResultSet, ExecutionError> { 
-
     if let Some(db_name) = machine.actual_database.clone() {
         let if_not_exists = create_table.if_not_exists;
         let table = Table::new(db_name, create_table.name.to_string());
