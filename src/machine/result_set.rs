@@ -245,7 +245,7 @@ impl ResultSet {
         }
 
         for tuple in &self.tuples {
-            if condition.evaluate(tuple, &self.columns) {
+            if condition.result(tuple, &self.columns).is_true() {
                 tuples.push(tuple.clone());
             }
         }

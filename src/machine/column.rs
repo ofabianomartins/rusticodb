@@ -14,7 +14,7 @@ pub struct Column {
     pub primary_key: bool
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum ColumnType {
     Undefined = 0,
     Null = 1,
@@ -90,11 +90,22 @@ impl Column {
     pub fn check_column_name(&self, other_name: &String) -> bool {
         return self.name == *other_name; 
     }
+
+    pub fn is_number(&self) -> bool {
+        return self.column_type == ColumnType::UnsignedTinyint ||
+        self.column_type == ColumnType::UnsignedSmallint ||
+        self.column_type == ColumnType::UnsignedInt ||
+        self.column_type == ColumnType::UnsignedBigint ||
+        self.column_type == ColumnType::SignedTinyint ||
+        self.column_type == ColumnType::SignedSmallint ||
+        self.column_type == ColumnType::SignedInt ||
+        self.column_type == ColumnType::SignedBigint;
+    }
 }
 
 impl PartialEq for Column {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name && self.table_alias == other.table_alias
+        self.alias == other.alias && self.table_alias == other.table_alias
     }
 }
 impl Eq for Column {}
@@ -182,5 +193,3 @@ pub fn get_columns_table_definition() -> Vec<Column> {
         ),
     ];
 }
-
-

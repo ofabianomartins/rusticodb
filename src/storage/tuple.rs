@@ -41,9 +41,13 @@ impl Tuple {
 
         let mut cell_index = 0;
         let mut position_index: usize = 4;
-        let mut cell_size: u32;
+        let mut cell_size: u32 = 0;
 
         loop {
+            if position_index >= self.data.len() {
+                return Cell::new();
+            }
+
             if self.data[position_index as usize] == (CellType::String as u8) {
                 let byte_array: [u8; 2] = [self.data[position_index + 1], self.data[position_index + 2]];
                 cell_size = (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
@@ -65,7 +69,7 @@ impl Tuple {
                 cell_size = Cell::count_data_size(self.data[position_index as usize]);
             }
 
-            if cell_index == position {
+            if cell_index >= cell_count || cell_index == position {
                 break;
             }
 

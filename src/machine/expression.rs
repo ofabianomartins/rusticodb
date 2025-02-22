@@ -46,7 +46,7 @@ pub enum Expression2Type {
     Div
 }
 
-fn get_type(column_type: ColumnType) -> CellType {
+fn _get_type(column_type: ColumnType) -> CellType {
    match column_type {
        ColumnType::Varchar => CellType::String,
        _ => CellType::Null
@@ -88,74 +88,6 @@ fn compare_func2(operator: &Expression2Type, opr1: Cell, opr2: Cell) -> Cell {
 }
 
 impl Expression {
-    pub fn evaluate(&self, tuple: &Tuple, columns: &Vec<Column>) -> bool {
-        match self {
-            Expression::Empty => true,
-            Expression::Func1(operator, opr1) => { 
-                match operator {
-                    Expression1Type::Not => {
-                        let value_opr1 = opr1.evaluate_value(tuple, columns);
-                        return value_opr1 == vec![0];
-                    },
-                    _ => false
-                }
-            },
-            Expression::Func2(operator, opr1, opr2) => {
-                let value_opr1 = opr1.evaluate_value(tuple, columns);
-                let value_opr2 = opr2.evaluate_value(tuple, columns);
-                match operator {
-                    Expression2Type::And => value_opr1 == vec![1] && value_opr2 == vec![1],
-                    Expression2Type::Or => value_opr1 == vec![1] || value_opr2 == vec![1],
-                    Expression2Type::Equal => value_opr1 == value_opr2,
-                    Expression2Type::NotEqual => value_opr1 != value_opr2,
-                    _ => false
-                }
-            },
-            _ => false
-        }
-    }
-
-    fn evaluate_value(&self, tuple: &Tuple, columns: &Vec<Column>) -> Vec<u8> {
-        match self {
-            Expression::Empty => vec![1],
-            Expression::ColName(colname)=> {
-                let mut value: Vec<u8> = Vec::new();
-
-                for (idx, column) in columns.iter().enumerate() {
-                    if column.name == *colname {
-                        value = tuple.get_vec_u8(idx as u16).unwrap();
-                    }
-                }
-                value
-            },
-            Expression::Const(value) => {
-                return value.to_vec_u8();
-            },
-            Expression::Func1(operator, opr1) => { 
-                match operator {
-                    Expression1Type::Not => {
-                        let value_opr1 = opr1.evaluate_value(tuple, columns);
-                        return if value_opr1 == vec![0] { vec![0] } else { vec![1] };
-                    },
-                    _ => vec![0u8]
-                }
-            },
-            Expression::Func2(operator, opr1, opr2) => {
-                let value_opr1 = opr1.evaluate_value(tuple, columns);
-                let value_opr2 = opr2.evaluate_value(tuple, columns);
-                match operator {
-                    Expression2Type::And => {
-                        return if value_opr1 == vec![1] && value_opr2 == vec![1] { vec![1] } else { vec![0] };
-                    },
-                    Expression2Type::Equal => {
-                        return if value_opr1 == value_opr2 { vec![1] } else { vec![0] };
-                    },
-                    _ => vec![0u8]
-                }
-            }
-        }
-    }
-
     pub fn result(&self, tuple: &Tuple, columns: &Vec<Column>) -> Cell {
         match self {
             Expression::Empty => Cell::new_null(),

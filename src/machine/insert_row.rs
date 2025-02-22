@@ -69,6 +69,8 @@ fn adjust_tuples(
 ) -> Result<Vec<Tuple>, ExecutionError> {
     let table_columns = get_columns(machine, table);
 
+    // println!("---------------------- {:?}", columns);
+
     let new_tuples: Vec<Tuple> = tuples.iter_mut()
         .map(|tuple| { 
             let mut new_tuple = Tuple::new();
@@ -76,9 +78,7 @@ fn adjust_tuples(
             for (_idx, column) in table_columns.iter().enumerate() {
                 let index_result = columns.iter().position(|e| e == column);
                 if let Some(index) = index_result {
-                    if column.primary_key != true {
-                       new_tuple.append_cell(tuple.get_cell(index as u16));
-                    }
+                    new_tuple.append_cell(tuple.get_cell(index as u16));
                 } else {
                     if let Some(next_id) = get_sequence_next_id(machine, column) {
                         new_tuple.push_unsigned_bigint(next_id);

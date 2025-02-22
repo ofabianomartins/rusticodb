@@ -25,7 +25,7 @@ pub fn check_database_exists(machine: &mut Machine, database_name: &String) -> b
     let columns = get_columns(machine, &table_databases);
     let tuples: Vec<Tuple> = read_tuples(machine, &table_databases)
         .into_iter()
-        .filter(|tuple| condition.evaluate(tuple, &columns))
+        .filter(|tuple| condition.result(tuple, &columns).is_true())
         .collect();
 
     return tuples.len() > 0;

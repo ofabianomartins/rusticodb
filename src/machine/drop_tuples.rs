@@ -8,7 +8,7 @@ use crate::storage::Tuple;
 pub fn drop_tuples(machine: &mut Machine, table: &Table, columns: Vec<Column>, condition: &Expression) {
     let mut tuples: Vec<Tuple> = machine.pager.read_tuples(&table.database_name, &table.name)
         .into_iter()
-        .filter(|tuple| !condition.evaluate(tuple, &columns))
+        .filter(|tuple| !condition.result(tuple, &columns).is_true())
         .collect();
 
     machine.pager.update_tuples(&table.database_name, &table.name, &mut tuples);

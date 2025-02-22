@@ -7,7 +7,7 @@ use rusticodb::utils::ExecutionError;
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
-pub fn test_in_two_columns_varchar() {
+pub fn test_in_two_varchar_columns() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -19,7 +19,7 @@ pub fn test_in_two_columns_varchar() {
     let _ = sql_executor.parse_command("CREATE DATABASE database1");
     let _ = sql_executor.parse_command("USE database1");
     let _ = sql_executor.parse_command("CREATE TABLE table1(name1 VARCHAR, name2 VARCHAR)");
-    let result_set = sql_executor.parse_command("INSERT table1 VALUES (\"fabiano\", \"martins\")");
+    let result_set = sql_executor.parse_command("INSERT table1 VALUES (\'fabiano\', \'martins\')");
 
 
     assert!(matches!(result_set, Ok(_result_set)));
@@ -44,7 +44,7 @@ pub fn test_in_two_columns_varchar_and_with_primary_key() {
     let _ = sql_executor.parse_command("CREATE DATABASE database1");
     let _ = sql_executor.parse_command("USE database1");
     let _ = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name1 VARCHAR, name2 VARCHAR)");
-    let result_set = sql_executor.parse_command("INSERT table1(name1, name2) VALUES (\"fabiano\", \"martins\")");
+    let result_set = sql_executor.parse_command("INSERT table1(name1, name2) VALUES (\'fabiano\', \'martins\')");
 
     assert!(matches!(result_set, Ok(_result_set)));
 
@@ -86,7 +86,7 @@ pub fn test_in_two_rows_with_null_value() {
     let _ = sql_executor.parse_command("CREATE DATABASE database1");
     let _ = sql_executor.parse_command("USE database1");
     let _ = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name1 VARCHAR NOT NULL, name2 VARCHAR)");
-    let result_set = sql_executor.parse_command("INSERT table1(name1, name2) VALUES (NULL, \"martins\")");
+    let result_set = sql_executor.parse_command("INSERT table1(name1, name2) VALUES (NULL, \'martins\')");
 
     assert!(matches!(result_set, Err(ExecutionError::ColumnCantBeNull(_result_set, _, _))));
 

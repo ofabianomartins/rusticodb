@@ -34,7 +34,7 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
 
     let tuples: Vec<Tuple> = read_tuples(machine, &table_columns)
         .into_iter()
-        .filter(|tuple| condition.evaluate(tuple, &get_columns_table_definition()))
+        .filter(|tuple| condition.result(tuple, &get_columns_table_definition()).is_true())
         .collect();
 
     let mut columns: Vec<Column> = Vec::new();
@@ -48,7 +48,12 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
                 table.alias.clone(),
                 elem.get_string(3).unwrap(),
                 elem.get_string(3).unwrap(),
-                ColumnType::Varchar,
+                match elem.get_string(4).unwrap().as_str() {
+                    "INTEGER" => ColumnType::UnsignedInt,
+                    "BIGINT" => ColumnType::UnsignedBigint,
+                    "VARCHAR" => ColumnType::Varchar,
+                    _ => ColumnType::Varchar
+                },
                 elem.get_boolean(5).unwrap(),
                 elem.get_boolean(6).unwrap(),
                 elem.get_boolean(7).unwrap(),

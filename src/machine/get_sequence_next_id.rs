@@ -43,7 +43,7 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
 
     let tuples: Vec<Tuple> = read_tuples(machine, &table_sequences)
         .into_iter()
-        .filter(|tuple| condition.evaluate(tuple, &columns))
+        .filter(|tuple| condition.result(tuple, &columns).is_true())
         .collect();
 
     let mut next_id: Option<u64> = None;

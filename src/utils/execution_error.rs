@@ -28,9 +28,11 @@ pub enum ExecutionError {
 
     ColumnNotExists(String),
     ColumnCantBeNull(String, String, String),
+    ColumnTypeNotMatch(String, String, String),
 
     WrongTupleSize(usize, usize),
     TupleNotExists(usize),
+    FailedUpdateTuples,
 
     NotImplementedYet
 }

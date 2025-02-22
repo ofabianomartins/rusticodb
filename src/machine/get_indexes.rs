@@ -23,7 +23,7 @@ pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> 
 
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_indexes())
         .into_iter()
-        .filter(|tuple| condition.evaluate(tuple, &columns))
+        .filter(|tuple| condition.result(tuple, &columns).is_true())
         .collect();
 
     for elem in tuples.into_iter() {

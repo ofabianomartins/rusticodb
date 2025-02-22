@@ -128,7 +128,7 @@ pub fn test_with_if_not_exists() {
 }
 
 #[test]
-pub fn test_with_two_columns() {
+pub fn test_with_two_varchar_columns() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -153,7 +153,7 @@ pub fn test_with_two_columns() {
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_not_null() {
+pub fn test_with_two_varchar_columns_and_one_is_not_null() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -195,7 +195,7 @@ pub fn test_with_two_columns_and_one_is_not_null() {
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_varchar_and_other_is_int() {
+pub fn test_with_two_varchar_columns_and_one_is_varchar_and_other_is_int() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);

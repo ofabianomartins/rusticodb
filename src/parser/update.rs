@@ -1,90 +1,73 @@
-use sqlparser::ast::Ident;
-use sqlparser::ast::Query;
-use sqlparser::ast::SetExpr;
 use sqlparser::ast::Expr;
-use sqlparser::ast::Value;
 use sqlparser::ast::Assignment;
 use sqlparser::ast::TableWithJoins;
 use sqlparser::ast::SelectItem;
+use sqlparser::ast::AssignmentTarget;
 
 use crate::machine::Machine;
-use crate::machine::Table;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
+use crate::machine::Attribution;
 use crate::machine::Column;
 use crate::machine::ColumnType;
-
-use crate::storage::Tuple;
+use crate::machine::Expression;
+use crate::machine::RawVal;
+use crate::machine::Table;
+use crate::machine::update_row;
 
 use crate::utils::ExecutionError;
 
-fn get_tuples(_columns: &Vec<Column>, source: Option<Box<Query>>) -> Vec<Tuple> {
-    let mut tuples: Vec<Tuple> = Vec::new();
+fn get_attributions(
+    db_name: &String,
+    table_name: &String,
+    assignments: Vec<Assignment>
+) -> Vec<Attribution> {
+    let mut attributions: Vec<Attribution> = Vec::new();
 
-    if let Some(query) = source {
-        let rows = (*query).body;
-        match *rows {
-            SetExpr::Values(values) => {
-              for items in values.rows {
-                let mut tuple = Tuple::new();
-                for item in items {
-                    match item {
-                        Expr::Identifier(value) => {
-                           tuple.push_string(&value.value);
-                        },
-                        Expr::Value(value) => {
-                           match value {
-                               Value::Null => {
-                                   tuple.push_null();
-                               },
-                               _ => {}
-                           }
-                        },
-                        _ => {}
-                    }
-                }
-                tuples.push(tuple)
-              }
+    for assignment in assignments {
+        match &assignment.target {
+            AssignmentTarget::ColumnName(name) => {
+                let column = Column::new(
+                    db_name.clone(),
+                    table_name.clone(),
+                    name.to_string(),
+                    ColumnType::Undefined,
+                    false,
+                    false,
+                    false
+                );
+                let expression = Expression::Const(RawVal::Str(assignment.value.to_string()));
+                let attribution = Attribution::new(column, expression);
+                attributions.push(attribution);
             },
-            _ => {}
+            AssignmentTarget::Tuple(name) => {
+                println!("2 {:?}", name);
+            }
         }
     }
 
-    return tuples; 
-}
-
-pub fn get_columns(
-    _machine: &mut Machine,
-    query_columns: Vec<Ident>,
-    table: &Table
-) -> Vec<Column> {
-    let mut columns = Vec::<Column>::new();
-
-    for ident in &query_columns {
-        columns.push(
-            Column::new(
-                table.database_name.clone(),
-                table.name.clone(),
-                ident.value.clone(),
-                ColumnType::Varchar,
-                false,
-                false,
-                false
-            )
-        )
-    }
-    return columns;
+    return attributions; 
 }
 
 pub fn update(
     machine: &mut Machine,
-    _table: TableWithJoins,
-    _assignments: Vec<Assignment>,
+    table_with_joins: TableWithJoins,
+    assignments: Vec<Assignment>,
     _selection: Option<Expr>,
     _returning: Option<Vec<SelectItem>>
 ) -> Result<ResultSet, ExecutionError> { 
-    if let Some(_db_name) = machine.actual_database.clone() {
-       return Ok(ResultSet::new_command(ResultSetType::Change, String::from("UPDATE")))
+    if let Some(db_name) = machine.actual_database.clone() {
+        let table_name = table_with_joins.to_string();
+        let table = Table::new(db_name.clone(), table_name.clone());
+
+        let attributions = get_attributions(&db_name, &table_name, assignments);
+
+        return update_row(
+           machine,
+           &table,
+           &attributions,
+           Expression::Const(RawVal::Str(String::from("fabiano")))
+        );
     } else {
         return Err(ExecutionError::DatabaseNotSetted);
     }
