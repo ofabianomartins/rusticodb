@@ -116,6 +116,7 @@ impl fmt::Display for Column {
     }
 }
 
+
 pub fn get_columns_table_definition() -> Vec<Column> {
     return vec![
         Column::new(

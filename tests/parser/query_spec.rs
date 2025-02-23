@@ -186,8 +186,8 @@ pub fn test_select_with_two_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 729);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 16);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 784);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 18);
 }
 
 #[test]
@@ -204,8 +204,8 @@ pub fn test_select_with_three_tables() {
     let result_set = sql_executor.parse_command("SELECT * FROM columns a, columns b, columns c");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 19683);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 24);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 21952);
+    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 27);
 }
 
 #[test]
@@ -222,8 +222,8 @@ pub fn test_select_with_all_and_more_one_attr() {
     let result_set = sql_executor.parse_command("SELECT *, name FROM columns");
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 27);
-    assert_eq!(result_set.unwrap()[0].column_count(), 9);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 28);
+    assert_eq!(result_set.unwrap()[0].column_count(), 10);
 }
 
 #[test]
@@ -241,7 +241,7 @@ pub fn test_select_with_limit_clause() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
 #[test]
@@ -259,7 +259,7 @@ pub fn test_select_with_all_where_equal() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
-    assert_eq!(result_set.unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
 #[test]
@@ -277,8 +277,8 @@ pub fn test_select_with_all_where_with_not_equal() {
 
 
     assert!(matches!(result_set, Ok(ref _result_set)));
-    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 22);
-    assert_eq!(result_set.unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 23);
+    assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
 #[test]
@@ -298,7 +298,7 @@ pub fn test_select_with_all_where_with_and_conditions() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 5);
-    assert_eq!(result_set.unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }
 
 
@@ -319,5 +319,5 @@ pub fn test_select_with_all_where_with_or_conditions() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 7);
-    assert_eq!(result_set.unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.unwrap()[0].column_count(), 9);
 }

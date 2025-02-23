@@ -6,7 +6,6 @@ use sqlparser::ast::AssignmentTarget;
 
 use crate::machine::Machine;
 use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::Attribution;
 use crate::machine::Column;
 use crate::machine::ColumnType;

@@ -37,5 +37,5 @@ pub fn test_with_two_columns_and_one_is_a_primary_key() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 0);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 }

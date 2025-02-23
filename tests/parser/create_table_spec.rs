@@ -182,7 +182,7 @@ pub fn test_with_two_varchar_columns_and_one_is_not_null() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -224,7 +224,7 @@ pub fn test_with_two_columns_one_is_int_and_other_is_varchar() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -266,7 +266,7 @@ pub fn test_with_two_columns_one_is_int_and_other_is_text() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -308,7 +308,7 @@ pub fn test_with_two_columns_one_is_int_and_other_is_boolean() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -350,7 +350,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_tinyint() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -400,7 +400,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_mediumint() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -450,7 +450,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_smallint() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -500,7 +500,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_int() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
@@ -544,7 +544,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_bigint() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
-    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 8);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),

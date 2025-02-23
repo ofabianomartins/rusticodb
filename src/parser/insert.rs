@@ -93,7 +93,7 @@ pub fn get_insert_columns(
                     let mut item_index = 0;
                     let mut column_index = 0;
                     
-                    while true {
+                    loop {
                         if table_columns.len() == column_index {
                             break;
                         }
