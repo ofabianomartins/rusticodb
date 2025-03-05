@@ -40,7 +40,6 @@ pub fn create_table(machine: &mut Machine, create_table: CreateTable) -> Result<
             let mut primary_key: bool = false;
             let mut default: String = String::from("");
 
-
             for option in &column.options {
                 match &option.option {
                     ColumnOption::NotNull => { notnull_column = true }
@@ -95,18 +94,17 @@ pub fn create_table(machine: &mut Machine, create_table: CreateTable) -> Result<
                 _ => ColumnType::Undefined
             };
 
-            columns.push(
-                Column::new(
-                    table.database_name.clone(),
-                    table.name.clone(),
-                    column.name.to_string().clone(),
-                    type_column,
-                    notnull_column,
-                    unique_column,
-                    primary_key,
-                    default
-                )
+            let tcolumn = Column::new(
+                table.database_name.clone(),
+                table.name.clone(),
+                column.name.to_string().clone(),
+                type_column,
+                notnull_column,
+                unique_column,
+                primary_key,
+                default
             );
+            columns.push(tcolumn);
         }
 
         return machine_create_table(machine, &table, columns);

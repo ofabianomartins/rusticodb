@@ -54,9 +54,9 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
                     "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint,
                     "SIGNED SMALLINT" => ColumnType::SignedSmallint,
                     "UNSIGNED INT" => ColumnType::UnsignedInt,
-                    "SIGNED INT" => ColumnType::UnsignedInt,
+                    "SIGNED INT" => ColumnType::SignedInt,
                     "UNSIGNED BIGINT" => ColumnType::UnsignedBigint,
-                    "SIGNED BIGINT" => ColumnType::UnsignedBigint,
+                    "SIGNED BIGINT" => ColumnType::SignedBigint,
                     "VARCHAR" => ColumnType::Varchar,
                     "TEXT" => ColumnType::Text,
                     _ => ColumnType::Varchar

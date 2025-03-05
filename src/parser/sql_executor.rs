@@ -32,7 +32,6 @@ use crate::machine::Machine;
 use crate::machine::result_set::ResultSet;
 use crate::utils::ExecutionError;
 
-
 pub struct SqlExecutor {
     pub machine: Machine
 }
@@ -102,17 +101,17 @@ impl SqlExecutor {
                     if_not_exists
                 )
             },
-            Statement::Drop { object_type, if_exists, names, .. } => {
-                match object_type {
-                    ObjectType::Database => drop_database(&mut self.machine, names, if_exists),
-                    ObjectType::Table => drop_table(&mut self.machine, names, if_exists),
-                    ObjectType::Index => drop_index(&mut self.machine, names, if_exists),
-                    ObjectType::Sequence => drop_sequence(&mut self.machine, names, if_exists),
-                    value => { 
-                        println!("DROP {:?}", value);
-                        Err(ExecutionError::NotImplementedYet)
-                    }
-                }
+            Statement::Drop { object_type: ObjectType::Database, if_exists, names, .. } => {
+                drop_database(&mut self.machine, names, if_exists)
+            },
+            Statement::Drop { object_type: ObjectType::Table, if_exists, names, .. } => {
+                drop_table(&mut self.machine, names, if_exists)
+            },
+            Statement::Drop { object_type: ObjectType::Index, if_exists, names, .. } => {
+                drop_index(&mut self.machine, names, if_exists)
+            },
+            Statement::Drop { object_type: ObjectType::Sequence, if_exists, names, .. } => {
+                drop_sequence(&mut self.machine, names, if_exists)
             },
             Statement::Delete(statement) => delete(&mut self.machine, statement),
             Statement::Insert(statement) => insert(&mut self.machine, statement),

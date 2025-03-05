@@ -1,7 +1,5 @@
 extern crate sqlparser;
 
-use failure::Fail;
-
 use sqlparser::ast::Query as Select;
 use sqlparser::ast::{Expr as ASTNode, *};
 
@@ -19,6 +17,7 @@ use crate::machine::Expression1Type;
 use crate::machine::Expression2Type;
 
 use crate::utils::ExecutionError;
+use crate::utils::QueryError;
 
 fn strip_quotes(ident: &str) -> String {
     if ident.starts_with('`') || ident.starts_with('"') {
@@ -61,24 +60,6 @@ fn func_arg_to_native_expr(node: &FunctionArg) -> Result<Box<Expr>, QueryError> 
 }
 
 */
-
-#[derive(Fail, Debug)]
-pub enum QueryError {
-    #[fail(display = "Failed to parse query. Chars remaining: {}", _0)]
-    SytaxErrorCharsRemaining(String),
-    #[fail(display = "Failed to parse query. Bytes remaining: {:?}", _0)]
-    SyntaxErrorBytesRemaining(Vec<u8>),
-    #[fail(display = "Failed to parse query: {}", _0)]
-    ParseError(String),
-    // #[fail(display = "Some assumption was violated. This is a bug: {}", _0)]
-    // FatalError(String, Backtrace),
-    #[fail(display = "Not implemented: {}", _0)]
-    NotImplemented(String),
-    #[fail(display = "Type error: {}", _0)]
-    TypeError(String),
-    #[fail(display = "Overflow or division by zero")]
-    Overflow,
-}
 
 type QueryResult = (Vec<SelectItem>, Vec<TableWithJoins>, Option<ASTNode>, Option<Expr>, Option<Offset>);
 
