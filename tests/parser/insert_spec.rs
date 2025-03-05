@@ -101,6 +101,43 @@ pub fn test_in_two_rows_with_null_value() {
 }
 
 #[test]
+pub fn test_in_two_columns_and_one_accept_null_value() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let _ = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name1 VARCHAR, name2 VARCHAR)");
+    let result_set = sql_executor.parse_command("INSERT table1(name2) VALUES (\'martins\')");
+
+    let result_set_select = sql_executor.parse_command("SELECT * FROM table1");
+
+    assert!(matches!(result_set_select, Ok(ref _result_set)));
+
+    let rs = result_set_select.unwrap();
+
+    assert_eq!(rs[0].tuples.len(), 1);
+    assert_eq!(rs[0].column_count(), 3);
+
+    assert_eq!(
+        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
+        1u64
+    );
+
+    assert_eq!(
+        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
+        String::from("martins")
+    );
+
+    assert!(matches!(result_set, Ok(_result_set)));
+}
+
+#[test]
 pub fn test_in_two_columns_one_with_default_varchar_value() {
     let pager = Pager::new();
     let machine = Machine::new(pager);

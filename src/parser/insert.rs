@@ -126,6 +126,8 @@ fn get_tuples(
                                 println!("insert value and column_type not identified {:?}", other);
                             }
                         }
+                    } else if tcolumn.not_null == false {
+                        tuple.push_null();
                     } 
                 }
 
