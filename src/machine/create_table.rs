@@ -1,10 +1,9 @@
-use sqlparser::ast::ColumnDef;
-use sqlparser::ast::ColumnOption;
-use sqlparser::ast::DataType;
 
 use crate::config::Config;
 
 use crate::machine::Table;
+use crate::machine::Column;
+use crate::machine::ColumnType;
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
@@ -12,6 +11,9 @@ use crate::machine::insert_tuples;
 
 use crate::storage::OsInterface;
 use crate::storage::Tuple;
+use crate::storage::get_tuple_column;
+use crate::storage::get_tuple_table;
+use crate::storage::get_tuple_sequence;
 
 use crate::utils::ExecutionError;
 
@@ -20,97 +22,76 @@ use crate::sys_db::SysDb;
 pub fn create_table(
     machine: &mut Machine, 
     table: &Table, 
-    columns: Vec<ColumnDef>
+    columns: Vec<Column>
 ) -> Result<ResultSet, ExecutionError>{
     OsInterface::create_file(
         &machine.pager.format_table_name(&table.database_name, &table.name)
     );
 
-    let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
-    tuple.push_string(&table.database_name);
-    tuple.push_string(&table.name);
-    tuple.push_string(&String::from("table"));
-    tuple.push_null();
-    tuples.push(tuple);
+    insert_tuples(
+        machine,
+        &SysDb::table_tables(),
+        &mut vec![
+            get_tuple_table(1u64, &table.database_name, &table.name)
+        ]
+    );
 
-    insert_tuples(machine, &SysDb::table_tables(), &mut tuples);
+    let mut column_tuples: Vec<Tuple> = vec![];
+    let mut sequence_tuples: Vec<Tuple> = Vec::new();
 
     for column in columns.iter() {
-        let mut type_column: String = String::from("");
-        let mut notnull_column: bool = false;
-        let mut unique_column: bool = false;
-        let mut primary_key_column: bool = false;
+        let type_column: String = match column.column_type {
+            ColumnType::UnsignedTinyint => String::from("UNSIGNED TINYINT"),
+            ColumnType::SignedTinyint => String::from("SIGNED TINYINT"),
+            ColumnType::UnsignedSmallint => String::from("UNSIGNED SMALLINT"),
+            ColumnType::SignedSmallint => String::from("SIGNED SMALLINT"),
+            ColumnType::UnsignedInt => String::from("UNSIGNED INT"),
+            ColumnType::SignedInt => String::from("SIGNED INT"),
+            ColumnType::UnsignedBigint => String::from("UNSIGNED BIGINT"),
+            ColumnType::SignedBigint => String::from("SIGNED BIGINT"),
+            ColumnType::Varchar => String::from("VARCHAR"),
+            ColumnType::Text => String::from("TEXT"),
+            ColumnType::Boolean => String::from("UNSIGNED TINYINT"),
+            _ => String::from("UNDEFINED")
+        };
 
-        match column.data_type {
-            DataType::TinyInt(_) => { type_column = String::from("TINYINT") },
-            DataType::SmallInt(_) => { type_column = String::from("SMALLINT") },
-            DataType::MediumInt(_) => { type_column = String::from("INT") },
-            DataType::BigInt(_) => { type_column = String::from("BIGINT") },
-            DataType::Integer(_) => { type_column = String::from("INT") },
-            DataType::Varchar(_) => { type_column = String::from("VARCHAR") }
-            DataType::Text => { type_column = String::from("TEXT") }
-            DataType::Boolean => { type_column = String::from("TINYINT") }
-            _ => {}
-        }
-
-        for option in &column.options {
-            match option.option {
-                ColumnOption::NotNull => { notnull_column = true }
-                ColumnOption::Unique { is_primary, ..} => {
-                    notnull_column = true;
-                    unique_column = true;
-                    primary_key_column = is_primary;
-                }
-                _ => {}
-            }
-        }
-
-        let mut tuples: Vec<Tuple> = Vec::new();
-        let mut tuple: Tuple = Tuple::new();
-        tuple.push_unsigned_bigint(1u64);
-        tuple.push_string(&table.database_name);
-        tuple.push_string(&table.name);
-        tuple.push_string(&column.name.to_string());
-        tuple.push_string(&type_column);
-        tuple.push_boolean(notnull_column);
-        tuple.push_boolean(unique_column);
-        tuple.push_boolean(primary_key_column);
-        tuples.push(tuple);
-
-        let table_columns = Table::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns()
+        column_tuples.push(
+            get_tuple_column(
+                1u64,
+                &table.database_name,
+                &table.name,
+                &column.name.to_string(),
+                &type_column,
+                column.not_null,
+                column.unique,
+                column.primary_key,
+                &column.default
+            )
         );
 
-        insert_tuples(machine, &table_columns, &mut tuples);
-
-        if primary_key_column {
-            let mut tuples: Vec<Tuple> = Vec::new();
-            let mut tuple: Tuple = Tuple::new();
-            tuple.push_unsigned_bigint(1u64);
-            tuple.push_string(&table.database_name);
-            tuple.push_string(&table.name);
-            tuple.push_string(&column.name.to_string());
-            tuple.push_string(
-                &format!(
-                    "{}_{}_{}_primary_key",
-                    table.database_name,
-                    table.name,
-                    column.name.to_string()
+        if column.primary_key {
+            sequence_tuples.push(
+                get_tuple_sequence(
+                    1u64,
+                    &table.database_name,
+                    &table.name,
+                    &column.name.to_string(),
+                    &format!(
+                        "{}_{}_{}_primary_key",
+                        table.database_name,
+                        table.name,
+                        column.name.to_string()
+                    ),
+                    1u64
                 )
             );
-            tuple.push_unsigned_bigint(1u64);
-            tuples.push(tuple);
-
-            let table_sequences = Table::new(
-                Config::sysdb(),
-                Config::sysdb_table_sequences()
-            );
-
-            insert_tuples(machine, &table_sequences, &mut tuples);
         }
     }
+
+    let table_columns = Table::new(Config::sysdb(), Config::sysdb_table_columns());
+    let table_sequences = Table::new(Config::sysdb(), Config::sysdb_table_sequences());
+
+    insert_tuples(machine, &table_columns, &mut column_tuples);
+    insert_tuples(machine, &table_sequences, &mut sequence_tuples);
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE TABLE")))
 }

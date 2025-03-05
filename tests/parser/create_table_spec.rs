@@ -83,13 +83,15 @@ pub fn test_that_already_exists() {
 
     let _ = sql_executor.parse_command("CREATE DATABASE database1");
     let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1");
+    let create_table_result = sql_executor.parse_command("CREATE TABLE table1");
     let error_parse = sql_executor.parse_command("CREATE TABLE table1");
 
+    assert!(matches!(create_table_result, Ok(_)));
     assert!(matches!(error_parse, Err(ExecutionError::DatabaseExists(_result_set))));
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
+
     assert!(check_database_exists(&mut sql_executor.machine, &database_name));
     let table = Table::new(database_name, table_name);
     assert!(check_table_exists(&mut sql_executor.machine, &table));
@@ -228,7 +230,7 @@ pub fn test_with_two_columns_one_is_int_and_other_is_varchar() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("INT")
+        String::from("SIGNED INT")
     );
     assert_eq!(
         result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
@@ -270,7 +272,7 @@ pub fn test_with_two_columns_one_is_int_and_other_is_text() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("INT")
+        String::from("SIGNED INT")
     );
     assert_eq!(
         result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
@@ -312,16 +314,16 @@ pub fn test_with_two_columns_one_is_int_and_other_is_boolean() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("INT")
+        String::from("SIGNED INT")
     );
     assert_eq!(
         result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("TINYINT")
+        String::from("UNSIGNED TINYINT")
     );
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_a_primary_key_tinyint() {
+pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_tinyint() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -354,7 +356,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_tinyint() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("TINYINT")
+        String::from("UNSIGNED TINYINT")
     );
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -371,7 +373,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_tinyint() {
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_a_primary_key_mediumint() {
+pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_mediumint() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -404,7 +406,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_mediumint() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("INT")
+        String::from("UNSIGNED INT")
     );
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -421,7 +423,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_mediumint() {
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_a_primary_key_smallint() {
+pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_smallint() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -454,7 +456,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_smallint() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("SMALLINT")
+        String::from("UNSIGNED SMALLINT")
     );
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -471,7 +473,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_smallint() {
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_a_primary_key_int() {
+pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_int() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -504,7 +506,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_int() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("INT")
+        String::from("UNSIGNED INT")
     );
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -521,7 +523,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_int() {
 }
 
 #[test]
-pub fn test_with_two_columns_and_one_is_a_primary_key_bigint() {
+pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_bigint() {
     let pager = Pager::new();
     let machine = Machine::new(pager);
     let mut sql_executor = SqlExecutor::new(machine);
@@ -548,7 +550,7 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_bigint() {
 
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("BIGINT")
+        String::from("UNSIGNED BIGINT")
     );
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
@@ -561,5 +563,937 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_bigint() {
     assert_eq!(
         result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
         true
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_tinyint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT UNSIGNED NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED TINYINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_tinyint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED TINYINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_smallint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT UNSIGNED NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED SMALLINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_smallint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED SMALLINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_int() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT UNSIGNED NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED INT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_int() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED INT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_bigint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT UNSIGNED NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED BIGINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_bigint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT NOT NULL)");
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED BIGINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_bigint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT UNSIGNED NOT NULL DEFAULT 1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED BIGINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_bigint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT NOT NULL DEFAULT -1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED BIGINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("-1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_int() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT UNSIGNED NOT NULL DEFAULT 1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED INT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_int() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT NOT NULL DEFAULT -1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED INT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("-1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_smallint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT UNSIGNED NOT NULL DEFAULT 1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED SMALLINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_smallint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT NOT NULL DEFAULT -1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED SMALLINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("-1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_tinyint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT UNSIGNED NOT NULL DEFAULT 1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED TINYINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_tinyint() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT NOT NULL DEFAULT -1)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("SIGNED TINYINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("-1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_string() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL DEFAULT 'test1')"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("VARCHAR")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("test1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_text() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TEXT NOT NULL DEFAULT 'test1')"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("TEXT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("test1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_true_boolean() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BOOLEAN NOT NULL DEFAULT true)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED TINYINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("1")
+    );
+}
+
+#[test]
+pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_false_boolean() {
+    let pager = Pager::new();
+    let machine = Machine::new(pager);
+    let mut sql_executor = SqlExecutor::new(machine);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut sql_executor.machine);
+
+    let _ = sql_executor.parse_command("CREATE DATABASE database1");
+    let _ = sql_executor.parse_command("USE database1");
+    let result_create = sql_executor.parse_command(
+        "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BOOLEAN NOT NULL DEFAULT false)"
+    );
+
+    assert!(matches!(result_create, Ok(ref _result_set)));
+
+    let _ = sql_executor.parse_command("USE rusticodb;");
+    let result_set = sql_executor.parse_command("
+        SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
+    ");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 2);
+    assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
+
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
+        String::from("UNSIGNED TINYINT")
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
+        true
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
+        false
+    );
+    assert_eq!(
+        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
+        String::from("0")
     );
 }

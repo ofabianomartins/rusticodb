@@ -13,7 +13,18 @@ pub fn test_check_string_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("database1"));
@@ -39,7 +50,8 @@ pub fn test_check_text_line_on_result_set() {
             ColumnType::Varchar, 
             false, 
             false, 
-            false
+            false,
+            String::from("")
         )
     );
 
@@ -59,7 +71,18 @@ pub fn test_check_unsigned_tinyint_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_unsigned_tinyint(8u8);
@@ -85,7 +108,8 @@ pub fn test_check_unsigned_smallint_line_on_result_set() {
             ColumnType::Varchar,
             false,
             false,
-            false
+            false,
+            String::from("")
         )
     );
 
@@ -105,7 +129,18 @@ pub fn test_check_unsigned_int_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_unsigned_int(8u32);
@@ -123,7 +158,18 @@ pub fn test_check_unsigned_bigint_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_unsigned_bigint(8u64);
@@ -141,7 +187,18 @@ pub fn test_check_signed_tinyint_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_signed_tinyint(8i8);
@@ -159,7 +216,18 @@ pub fn test_check_signed_smallint_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_signed_smallint(8i16);
@@ -177,7 +245,18 @@ pub fn test_check_signed_int_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_signed_int(8i32);
@@ -195,7 +274,18 @@ pub fn test_check_signed_bigint_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_signed_bigint(8i64);
@@ -213,8 +303,30 @@ pub fn test_check_signed_bigint_and_string_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("id"), ColumnType::UnsignedBigint, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("id"),
+            ColumnType::UnsignedBigint,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("name"),
+            ColumnType::Varchar,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_unsigned_bigint(8u64);
@@ -234,7 +346,18 @@ pub fn test_check_signed_bigint_with_string_line_on_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("id"), ColumnType::UnsignedBigint, false, false, false));
+    columns.push(
+        Column::new(
+            String::from("rusticodb"),
+            String::from("databases"),
+            String::from("id"),
+            ColumnType::UnsignedBigint,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    );
 
     let mut tuple = Tuple::new();
     tuple.push_unsigned_bigint(8u64);
@@ -252,7 +375,7 @@ pub fn test_check_result_on_result_set_with_two_lines() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("database2"));
@@ -285,8 +408,8 @@ pub fn test_projection_in_one_column() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -300,7 +423,7 @@ pub fn test_projection_in_one_column() {
 
     let mut projection_columns: Vec<Column> = Vec::new();
 
-    projection_columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    projection_columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let result_set = ResultSet::new_select(columns, tuples);
     let new_set_result = result_set.projection(projection_columns);
@@ -317,9 +440,9 @@ pub fn test_projection_in_two_columns() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -335,8 +458,8 @@ pub fn test_projection_in_two_columns() {
 
     let mut projection_columns: Vec<Column> = Vec::new();
 
-    projection_columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    projection_columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
+    projection_columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    projection_columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let result_set = ResultSet::new_select(columns, tuples);
     let new_set_result = result_set.projection(projection_columns);
@@ -375,7 +498,7 @@ pub fn test_cartesian_product_between_a_empty_and_full_result_sets() {
     let mut columns1: Vec<Column> = Vec::new();
     let mut tuples1: Vec<Tuple> = Vec::new();
 
-    columns1.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns1.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("database2"));
@@ -403,7 +526,7 @@ pub fn test_cartesian_product_between_two_result_sets() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("database2"));
@@ -437,9 +560,9 @@ pub fn test_union_of_two_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -458,9 +581,9 @@ pub fn test_union_of_two_result_set() {
     let mut columns2: Vec<Column> = Vec::new();
     let mut tuples2: Vec<Tuple> = Vec::new();
 
-    columns2.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns2.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns2.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false ));
+    columns2.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns2.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns2.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -490,9 +613,9 @@ pub fn test_selection_of_two_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -533,9 +656,9 @@ pub fn test_limit_to_two_of_result_set() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -568,9 +691,9 @@ pub fn test_limit_bigger_than_of_result_set_size() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -603,9 +726,9 @@ pub fn test_offset_to_two_of_result_set_size() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false,));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));
@@ -643,9 +766,9 @@ pub fn test_offset_bigger_of_result_set_size() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();
 
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false));
-    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("last_name"), ColumnType::Varchar, false, false, false, String::from("")));
+    columns.push(Column::new(String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
     let mut tuple = Tuple::new();
     tuple.push_string(&String::from("fabiano"));

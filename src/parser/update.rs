@@ -33,7 +33,8 @@ fn get_attributions(
                     ColumnType::Undefined,
                     false,
                     false,
-                    false
+                    false,
+                    String::from("")
                 );
                 let expression = Expression::Const(RawVal::Str(assignment.value.to_string()));
                 let attribution = Attribution::new(column, expression);

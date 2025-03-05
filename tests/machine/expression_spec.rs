@@ -25,7 +25,8 @@ pub fn test_if_expression_equal_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -54,7 +55,8 @@ pub fn test_if_expression_equal_operator_with_string() {
             ColumnType::Varchar,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -83,7 +85,8 @@ pub fn test_if_expression_equal_operator_with_null() {
             ColumnType::Varchar,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -112,7 +115,8 @@ pub fn test_if_expression_not_equal_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -141,7 +145,8 @@ pub fn test_if_expression_not_equal_operator_with_string() {
             ColumnType::Varchar,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -170,7 +175,8 @@ pub fn test_if_expression_not_equal_operator_with_null() {
             ColumnType::Varchar,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -207,7 +213,8 @@ pub fn test_if_expression_and_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -244,7 +251,8 @@ pub fn test_if_expression_or_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -273,7 +281,8 @@ pub fn test_if_expression_greather_or_equal_operator_with_equal_value() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -302,7 +311,8 @@ pub fn test_if_expression_less_or_equal_operator_with_equal_value() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -331,7 +341,8 @@ pub fn test_if_expression_greather_or_equal_operator_with_diff_value() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -360,7 +371,8 @@ pub fn test_if_expression_less_or_equal_operator_with_diff_value() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -389,7 +401,8 @@ pub fn test_if_expression_greather_than_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -418,7 +431,8 @@ pub fn test_if_expression_less_than_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -447,7 +461,8 @@ pub fn test_if_expression_add_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -476,7 +491,8 @@ pub fn test_if_expression_add_operator_inverse() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -505,7 +521,8 @@ pub fn test_if_expression_sub_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -534,7 +551,8 @@ pub fn test_if_expression_sub_operator_inverse() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -563,7 +581,8 @@ pub fn test_if_expression_mul_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -593,7 +612,8 @@ pub fn test_if_expression_mul_operator_inverse() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -622,7 +642,8 @@ pub fn test_if_expression_div_operator() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 
@@ -652,7 +673,8 @@ pub fn test_if_expression_div_operator_inverse() {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
     ];
 

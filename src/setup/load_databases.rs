@@ -5,16 +5,11 @@ use crate::machine::insert_tuples;
 use crate::machine::create_file;
 
 use crate::storage::Tuple;
+use crate::storage::get_tuple_database;
 
 use crate::sys_db::SysDb;
 use crate::utils::Logger;
 
-pub fn get_tuple_database(id: u64, name: &String) -> Tuple {
-    let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(id);
-    tuple.push_string(name);
-    return tuple;
-}
 
 pub fn setup_databases_table(machine: &mut Machine) {
     Logger::info("setup databases table");

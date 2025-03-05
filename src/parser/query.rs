@@ -141,6 +141,7 @@ pub fn get_columns(
                         false,
                         false,
                         false,
+                        String::from("")
                     )
                 )
             },
@@ -156,7 +157,8 @@ pub fn get_columns(
                         ColumnType::Undefined,
                         false,
                         false,
-                        false
+                        false,
+                        String::from("")
                     )
                 )
             },

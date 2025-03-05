@@ -77,7 +77,8 @@ pub fn get_insert_columns(
                 ColumnType::Varchar,
                 false,
                 false,
-                false
+                false,
+                String::from("")
             )
         )
     }

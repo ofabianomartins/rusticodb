@@ -41,7 +41,7 @@ impl Tuple {
 
         let mut cell_index = 0;
         let mut position_index: usize = 4;
-        let mut cell_size: u32 = 0;
+        let mut cell_size: u32;
 
         loop {
             if position_index >= self.data.len() {
@@ -304,3 +304,62 @@ impl fmt::Display for Tuple {
         write!(f, ")]")
     }
 }
+
+pub fn get_tuple_database(id: u64, name: &String) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(id);
+    tuple.push_string(name);
+    return tuple;
+}
+
+pub fn get_tuple_table(id: u64, db_name: &String, name: &String) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(id);
+    tuple.push_string(db_name);
+    tuple.push_string(name);
+    return tuple;
+}
+
+pub fn get_tuple_column(
+    id: u64,
+    db_name: &String,
+    tbl_name: &String,
+    name: &String,
+    ctype: &String,
+    not_null: bool,
+    unique: bool,
+    primary_key: bool,
+    default: &String
+) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(id);
+    tuple.push_string(db_name);
+    tuple.push_string(tbl_name);
+    tuple.push_string(name);
+    tuple.push_string(ctype);
+    tuple.push_boolean(not_null);
+    tuple.push_boolean(unique);
+    tuple.push_boolean(primary_key);
+    tuple.push_string(default);
+    return tuple;
+}
+
+pub fn get_tuple_sequence(
+    id: u64,
+    db_name: &String,
+    tbl_name: &String,
+    col_name: &String,
+    name: &String,
+    next_id: u64
+) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_unsigned_bigint(id);
+    tuple.push_string(db_name);
+    tuple.push_string(tbl_name);
+    tuple.push_string(col_name);
+    tuple.push_string(name);
+    tuple.push_unsigned_bigint(next_id);
+    return tuple;
+}
+
+

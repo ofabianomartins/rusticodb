@@ -11,7 +11,8 @@ pub struct Column {
     pub column_type: ColumnType,
     pub not_null: bool,
     pub unique: bool,
-    pub primary_key: bool
+    pub primary_key: bool,
+    pub default: String
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -39,7 +40,8 @@ impl Column {
         column_type: ColumnType,
         not_null: bool,
         unique: bool,
-        primary_key: bool
+        primary_key: bool,
+        default: String
     ) -> Self {
         Column { 
             database_name: database_name.clone(), 
@@ -51,7 +53,8 @@ impl Column {
             column_type,
             not_null,
             unique,
-            primary_key
+            primary_key,
+            default
         }
     }
 
@@ -65,7 +68,8 @@ impl Column {
         column_type: ColumnType,
         not_null: bool,
         unique: bool,
-        primary_key: bool
+        primary_key: bool,
+        default: String
     ) -> Self {
         Column { 
             database_name, 
@@ -77,7 +81,8 @@ impl Column {
             column_type,
             not_null,
             unique,
-            primary_key
+            primary_key,
+            default
         }
     }
 
@@ -126,7 +131,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::UnsignedBigint,
             true,
             true,
-            true
+            true,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -135,7 +141,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Varchar,
             true,
             false,
-            false
+            false,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -144,7 +151,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Varchar,
             true,
             false,
-            false
+            false,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -153,7 +161,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Varchar,
             true,
             false,
-            false
+            false,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -162,7 +171,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Varchar,
             true,
             false,
-            false
+            false,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -171,7 +181,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Boolean,
             true,
             false,
-            false
+            false,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -180,7 +191,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Boolean,
             true,
             false,
-            false
+            false,
+            String::from("")
         ),
         Column::new(
             String::from("rusitcodb"),
@@ -189,8 +201,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             ColumnType::Boolean,
             true,
             false,
-            false
-
-        ),
+            false,
+            String::from("")
+        )
     ];
 }

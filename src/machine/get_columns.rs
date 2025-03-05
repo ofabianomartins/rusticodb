@@ -49,14 +49,22 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
                 elem.get_string(3).unwrap(),
                 elem.get_string(3).unwrap(),
                 match elem.get_string(4).unwrap().as_str() {
-                    "INTEGER" => ColumnType::UnsignedInt,
-                    "BIGINT" => ColumnType::UnsignedBigint,
+                    "UNSIGNED TINYINT" => ColumnType::UnsignedTinyint,
+                    "SIGNED TINYINT" => ColumnType::SignedTinyint,
+                    "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint,
+                    "SIGNED SMALLINT" => ColumnType::SignedSmallint,
+                    "UNSIGNED INT" => ColumnType::UnsignedInt,
+                    "SIGNED INT" => ColumnType::UnsignedInt,
+                    "UNSIGNED BIGINT" => ColumnType::UnsignedBigint,
+                    "SIGNED BIGINT" => ColumnType::UnsignedBigint,
                     "VARCHAR" => ColumnType::Varchar,
+                    "TEXT" => ColumnType::Text,
                     _ => ColumnType::Varchar
                 },
                 elem.get_boolean(5).unwrap(),
                 elem.get_boolean(6).unwrap(),
                 elem.get_boolean(7).unwrap(),
+                elem.get_string(8).unwrap()
             )
         );
     }
