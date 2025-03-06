@@ -8,6 +8,7 @@ use crate::machine::drop_database_ref;
 use crate::machine::check_database_exists;
 
 use crate::storage::OsInterface;
+use crate::storage::format_database_name;
 
 use crate::utils::ExecutionError;
 
@@ -25,7 +26,7 @@ pub fn drop_database(machine: &mut Machine, database_name: String, if_exists: bo
     }
     drop_database_ref(machine, &database_name);
 
-    OsInterface::destroy_folder(&machine.pager.format_database_name(&database_name));
+    OsInterface::destroy_folder(&format_database_name(&database_name));
 
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP DATABASE")))
 }

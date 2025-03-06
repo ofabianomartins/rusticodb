@@ -126,6 +126,13 @@ impl Machine {
         Self { pager, actual_database: None }
     }
 
+    pub fn get_actual_database_name(&mut self) -> String {
+        match &self.actual_database {
+            Some(db) => db.clone(),
+            None => String::from("<no-database>")
+        }
+    }
+
     pub fn set_actual_database(&mut self, name: String) -> Result<ResultSet, ExecutionError> {
         if check_database_exists(self, &name) == false {
             return Err(ExecutionError::DatabaseNotExists(name));

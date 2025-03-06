@@ -11,9 +11,9 @@ use std::io::Write;
 
 use crate::setup::setup_system;
 use crate::machine::Machine;
-use crate::storage::pager::Pager;
+use crate::storage::Pager;
 
-use crate::parser::sql_executor::SqlExecutor;
+use crate::parser::parse_command;
 
 fn main() {
     let pager = Pager::new();
@@ -25,12 +25,10 @@ fn main() {
     let stdin = io::stdin();
     let mut buf = String::new();
 
-    let mut executor = SqlExecutor::new(machine);
-
     // let previous_comands: Vec<String> = Vec::new();
 
     loop {
-        print!("{} > ", executor.get_database_name());
+        print!("{} > ", machine.get_actual_database_name());
         stdout.flush().expect("flush stdout");
         buf.truncate(0);
         let n = stdin.read_line(&mut buf).expect("read line");
@@ -39,7 +37,7 @@ fn main() {
             "quit" | "exit" => break,
             "" => continue,
             sql_command => {
-                match executor.parse_command(sql_command) {
+                match parse_command(&mut machine, sql_command) {
                     Ok(result_set) => {
                         for item in result_set {
                             println!("{}", item);

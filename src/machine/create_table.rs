@@ -14,6 +14,7 @@ use crate::storage::Tuple;
 use crate::storage::get_tuple_column;
 use crate::storage::get_tuple_table;
 use crate::storage::get_tuple_sequence;
+use crate::storage::format_table_name;
 
 use crate::utils::ExecutionError;
 
@@ -24,9 +25,7 @@ pub fn create_table(
     table: &Table, 
     columns: Vec<Column>
 ) -> Result<ResultSet, ExecutionError>{
-    OsInterface::create_file(
-        &machine.pager.format_table_name(&table.database_name, &table.name)
-    );
+    OsInterface::create_file(&format_table_name(&table.database_name, &table.name));
 
     insert_tuples(
         machine,

@@ -6,6 +6,7 @@ use crate::machine::insert_tuples;
 
 use crate::storage::OsInterface;
 use crate::storage::Tuple;
+use crate::storage::format_table_name;
 
 use crate::utils::ExecutionError;
 
@@ -16,9 +17,7 @@ pub fn create_view(
     table: &Table, 
     query: &String
 ) -> Result<ResultSet, ExecutionError>{
-    OsInterface::create_file(
-        &machine.pager.format_table_name(&table.database_name, &table.name)
-    );
+    OsInterface::create_file(&format_table_name(&table.database_name, &table.name));
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();

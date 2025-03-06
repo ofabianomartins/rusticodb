@@ -2,11 +2,12 @@ use crate::machine::Machine;
 use crate::machine::Table;
 
 use crate::storage::Tuple;
-
-use crate::utils::Logger;
+use crate::storage::format_table_name;
+use crate::storage::read_tuples as read_tuples_storage;
 
 pub fn read_tuples(machine: &mut Machine, table: &Table) -> Vec<Tuple> {
-    Logger::debug(format!("Reading ({}, {})", table.database_name, table.name).leak());
-    return machine.pager.read_tuples(&table.database_name, &table.name)
+    let page_key = format_table_name(&table.database_name, &table.name);
+
+    return read_tuples_storage(&mut machine.pager, &page_key)
 }
 

@@ -2,36 +2,35 @@ use std::path::Path;
 
 use rusticodb::config::Config;
 use rusticodb::machine::Machine;
-use rusticodb::parser::sql_executor::SqlExecutor;
+use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
-use rusticodb::storage::pager::Pager;
+use rusticodb::storage::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set_delete = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set_delete = parse_command(&mut machine, "
         DELETE FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
     assert!(matches!(result_set_delete, Ok(ref _result_set)));
-    let result_set = sql_executor.parse_command("
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 

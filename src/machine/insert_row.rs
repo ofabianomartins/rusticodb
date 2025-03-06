@@ -9,6 +9,9 @@ use crate::machine::get_columns;
 
 use crate::storage::Tuple;
 use crate::storage::CellType;
+use crate::storage::format_table_name;
+use crate::storage::insert_tuples;
+use crate::storage::flush_page;
 
 use crate::utils::ExecutionError;
 
@@ -29,8 +32,9 @@ pub fn insert_row(
 
     let mut adjusted_tuples = adjusted_tuples_result.unwrap();
 
-    machine.pager.insert_tuples(&table.database_name, &table.name, &mut adjusted_tuples);
-    machine.pager.flush_page(&table.database_name, &table.name);
+    let page_key = format_table_name(&table.database_name, &table.name);
+    insert_tuples(&mut machine.pager, &page_key, &mut adjusted_tuples);
+    flush_page(&mut machine.pager, &page_key);
 
     return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
 }

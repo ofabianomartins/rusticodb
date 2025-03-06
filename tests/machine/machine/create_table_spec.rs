@@ -9,7 +9,7 @@ use rusticodb::machine::create_table;
 use rusticodb::machine::check_table_exists;
 use rusticodb::machine::check_database_exists;
 
-use rusticodb::storage::pager::Pager;
+use rusticodb::storage::Pager;
 
 use rusticodb::setup::setup_system;
 

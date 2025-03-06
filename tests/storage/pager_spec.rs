@@ -4,9 +4,15 @@ use rusticodb::config::Config;
 use rusticodb::storage::os_interface::OsInterface;
 use rusticodb::storage::cell::CellType;
 use rusticodb::storage::tuple::Tuple;
-use rusticodb::storage::pager::Pager;
-use rusticodb::storage::page::Page;
-use rusticodb::storage::os_interface::BLOCK_SIZE;
+use rusticodb::storage::Pager;
+use rusticodb::storage::Page;
+use rusticodb::storage::BLOCK_SIZE;
+use rusticodb::storage::format_database_name;
+use rusticodb::storage::format_table_name;
+use rusticodb::storage::read_data;
+use rusticodb::storage::write_data;
+use rusticodb::storage::insert_tuples;
+use rusticodb::storage::read_tuples;
 
 use crate::test_utils::create_tmp_test_folder;
 use crate::test_utils::read_from_file;
@@ -85,10 +91,12 @@ pub fn test2_insert_tuples_on_pager() {
 
     let mut pager = Pager::new();
 
-    pager.insert_tuples(&database1, &table1, &mut tuples);
+    let page_key = format_table_name(&database1, &table1);
+
+    insert_tuples(&mut pager, &page_key, &mut tuples);
 
     let page_key = format!("{}/{}/{}.db", Config::data_folder(), database1, table1);
-    let page: &Page = pager.pages.get(&page_key).unwrap();
+    let page: &Page = pager.get(&page_key).unwrap();
 
     assert_eq!(page.data, raw_buffer);
 }
@@ -142,11 +150,13 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
 
     let mut pager = Pager::new();
 
-    pager.insert_tuples(&database1, &table1, &mut tuples);
-    pager.insert_tuples(&database1, &table1, &mut tuples2);
+    let page_key = format_table_name(&database1, &table1);
+
+    insert_tuples(&mut pager, &page_key, &mut tuples);
+    insert_tuples(&mut pager, &page_key, &mut tuples2);
 
     let page_key = format!("{}/{}/{}.db", Config::data_folder(), database1, table1);
-    let page: &Page = pager.pages.get(&page_key).unwrap();
+    let page: &Page = pager.get(&page_key).unwrap();
 
     assert_eq!(page.data, raw_buffer);
 }
@@ -200,13 +210,15 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
 
     let mut pager = Pager::new();
 
-    pager.insert_tuples(&database1, &table1, &mut tuples);
-    pager.insert_tuples(&database1, &table1, &mut tuples2);
+    let page_key = format_table_name(&database1, &table1);
 
-    let tuples = pager.read_tuples(&database1, &table1);
+    insert_tuples(&mut pager, &page_key, &mut tuples);
+    insert_tuples(&mut pager, &page_key, &mut tuples2);
+
+    let tuples = read_tuples(&mut pager, &page_key);
 
     let page_key = format!("{}/{}/{}.db", Config::data_folder(), database1, table1);
-    let page: &Page = pager.pages.get(&page_key).unwrap();
+    let page: &Page = pager.get(&page_key).unwrap();
 
     assert_eq!(page.data, raw_buffer);
     assert_eq!(tuples.len(), 2);
@@ -219,13 +231,13 @@ pub fn test_write_data_metadata_file() {
 
     let data = [2u8; BLOCK_SIZE];
 
-    let pager = Pager::new();
-
     create_tmp_test_folder();
 
-    OsInterface::create_folder(&pager.format_database_name(&database1));
-    OsInterface::create_file(&pager.format_table_name(&database1, &table1));
-    pager.write_data(&database1, &table1, 0u64, &data);
+    let page_key = format_table_name(&database1, &table1);
+
+    OsInterface::create_folder(&format_database_name(&database1));
+    OsInterface::create_file(&page_key);
+    write_data(&page_key, 0u64, &data);
 
     let metadata_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&metadata_filename).exists());
@@ -243,14 +255,14 @@ pub fn test_read_data_metadata_file() {
 
     let data = [2u8; BLOCK_SIZE];
 
-    let pager = Pager::new();
-
     create_tmp_test_folder();
 
-    OsInterface::create_folder(&pager.format_database_name(&database1));
-    OsInterface::create_file(&pager.format_table_name(&database1, &table1));
-    pager.write_data(&database1, &table1, 0u64, &data);
+    let page_key = format_table_name(&database1, &table1);
 
-    let actual_content = pager.read_data(&database1, &table1, 0u64);
+    OsInterface::create_folder(&format_database_name(&database1));
+    OsInterface::create_file(&page_key);
+    write_data(&page_key, 0u64, &data);
+
+    let actual_content = read_data(&page_key, 0u64);
     assert_eq!(actual_content, data, "File content does not match expected content");
 }

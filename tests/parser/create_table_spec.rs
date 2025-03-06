@@ -8,33 +8,32 @@ use rusticodb::machine::check_table_exists;
 use rusticodb::machine::check_database_exists;
 
 use rusticodb::utils::execution_error::ExecutionError;
-use rusticodb::parser::sql_executor::SqlExecutor;
+use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 
-use rusticodb::storage::pager::Pager;
+use rusticodb::storage::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_metadata_file() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name, table_name);
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
-    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
+    assert!(check_table_exists(&mut machine, &table));
+    assert!(matches!(machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -43,15 +42,14 @@ pub fn test_metadata_file() {
 #[test]
 pub fn test_without_set_database() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let error_parse = sql_executor.parse_command("CREATE TABLE table1");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let error_parse = parse_command(&mut machine, "CREATE TABLE table1");
 
     assert!(
         matches!(
@@ -62,10 +60,10 @@ pub fn test_without_set_database() {
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name, table_name);
-    assert_eq!(check_table_exists(&mut sql_executor.machine, &table), false);
-    assert!(matches!(sql_executor.machine.actual_database, None));
+    assert_eq!(check_table_exists(&mut machine, &table), false);
+    assert!(matches!(machine.actual_database, None));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert_eq!(Path::new(&table_filename).exists(), false);
@@ -74,17 +72,16 @@ pub fn test_without_set_database() {
 #[test]
 pub fn test_that_already_exists() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let create_table_result = sql_executor.parse_command("CREATE TABLE table1");
-    let error_parse = sql_executor.parse_command("CREATE TABLE table1");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let create_table_result = parse_command(&mut machine, "CREATE TABLE table1");
+    let error_parse = parse_command(&mut machine, "CREATE TABLE table1");
 
     assert!(matches!(create_table_result, Ok(_)));
     assert!(matches!(error_parse, Err(ExecutionError::DatabaseExists(_result_set))));
@@ -92,10 +89,10 @@ pub fn test_that_already_exists() {
     let database_name = String::from("database1");
     let table_name = String::from("table1");
 
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name, table_name);
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
-    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
+    assert!(check_table_exists(&mut machine, &table));
+    assert!(matches!(machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -104,26 +101,25 @@ pub fn test_that_already_exists() {
 #[test]
 pub fn test_with_if_not_exists() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1");
-    let result_set = sql_executor.parse_command("CREATE TABLE IF NOT EXISTS table1");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1");
+    let result_set = parse_command(&mut machine, "CREATE TABLE IF NOT EXISTS table1");
 
     assert!(matches!(result_set, Ok(_result_set)));
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name, table_name);
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
-    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
+    assert!(check_table_exists(&mut machine, &table));
+    assert!(matches!(machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -132,23 +128,22 @@ pub fn test_with_if_not_exists() {
 #[test]
 pub fn test_with_two_varchar_columns() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 VARCHAR, name2 VARCHAR)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 VARCHAR, name2 VARCHAR)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
-    assert!(matches!(sql_executor.machine.actual_database, Some(_database_name)));
+    assert!(check_table_exists(&mut machine, &table));
+    assert!(matches!(machine.actual_database, Some(_database_name)));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
@@ -157,28 +152,27 @@ pub fn test_with_two_varchar_columns() {
 #[test]
 pub fn test_with_two_varchar_columns_and_one_is_not_null() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 VARCHAR NOT NULL, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 VARCHAR NOT NULL, name2 VARCHAR NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -199,28 +193,27 @@ pub fn test_with_two_varchar_columns_and_one_is_not_null() {
 #[test]
 pub fn test_with_two_columns_one_is_int_and_other_is_varchar() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 INTEGER NOT NULL, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 INTEGER NOT NULL, name2 VARCHAR NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -241,28 +234,27 @@ pub fn test_with_two_columns_one_is_int_and_other_is_varchar() {
 #[test]
 pub fn test_with_two_columns_one_is_int_and_other_is_text() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 INTEGER NOT NULL, name2 TEXT NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 INTEGER NOT NULL, name2 TEXT NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -283,28 +275,27 @@ pub fn test_with_two_columns_one_is_int_and_other_is_text() {
 #[test]
 pub fn test_with_two_columns_one_is_int_and_other_is_boolean() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 INTEGER NOT NULL, name2 BOOLEAN NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 INTEGER NOT NULL, name2 BOOLEAN NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -325,28 +316,27 @@ pub fn test_with_two_columns_one_is_int_and_other_is_boolean() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_tinyint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 TINYINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 TINYINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -375,28 +365,27 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_tinyint() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_mediumint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 MEDIUMINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 MEDIUMINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -425,28 +414,27 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_mediumint() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_smallint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 SMALLINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 SMALLINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -475,28 +463,27 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_smallint() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_int() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 INTEGER PRIMARY KEY, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 INTEGER PRIMARY KEY, name2 VARCHAR NOT NULL)");
 
     let database_name = String::from("database1");
     let table_name = String::from("table1");
-    assert!(check_database_exists(&mut sql_executor.machine, &database_name));
+    assert!(check_database_exists(&mut machine, &database_name));
     let table = Table::new(database_name.clone(), table_name.clone());
-    assert!(check_table_exists(&mut sql_executor.machine, &table));
+    assert!(check_table_exists(&mut machine, &table));
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -525,22 +512,21 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_int() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_bigint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let _ = sql_executor.parse_command("CREATE TABLE table1(name1 BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let _ = parse_command(&mut machine, "CREATE TABLE table1(name1 BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL)");
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -569,21 +555,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_bigint() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_tinyint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT UNSIGNED NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT UNSIGNED NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -612,21 +597,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_tinyin
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_tinyint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -655,21 +639,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_tinyint(
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_smallint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT UNSIGNED NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT UNSIGNED NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -698,21 +681,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_smalli
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_smallint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -741,21 +723,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_smallint
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_int() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT UNSIGNED NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT UNSIGNED NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -784,21 +765,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_int() 
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_int() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -827,21 +807,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_int() {
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_bigint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT UNSIGNED NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT UNSIGNED NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -870,21 +849,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_bigint
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_bigint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command("CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT NOT NULL)");
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT NOT NULL)");
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -913,23 +891,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_bigint()
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_bigint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT UNSIGNED NOT NULL DEFAULT 1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -962,23 +939,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_bigint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BIGINT NOT NULL DEFAULT -1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1011,23 +987,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_int() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT UNSIGNED NOT NULL DEFAULT 1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1060,23 +1035,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_int() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 INT NOT NULL DEFAULT -1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1109,23 +1083,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_smallint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT UNSIGNED NOT NULL DEFAULT 1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1158,23 +1131,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_smallint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 SMALLINT NOT NULL DEFAULT -1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1207,23 +1179,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_unsigned_tinyint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT UNSIGNED NOT NULL DEFAULT 1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1256,23 +1227,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_signed_tinyint() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TINYINT NOT NULL DEFAULT -1)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1305,23 +1275,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_string() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 VARCHAR NOT NULL DEFAULT 'test1')"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1354,23 +1323,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_text() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 TEXT NOT NULL DEFAULT 'test1')"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1403,23 +1371,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_true_boolean() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BOOLEAN NOT NULL DEFAULT true)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 
@@ -1452,23 +1419,22 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
 #[test]
 pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_value_false_boolean() {
     let pager = Pager::new();
-    let machine = Machine::new(pager);
-    let mut sql_executor = SqlExecutor::new(machine);
+    let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
 
-    setup_system(&mut sql_executor.machine);
+    setup_system(&mut machine);
 
-    let _ = sql_executor.parse_command("CREATE DATABASE database1");
-    let _ = sql_executor.parse_command("USE database1");
-    let result_create = sql_executor.parse_command(
+    let _ = parse_command(&mut machine, "CREATE DATABASE database1");
+    let _ = parse_command(&mut machine, "USE database1");
+    let result_create = parse_command(&mut machine, 
         "CREATE TABLE table1(id BIGINT PRIMARY KEY, name2 BOOLEAN NOT NULL DEFAULT false)"
     );
 
     assert!(matches!(result_create, Ok(ref _result_set)));
 
-    let _ = sql_executor.parse_command("USE rusticodb;");
-    let result_set = sql_executor.parse_command("
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "
         SELECT * FROM columns WHERE table_name = 'table1' AND database_name = 'database1'
     ");
 

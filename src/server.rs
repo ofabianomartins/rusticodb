@@ -14,9 +14,9 @@ use std::error::Error;
 
 use crate::setup::setup_system;
 use crate::machine::Machine;
-use crate::storage::pager::Pager;
+use crate::storage::Pager;
 
-use crate::parser::sql_executor::SqlExecutor;
+use crate::parser::parse_command;
 
 async fn handle_client(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
     let mut buffer = [0; 1024];
@@ -32,15 +32,13 @@ async fn handle_client(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     setup_system(&mut machine);
 
-    let mut executor = SqlExecutor::new(machine);
-
     let received_data = match str::from_utf8(&buffer[..bytes_read]) {
         Ok(v) => v,
         Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
     };
     print!("Received data: {}", received_data);
 
-    match executor.parse_command(received_data) {
+    match parse_command(&mut machine, received_data) {
         Ok(result_set) => {
             for item in result_set {
                 println!("{}", item);

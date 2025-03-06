@@ -7,6 +7,7 @@ use crate::machine::drop_table_ref;
 use crate::machine::check_table_exists;
 
 use crate::storage::OsInterface;
+use crate::storage::format_table_name;
 
 use crate::utils::ExecutionError;
 
@@ -23,9 +24,7 @@ pub fn drop_table(machine: &mut Machine, table: &Table, if_exists: bool) -> Resu
     drop_columns(machine, table);
     drop_table_ref(machine, table);
 
-    OsInterface::destroy_file(
-        &machine.pager.format_table_name(&table.database_name, &table.name)
-    );
+    OsInterface::destroy_file(&format_table_name(&table.database_name, &table.name));
 
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("DROP TABLE")))
 }
