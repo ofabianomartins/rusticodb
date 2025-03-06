@@ -15,14 +15,14 @@ use crate::machine::create_database;
 use crate::machine::path_exists;
 use crate::machine::check_database_exists;
 
-use crate::storage::OsInterface;
+use crate::storage::os_interface::create_folder_if_not_exists;
 
 use crate::sys_db::SysDb;
 
 use crate::utils::Logger;
 
 pub fn setup_system(machine: &mut Machine) {
-    OsInterface::create_folder_if_not_exists(&Config::data_folder());
+    create_folder_if_not_exists(&Config::data_folder());
 
     Logger::info("Initializing setup!");
     load_context(machine);

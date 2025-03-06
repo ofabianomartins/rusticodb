@@ -7,7 +7,7 @@ use crate::machine::ResultSetType;
 use crate::machine::check_database_exists;
 use crate::machine::insert_tuples;
 
-use crate::storage::OsInterface;
+use crate::storage::os_interface::create_folder;
 use crate::storage::Tuple;
 use crate::storage::format_database_name;
 
@@ -20,7 +20,7 @@ pub fn create_database(machine: &mut Machine, database_name: String, if_not_exis
     if check_database_exists(machine, &database_name) {
         return Err(ExecutionError::DatabaseExists(database_name));
     }
-    OsInterface::create_folder(&format_database_name(&database_name));
+    create_folder(&format_database_name(&database_name));
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();

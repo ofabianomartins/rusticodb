@@ -9,7 +9,7 @@ use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
 use crate::machine::insert_tuples;
 
-use crate::storage::OsInterface;
+use crate::storage::os_interface::create_file;
 use crate::storage::Tuple;
 use crate::storage::get_tuple_column;
 use crate::storage::get_tuple_table;
@@ -25,7 +25,7 @@ pub fn create_table(
     table: &Table, 
     columns: Vec<Column>
 ) -> Result<ResultSet, ExecutionError>{
-    OsInterface::create_file(&format_table_name(&table.database_name, &table.name));
+    create_file(&format_table_name(&table.database_name, &table.name));
 
     insert_tuples(
         machine,

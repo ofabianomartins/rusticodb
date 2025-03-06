@@ -35,6 +35,6 @@ pub use self::flush_page::flush_page;
 
 pub use self::page::Page;
 
-pub use self::os_interface::{ OsInterface, BLOCK_SIZE };
+pub use self::os_interface::{ BLOCK_SIZE };
 
 pub type Pager = HashMap<String, Page>;

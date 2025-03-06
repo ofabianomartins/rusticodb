@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use rusticodb::config::Config;
-use rusticodb::storage::os_interface::OsInterface;
+use rusticodb::storage::os_interface::create_file;
+use rusticodb::storage::os_interface::create_folder;
 use rusticodb::storage::cell::CellType;
 use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::Pager;
@@ -235,8 +236,8 @@ pub fn test_write_data_metadata_file() {
 
     let page_key = format_table_name(&database1, &table1);
 
-    OsInterface::create_folder(&format_database_name(&database1));
-    OsInterface::create_file(&page_key);
+    create_folder(&format_database_name(&database1));
+    create_file(&page_key);
     write_data(&page_key, 0u64, &data);
 
     let metadata_filename = format!("{}/database1/table1.db", Config::data_folder());
@@ -259,8 +260,8 @@ pub fn test_read_data_metadata_file() {
 
     let page_key = format_table_name(&database1, &table1);
 
-    OsInterface::create_folder(&format_database_name(&database1));
-    OsInterface::create_file(&page_key);
+    create_folder(&format_database_name(&database1));
+    create_file(&page_key);
     write_data(&page_key, 0u64, &data);
 
     let actual_content = read_data(&page_key, 0u64);
