@@ -5,11 +5,13 @@ use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
 use crate::machine::check_database_exists;
-use crate::machine::insert_tuples;
+use crate::machine::insert_row;
+use crate::machine::get_databases_table_definition_without_id;
 
 use crate::storage::os_interface::create_folder;
 use crate::storage::Tuple;
 use crate::storage::format_database_name;
+use crate::storage::get_tuple_database;
 
 use crate::utils::ExecutionError;
 
@@ -23,14 +25,16 @@ pub fn create_database(machine: &mut Machine, database_name: String, if_not_exis
     create_folder(&format_database_name(&database_name));
 
     let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
-    tuple.push_string(&database_name);
-    tuples.push(tuple);
+    tuples.push(get_tuple_database(&database_name));
 
     let table = Table::new(Config::sysdb(), Config::sysdb_table_databases());
 
-    insert_tuples(machine, &table, &mut tuples);
+    let _ = insert_row(
+        machine,
+        &table,
+        &get_databases_table_definition_without_id(),
+        &mut tuples
+    );
 
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE DATABASE")))
 }

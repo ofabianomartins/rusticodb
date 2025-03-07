@@ -1,4 +1,5 @@
 use std::usize;
+use std::fmt;
 
 use crate::storage::BLOCK_SIZE;
 use crate::storage::Tuple;
@@ -75,7 +76,7 @@ impl Page {
             buffer.append(&mut tuple.data);
         }
 
-        self.set_next_tuple_position(buffer.len() as u16);
+        self.set_next_tuple_position(4u16 + (buffer.len() as u16));
 
         for (idx, elem) in &mut buffer.iter().enumerate() {
             (*self).data[4usize + idx] = *elem;
@@ -90,7 +91,10 @@ impl Page {
         let mut position_index: u16 = 4;
 
         while tuple_index < tuple_count {
-            let byte_array2: [u8; 2] = [self.data[(position_index as usize) + 2], self.data[(position_index as usize) + 3]];
+            let byte_array2: [u8; 2] = [
+                self.data[(position_index as usize) + 2],
+                self.data[(position_index as usize) + 3]
+            ];
             let data_size = u16::from_be_bytes(byte_array2); 
 
             let mut buffer_array: Vec<u8> = Vec::new();
@@ -104,5 +108,22 @@ impl Page {
         }
 
         return tuples;
+    }
+}
+
+impl fmt::Display for Page {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let tuple_count: usize = self.tuple_count() as usize;
+        let next_position: usize = self.next_tuple_position() as usize;
+        let _ = write!(f, "Page [{}, {}, (", tuple_count, next_position);
+
+        for (idx, tuple) in self.read_tuples().iter().enumerate() {
+            let _ = write!(f, "{}", tuple);
+
+            if idx != tuple_count - 1 {
+              let _ = write!(f, ",");
+            }
+        }
+        write!(f, ")]")
     }
 }

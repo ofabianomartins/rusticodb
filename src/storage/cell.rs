@@ -13,6 +13,7 @@ pub struct Cell {
 // Should be save in one byte
 #[derive(Debug,Eq, PartialEq, Ord, PartialOrd)]
 pub enum CellType {
+    Undefined = 0,
     Null = 1,
     Boolean = 2,
     UnsignedTinyint = 3,
@@ -480,7 +481,7 @@ impl Cell {
             10 => CellType::SignedBigint,
             11 => CellType::String,
             12 => CellType::Text,
-            _ => CellType::Null
+            _ => CellType::Undefined
         }
 
     }

@@ -259,6 +259,9 @@ impl Tuple {
     }
 
     pub fn cell_count(&self) -> u16 {
+        if self.data.len() == 0 {
+            return 0u16;
+        }
         let byte_array: [u8; 2] = [self.data[0], self.data[1]];
         return u16::from_be_bytes(byte_array); // or use `from_be_bytes` for big-endian
     }
@@ -271,6 +274,9 @@ impl Tuple {
     }
 
     pub fn data_size(&self) -> u16 {
+        if self.data.len() == 0 {
+            return 0u16;
+        }
         let byte_array: [u8; 2] = [self.data[2], self.data[3]];
         return u16::from_be_bytes(byte_array); // or use `from_be_bytes` for big-endian
     }
@@ -288,9 +294,10 @@ impl Tuple {
 impl fmt::Display for Tuple {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let cell_count = self.cell_count();
+        let data_size = self.data_size();
         let mut cell_index = 0;
 
-        let _ = write!(f, "[{}, (", cell_count);
+        let _ = write!(f, "Tuple [{}, {}, (", cell_count, data_size);
 
         while cell_index < cell_count {
             let _ = write!(f, "{}", self.get_cell(cell_index));
@@ -305,18 +312,18 @@ impl fmt::Display for Tuple {
     }
 }
 
-pub fn get_tuple_database(id: u64, name: &String) -> Tuple {
+pub fn get_tuple_database(name: &String) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(id);
     tuple.push_string(name);
     return tuple;
 }
 
-pub fn get_tuple_table(id: u64, db_name: &String, name: &String) -> Tuple {
+pub fn get_tuple_table(db_name: &String, name: &String) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(id);
     tuple.push_string(db_name);
     tuple.push_string(name);
+    tuple.push_string(&String::from("table"));
+    tuple.push_string(&String::from(""));
     return tuple;
 }
 
@@ -344,6 +351,28 @@ pub fn get_tuple_column(
     return tuple;
 }
 
+pub fn get_tuple_column_without_id(
+    db_name: &String,
+    tbl_name: &String,
+    name: &String,
+    ctype: &String,
+    not_null: bool,
+    unique: bool,
+    primary_key: bool,
+    default: &String
+) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(db_name);
+    tuple.push_string(tbl_name);
+    tuple.push_string(name);
+    tuple.push_string(ctype);
+    tuple.push_boolean(not_null);
+    tuple.push_boolean(unique);
+    tuple.push_boolean(primary_key);
+    tuple.push_string(default);
+    return tuple;
+}
+
 pub fn get_tuple_sequence(
     id: u64,
     db_name: &String,
@@ -359,6 +388,38 @@ pub fn get_tuple_sequence(
     tuple.push_string(col_name);
     tuple.push_string(name);
     tuple.push_unsigned_bigint(next_id);
+    return tuple;
+}
+
+pub fn get_tuple_sequence_without_id(
+    db_name: &String,
+    tbl_name: &String,
+    col_name: &String,
+    name: &String,
+    next_id: u64
+) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(db_name);
+    tuple.push_string(tbl_name);
+    tuple.push_string(col_name);
+    tuple.push_string(name);
+    tuple.push_unsigned_bigint(next_id);
+    return tuple;
+}
+
+pub fn get_tuple_index(
+    db_name: &String,
+    tbl_name: &String,
+    col_name: &String,
+    name: &String,
+    itype: &String
+) -> Tuple {
+    let mut tuple: Tuple = Tuple::new();
+    tuple.push_string(db_name);
+    tuple.push_string(tbl_name);
+    tuple.push_string(col_name);
+    tuple.push_string(name);
+    tuple.push_string(itype);
     return tuple;
 }
 

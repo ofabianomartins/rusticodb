@@ -21,7 +21,7 @@ pub fn drop_sequence(machine: &mut Machine, names: Vec<ObjectName>, if_exists: b
             );
         }
         if check_sequence_exists(machine, &db_name, &name) == false {
-            return Err(ExecutionError::IndexNotExists(name));
+            return Err(ExecutionError::SequenceNotExists(name));
         }
         return machine_drop_sequence(machine, &name);
     } else {

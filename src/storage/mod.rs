@@ -22,8 +22,11 @@ pub use self::format_table_name::format_table_name;
 pub use self::tuple::Tuple;
 pub use self::tuple::get_tuple_database;
 pub use self::tuple::get_tuple_column;
+pub use self::tuple::get_tuple_column_without_id;
 pub use self::tuple::get_tuple_table;
 pub use self::tuple::get_tuple_sequence;
+pub use self::tuple::get_tuple_sequence_without_id;
+pub use self::tuple::get_tuple_index;
 pub use self::cell::{ Cell, CellType };
 
 pub use self::insert_tuples::insert_tuples;

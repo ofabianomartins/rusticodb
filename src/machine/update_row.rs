@@ -50,25 +50,27 @@ fn adjust_tuples(
     table: &Table,
     tuples: &mut Vec<Tuple>,
     attributions: &Vec<Attribution>,
-    _expressions: Expression
+    expression: Expression
 ) -> Result<Vec<Tuple>, ExecutionError> {
     let table_columns = get_columns(machine, table);
 
     let new_tuples: Vec<Tuple> = tuples.iter_mut()
         .map(|tuple| { 
-            let mut new_tuple = Tuple::new();
-
-            for (idx, column) in table_columns.iter().enumerate() {
-                let index_result = attributions.iter().position(|e| e.target == *column);
-                if let Some(index) = index_result {
-                    let attr = attributions.get(index).unwrap();
-                    new_tuple.append_cell(attr.expr.result(&tuple, &table_columns));
-                } else {
-                    new_tuple.append_cell(tuple.get_cell(idx as u16));
-                } 
+            if expression.result(tuple, &table_columns).is_true() {
+                let mut new_tuple = Tuple::new();
+                for (idx, column) in table_columns.iter().enumerate() {
+                    let index_result = attributions.iter().position(|e| e.target == *column);
+                    if let Some(index) = index_result {
+                        let attr = attributions.get(index).unwrap();
+                        new_tuple.append_cell(attr.expr.result(&tuple, &table_columns));
+                    } else {
+                        new_tuple.append_cell(tuple.get_cell(idx as u16));
+                    } 
+                }
+                new_tuple
+            } else {
+                tuple.clone()
             }
-
-            new_tuple
         })
         .collect::<Vec<_>>();
 

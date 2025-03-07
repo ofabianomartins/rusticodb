@@ -370,6 +370,7 @@ fn print_complete_cell(f: &mut fmt::Formatter, column_size_count: u64) {
 
 impl fmt::Display for ResultSet {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let _ = write!(f, "\n\n");
         match self.set_type {
             ResultSetType::Change => {
                 write!(f, "{}", self.message)

@@ -1,21 +1,21 @@
 mod load_databases;
 mod load_tables;
-mod load_columns;
 mod load_sequences;
+mod load_indexes;
 
 use crate::config::Config;
 
 use crate::setup::load_databases::setup_databases_table;
 use crate::setup::load_tables::setup_tables_table;
-use crate::setup::load_columns::setup_columns_table;
 use crate::setup::load_sequences::setup_sequences_table;
+use crate::setup::load_indexes::setup_indexes_table;
 
 use crate::machine::Machine;
-use crate::machine::create_database;
 use crate::machine::path_exists;
-use crate::machine::check_database_exists;
+use crate::machine::database_exists;
 
 use crate::storage::os_interface::create_folder_if_not_exists;
+use crate::storage::format_database_name;
 
 use crate::sys_db::SysDb;
 
@@ -30,9 +30,17 @@ pub fn setup_system(machine: &mut Machine) {
 }
 
 pub fn load_context(machine: &mut Machine) {
-    if check_database_exists(machine, &Config::sysdb()) == false {
+    if database_exists(machine, &Config::sysdb()) == false {
         Logger::warn("rusticodb does not exists");
-        let _ = create_database(machine, Config::sysdb(), true);
+        create_folder_if_not_exists(&format_database_name(&Config::sysdb()));
+    }
+
+    if path_exists(machine,&SysDb::table_sequences()) == false {
+        setup_sequences_table(machine);
+    }
+
+    if path_exists(machine,&SysDb::table_indexes()) == false {
+        setup_indexes_table(machine);
     }
 
     if path_exists(machine,&SysDb::table_databases()) == false {
@@ -41,13 +49,5 @@ pub fn load_context(machine: &mut Machine) {
 
     if path_exists(machine,&SysDb::table_tables()) == false {
         setup_tables_table(machine);
-    }
-
-    if path_exists(machine,&SysDb::table_columns()) == false {
-        setup_columns_table(machine);
-    }
-
-    if path_exists(machine,&SysDb::table_sequences()) == false {
-        setup_sequences_table(machine);
     }
 }

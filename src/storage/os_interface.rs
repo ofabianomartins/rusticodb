@@ -53,6 +53,7 @@ pub fn write_data(file_name: &String, pos: u64, data: &[u8; BLOCK_SIZE]) {
 
 pub fn read_data(file_name: &String, pos: u64) -> [u8; BLOCK_SIZE] {
     let mut buffer = [0u8; BLOCK_SIZE];
+    buffer[3] = 4u8;
 
     let mut file = OpenOptions::new()
         .read(true)

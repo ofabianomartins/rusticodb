@@ -1,5 +1,7 @@
 use std::fmt;
 
+use crate::config::Config;
+
 #[derive(Debug, Clone)]
 pub struct Column {
     pub database_name: String,
@@ -121,22 +123,28 @@ impl fmt::Display for Column {
     }
 }
 
-
 pub fn get_columns_table_definition() -> Vec<Column> {
-    return vec![
+    let mut data = vec![
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("id"),
             ColumnType::UnsignedBigint,
             true,
             true,
             true,
             String::from("")
-        ),
+        )
+    ];
+    data.append(&mut get_columns_table_definition_without_id());
+    return data;
+}
+
+pub fn get_columns_table_definition_without_id() -> Vec<Column> {
+    return vec![
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("database_name"),
             ColumnType::Varchar,
             true,
@@ -145,8 +153,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("table_name"),
             ColumnType::Varchar,
             true,
@@ -155,8 +163,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("name"),
             ColumnType::Varchar,
             true,
@@ -165,8 +173,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("type"),
             ColumnType::Varchar,
             true,
@@ -175,8 +183,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("not_null"),
             ColumnType::Boolean,
             true,
@@ -185,8 +193,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("primary_key"),
             ColumnType::Boolean,
             true,
@@ -195,10 +203,20 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            String::from("rusitcodb"),
-            String::from("columns"),
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
             String::from("unique"),
             ColumnType::Boolean,
+            true,
+            false,
+            false,
+            String::from("")
+        ),
+        Column::new(
+            Config::sysdb(),
+            Config::sysdb_table_columns(),
+            String::from("default"),
+            ColumnType::Varchar,
             true,
             false,
             false,

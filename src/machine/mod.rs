@@ -49,6 +49,7 @@ pub mod check_view_exists;
 // TUPLE FUNCTIONS
 pub mod read_tuples;
 pub mod insert_row;
+pub mod insert_full_row;
 pub mod insert_tuples;
 pub mod update_tuples;
 pub mod drop_tuples;
@@ -65,10 +66,11 @@ pub use self::attribution::Attribution;
 
 pub use self::result_set::ResultSet;
 pub use self::result_set::ResultSetType;
-pub use self::table::Table;
-pub use self::column::{ Column, ColumnType, get_columns_table_definition };
-pub use self::sequence::Sequence;
-pub use self::index::Index;
+pub use self::database::{ Database, get_databases_table_definition, get_databases_table_definition_without_id };
+pub use self::table::{ Table, get_tables_table_definition, get_tables_table_definition_without_id };
+pub use self::column::{ Column, ColumnType, get_columns_table_definition, get_columns_table_definition_without_id };
+pub use self::sequence::{ Sequence, get_sequences_table_definition, get_sequences_table_definition_without_id };
+pub use self::index::{ Index, get_indexes_table_definition, get_indexes_table_definition_without_id };
 
 pub use create_file::create_file;
 pub use path_exists::path_exists;
@@ -105,6 +107,7 @@ pub use check_view_exists::check_view_exists;
 pub use product_cartesian::product_cartesian;
 
 pub use insert_row::insert_row;
+pub use insert_full_row::insert_full_row;
 pub use insert_tuples::insert_tuples;
 pub use update_tuples::update_tuples;
 pub use read_tuples::read_tuples;

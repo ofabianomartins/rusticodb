@@ -56,7 +56,7 @@ pub fn test_sequence_error_if_not_exists() {
 
     let result_set_drop = parse_command(&mut machine, "DROP SEQUENCE sequence1");
 
-    assert!(matches!(result_set_drop, Err(ExecutionError::IndexNotExists(ref _result_set))));
+    assert!(matches!(result_set_drop, Err(ExecutionError::SequenceNotExists(ref _result_set))));
 
     let database_name = String::from("rusticodb");
     let table_name = String::from("sequences");

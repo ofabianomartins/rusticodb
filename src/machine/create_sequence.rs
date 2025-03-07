@@ -4,13 +4,16 @@ use sqlparser::ast::SequenceOptions;
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
-use crate::machine::insert_tuples;
+use crate::machine::insert_row;
+use crate::machine::get_sequences_table_definition_without_id;
 
 use crate::storage::Tuple;
+use crate::storage::get_tuple_sequence_without_id;
 
 use crate::sys_db::SysDb;
 
 use crate::utils::ExecutionError;
+use crate::utils::Logger;
 
 pub fn create_sequence(
     machine: &mut Machine, 
@@ -23,16 +26,23 @@ pub fn create_sequence(
 ) -> Result<ResultSet, ExecutionError>{
 
     let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1);
-    tuple.push_string(&database_name);
-    tuple.push_string(&table_name);
-    tuple.push_string(&column_name);
-    tuple.push_string(&sequence_name);
-    tuple.push_unsigned_bigint(1u64);
-    tuples.push(tuple);
+    tuples.push(
+        get_tuple_sequence_without_id(
+            &database_name,
+            &table_name,
+            &column_name,
+            &sequence_name,
+            1u64
+        )
+    );
 
-    insert_tuples(machine, &SysDb::table_sequences(), &mut tuples);
+    Logger::info(format!("CREATE SEQUENCE {}", sequence_name).leak());
+    let _ = insert_row(
+        machine, 
+        &SysDb::table_sequences(),
+        &get_sequences_table_definition_without_id(),
+        &mut tuples
+    );
 
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE SEQUENCE")))
 }
