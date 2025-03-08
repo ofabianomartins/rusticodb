@@ -4,7 +4,6 @@ pub mod setup;
 pub mod machine;
 pub mod config;
 pub mod utils;
-pub mod sys_db;
 
 use std::str;
 

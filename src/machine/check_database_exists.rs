@@ -6,7 +6,8 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
-use crate::sys_db::SysDb;
+
+use crate::config::SysDb;
 
 pub fn check_database_exists(machine: &mut Machine, database_name: &String) -> bool {
     let condition = Expression::Func2(

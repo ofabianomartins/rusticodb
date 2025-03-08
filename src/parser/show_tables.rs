@@ -6,7 +6,8 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::utils::ExecutionError;
-use crate::sys_db::SysDb;
+
+use crate::config::SysDb;
 
 pub fn show_tables(machine: &mut Machine) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.actual_database.clone() {

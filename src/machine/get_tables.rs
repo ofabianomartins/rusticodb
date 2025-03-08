@@ -6,7 +6,7 @@ use crate::machine::read_tuples;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
-use crate::sys_db::SysDb;
+use crate::config::SysDb;
 
 use crate::storage::Tuple;
 

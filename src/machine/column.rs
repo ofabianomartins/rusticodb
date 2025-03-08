@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::storage::CellType;
 
-use crate::config::Config;
+use crate::config::SysDb;
 
 pub type ColumnType = CellType;
 
@@ -114,8 +114,8 @@ impl fmt::Display for Column {
 pub fn get_columns_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("id"),
             ColumnType::UnsignedBigint,
             true,
@@ -131,8 +131,8 @@ pub fn get_columns_table_definition() -> Vec<Column> {
 pub fn get_columns_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("database_name"),
             ColumnType::Varchar,
             true,
@@ -141,8 +141,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("table_name"),
             ColumnType::Varchar,
             true,
@@ -151,8 +151,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("name"),
             ColumnType::Varchar,
             true,
@@ -161,8 +161,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("type"),
             ColumnType::Varchar,
             true,
@@ -171,8 +171,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("not_null"),
             ColumnType::Boolean,
             true,
@@ -181,8 +181,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("primary_key"),
             ColumnType::Boolean,
             true,
@@ -191,8 +191,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("unique"),
             ColumnType::Boolean,
             true,
@@ -201,8 +201,8 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_columns(),
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
             String::from("default"),
             ColumnType::Varchar,
             true,

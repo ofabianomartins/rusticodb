@@ -10,7 +10,8 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
-use crate::sys_db::SysDb;
+
+use crate::config::SysDb;
 
 pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u64> {
     let condition = Expression::Func2(

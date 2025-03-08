@@ -7,7 +7,7 @@ use crate::machine::get_indexes_table_definition_without_id;
 use crate::storage::Tuple;
 use crate::storage::get_tuple_index;
 
-use crate::sys_db::SysDb;
+use crate::config::SysDb;
 
 use crate::utils::ExecutionError;
 

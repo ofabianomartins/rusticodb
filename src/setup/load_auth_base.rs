@@ -1,4 +1,7 @@
 use crate::config::Config;
+use crate::config::SysDb;
+
+use crate::utils::Logger;
 
 use crate::machine::Machine;
 use crate::machine::insert_row;
@@ -14,10 +17,6 @@ use crate::storage::Tuple;
 use crate::storage::get_tuple_database;
 use crate::storage::get_tuple_table;
 use crate::storage::get_tuple_index;
-
-use crate::sys_db::SysDb;
-use crate::utils::Logger;
-
 
 pub fn setup_auth_base(machine: &mut Machine) {
     Logger::info("setup auth databases and tables");

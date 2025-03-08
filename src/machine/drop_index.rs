@@ -9,7 +9,7 @@ use crate::machine::Expression2Type;
 
 use crate::utils::ExecutionError;
 
-use crate::sys_db::SysDb;
+use crate::config::SysDb;
 
 pub fn drop_index(machine: &mut Machine, index_name: &String) -> Result<ResultSet, ExecutionError>{
     let columns = get_columns(machine, &SysDb::table_indexes());

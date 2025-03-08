@@ -2,6 +2,7 @@ mod load_base;
 mod load_base_tables;
 
 use crate::config::Config;
+use crate::config::SysDb;
 
 use crate::setup::load_base_tables::setup_base_tables;
 use crate::setup::load_base::setup_base;
@@ -12,8 +13,6 @@ use crate::machine::database_exists;
 
 use crate::storage::os_interface::create_folder_if_not_exists;
 use crate::storage::format_database_name;
-
-use crate::sys_db::SysDb;
 
 use crate::utils::Logger;
 
@@ -26,9 +25,9 @@ pub fn setup_system(machine: &mut Machine) {
 }
 
 pub fn load_context(machine: &mut Machine) {
-    if database_exists(machine, &Config::sysdb()) == false {
+    if database_exists(machine, &SysDb::dbname()) == false {
         Logger::warn("rusticodb does not exists");
-        create_folder_if_not_exists(&format_database_name(&Config::sysdb()));
+        create_folder_if_not_exists(&format_database_name(&SysDb::dbname()));
     }
 
     if path_exists(machine,&SysDb::table_sequences()) == false {

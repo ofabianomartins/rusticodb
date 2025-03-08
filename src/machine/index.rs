@@ -1,6 +1,7 @@
 use std::fmt;
 
-use crate::config::Config;
+use crate::config::SysDb;
+
 use crate::machine::Column;
 use crate::machine::ColumnType;
 
@@ -37,8 +38,8 @@ impl fmt::Display for Index {
 pub fn get_indexes_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_indexes(),
+            SysDb::dbname(),
+            SysDb::tblname_indexes(),
             String::from("id"),
             ColumnType::UnsignedBigint,
             true,
@@ -54,8 +55,8 @@ pub fn get_indexes_table_definition() -> Vec<Column> {
 pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_indexes(),
+            SysDb::dbname(),
+            SysDb::tblname_indexes(),
             String::from("database_name"),
             ColumnType::Varchar,
             true,
@@ -64,8 +65,8 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_indexes(),
+            SysDb::dbname(),
+            SysDb::tblname_indexes(),
             String::from("table_name"),
             ColumnType::Varchar,
             true,
@@ -74,8 +75,8 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_indexes(),
+            SysDb::dbname(),
+            SysDb::tblname_indexes(),
             String::from("column_name"),
             ColumnType::Varchar,
             true,
@@ -84,8 +85,8 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_indexes(),
+            SysDb::dbname(),
+            SysDb::tblname_indexes(),
             String::from("name"),
             ColumnType::Varchar,
             true,
@@ -94,8 +95,8 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_indexes(),
+            SysDb::dbname(),
+            SysDb::tblname_indexes(),
             String::from("type"),
             ColumnType::Varchar,
             true,

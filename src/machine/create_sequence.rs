@@ -10,7 +10,7 @@ use crate::machine::get_sequences_table_definition_without_id;
 use crate::storage::Tuple;
 use crate::storage::get_tuple_sequence_without_id;
 
-use crate::sys_db::SysDb;
+use crate::config::SysDb;
 
 use crate::utils::ExecutionError;
 use crate::utils::Logger;

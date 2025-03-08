@@ -10,7 +10,8 @@ use crate::storage::format_database_name;
 use crate::storage::get_tuple_database;
 
 use crate::utils::ExecutionError;
-use crate::sys_db::SysDb;
+
+use crate::config::SysDb;
 
 pub fn create_database(machine: &mut Machine, database_name: String, if_not_exists: bool) -> Result<ResultSet, ExecutionError>{
     if check_database_exists(machine, &database_name) && if_not_exists {

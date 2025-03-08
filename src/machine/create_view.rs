@@ -10,7 +10,7 @@ use crate::storage::format_table_name;
 
 use crate::utils::ExecutionError;
 
-use crate::sys_db::SysDb;
+use crate::config::SysDb;
 
 pub fn create_view(
     machine: &mut Machine, 

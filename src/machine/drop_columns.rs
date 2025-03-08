@@ -6,7 +6,7 @@ use crate::machine::drop_tuples;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
-use crate::sys_db::SysDb;
+use crate::config::SysDb;
 
 pub fn drop_columns(machine: &mut Machine, table: &Table) {
     let condition = Expression::Func2(

@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::config::Config;
+use crate::config::SysDb;
 
 use crate::machine::Column;
 use crate::machine::ColumnType;
@@ -50,8 +50,8 @@ impl fmt::Display for Table {
 pub fn get_tables_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_tables(),
+            SysDb::dbname(),
+            SysDb::tblname_tables(),
             String::from("id"),
             ColumnType::UnsignedBigint,
             true,
@@ -67,8 +67,8 @@ pub fn get_tables_table_definition() -> Vec<Column> {
 pub fn get_tables_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_tables(),
+            SysDb::dbname(),
+            SysDb::tblname_tables(),
             String::from("database_name"),
             ColumnType::Varchar,
             true,
@@ -77,8 +77,8 @@ pub fn get_tables_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_tables(),
+            SysDb::dbname(),
+            SysDb::tblname_tables(),
             String::from("name"),
             ColumnType::Varchar,
             true,
@@ -87,8 +87,8 @@ pub fn get_tables_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_tables(),
+            SysDb::dbname(),
+            SysDb::tblname_tables(),
             String::from("type"),
             ColumnType::Varchar,
             true,
@@ -97,8 +97,8 @@ pub fn get_tables_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            Config::sysdb(),
-            Config::sysdb_table_tables(),
+            SysDb::dbname(),
+            SysDb::tblname_tables(),
             String::from("query"),
             ColumnType::Varchar,
             true,
