@@ -9,13 +9,13 @@ pub fn test_cell_insert_string_to_u8() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
 
-    cell.string_to_bin(&data);
+    cell.varchar_to_bin(&data);
 
     assert_eq!(cell.data, buffer);
 }
@@ -198,14 +198,14 @@ pub fn test_cell_get_u8_to_string() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    match cell.bin_to_string() {
+    match cell.bin_to_varchar() {
         Ok(format_data) => {
             assert_eq!(format_data, data);
         },
@@ -227,19 +227,19 @@ pub fn test_cell_get_u8_to_string_with_error() {
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_string(), Err(ExecutionError::WrongFormat)));
+    assert!(matches!(cell.bin_to_varchar(), Err(ExecutionError::WrongFormat)));
 }
 
 #[test]
 pub fn test_cell_get_u8_to_string_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_string(), Err(ExecutionError::WrongLength)));
+    assert!(matches!(cell.bin_to_varchar(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -249,14 +249,14 @@ pub fn test_cell_get_u8_to_string_with_length_error2() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut ((bytes_array.len() + 5) as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
     let mut cell = Cell::new();
     cell.load(buffer);
 
-    assert!(matches!(cell.bin_to_string(), Err(ExecutionError::WrongLength)));
+    assert!(matches!(cell.bin_to_varchar(), Err(ExecutionError::WrongLength)));
 }
 
 #[test]
@@ -288,7 +288,7 @@ pub fn test_cell_get_u8_to_text_with_error() {
 
     let mut bytes_array = data.clone().into_bytes();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
@@ -302,7 +302,7 @@ pub fn test_cell_get_u8_to_text_with_error() {
 pub fn test_cell_get_u8_to_text_with_lentgh_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -357,7 +357,7 @@ pub fn test_cell_get_u8_to_false_boolean() {
 pub fn test_cell_get_u8_to_false_boolean_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(0u8);
 
     let mut cell = Cell::new();
@@ -370,7 +370,7 @@ pub fn test_cell_get_u8_to_false_boolean_with_error() {
 pub fn test_cell_get_u8_to_false_boolean_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -395,7 +395,7 @@ pub fn test_cell_get_u8_to_unsigned_tinyint() {
 pub fn test_cell_get_u8_to_unsigned_tinyint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(50u8);
 
     let mut cell = Cell::new();
@@ -408,7 +408,7 @@ pub fn test_cell_get_u8_to_unsigned_tinyint_with_error() {
 pub fn test_cell_get_u8_to_unsigned_tinyint_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -439,7 +439,7 @@ pub fn test_cell_get_u8_to_unsigned_smallint() {
 pub fn test_cell_get_u8_to_unsigned_smallint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut 50u16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
@@ -452,7 +452,7 @@ pub fn test_cell_get_u8_to_unsigned_smallint_with_error() {
 pub fn test_cell_get_u8_to_unsigned_smallint_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -483,7 +483,7 @@ pub fn test_cell_get_u8_to_unsigned_int() {
 pub fn test_cell_get_u8_to_unsigned_int_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut 50u32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
@@ -496,7 +496,7 @@ pub fn test_cell_get_u8_to_unsigned_int_with_error() {
 pub fn test_cell_get_u8_to_unsigned_int_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -527,7 +527,7 @@ pub fn test_cell_get_u8_to_unsigned_bigint() {
 pub fn test_cell_get_u8_to_unsigned_bigint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut 14294967295u64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
@@ -540,7 +540,7 @@ pub fn test_cell_get_u8_to_unsigned_bigint_with_error() {
 pub fn test_cell_get_u8_to_unsigned_bigint_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -571,7 +571,7 @@ pub fn test_cell_get_u8_to_signed_tinyint() {
 pub fn test_cell_get_u8_to_signed_tinyint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(-123i8 as u8);
 
     let mut cell = Cell::new();
@@ -584,7 +584,7 @@ pub fn test_cell_get_u8_to_signed_tinyint_with_error() {
 pub fn test_cell_get_u8_to_signed_tinyint_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -614,7 +614,7 @@ pub fn test_cell_get_u8_to_signed_smallint() {
 pub fn test_cell_get_u8_to_signed_smallint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut 50i16.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
@@ -627,7 +627,7 @@ pub fn test_cell_get_u8_to_signed_smallint_with_error() {
 pub fn test_cell_get_u8_to_signed_smallint_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -657,7 +657,7 @@ pub fn test_cell_get_u8_to_signed_int() {
 pub fn test_cell_get_u8_to_signed_int_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut 50i32.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
@@ -670,7 +670,7 @@ pub fn test_cell_get_u8_to_signed_int_with_error() {
 pub fn test_cell_get_u8_to_signed_int_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);
@@ -700,7 +700,7 @@ pub fn test_cell_get_u8_to_signed_bigint() {
 pub fn test_cell_get_u8_to_signed_bigint_with_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut 14294967295i64.to_be_bytes().to_vec());
 
     let mut cell = Cell::new();
@@ -713,7 +713,7 @@ pub fn test_cell_get_u8_to_signed_bigint_with_error() {
 pub fn test_cell_get_u8_to_signed_bigint_with_length_error() {
     let mut buffer: Vec<u8> = Vec::new();
 
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
 
     let mut cell = Cell::new();
     cell.load(buffer);

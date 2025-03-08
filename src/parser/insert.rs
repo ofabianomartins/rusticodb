@@ -65,7 +65,7 @@ fn get_tuples(
                             },
                             Some(Expr::Value(Value::SingleQuotedString(value))) => {
                                 if tcolumn.column_type == ColumnType::Varchar {
-                                    tuple.push_string(&value);
+                                    tuple.push_varchar(&value);
                                 }
                             },
                             other => {
@@ -120,7 +120,7 @@ fn get_tuples(
                                 let value = tcolumn.default == String::from("1");
                                 tuple.push_unsigned_tinyint(if value { 1u8 } else { 0u8 })
                             },
-                            ColumnType::Varchar => tuple.push_string(&tcolumn.default),
+                            ColumnType::Varchar => tuple.push_varchar(&tcolumn.default),
                             ColumnType::Text => tuple.push_text(&tcolumn.default),
                             other => {
                                 println!("insert value and column_type not identified {:?}", other);

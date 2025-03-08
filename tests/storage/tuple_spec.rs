@@ -22,7 +22,7 @@ pub fn test_tuple_push_null() {
 }
 
 #[test]
-pub fn test_tuple_push_string() {
+pub fn test_tuple_push_varchar() {
     let mut buffer: Vec<u8> = Vec::new();
     let data: String = String::from("simple_string");
 
@@ -30,7 +30,7 @@ pub fn test_tuple_push_string() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 20u16.to_be_bytes().to_vec());
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
@@ -40,7 +40,7 @@ pub fn test_tuple_push_string() {
     }
 
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
 
     assert_eq!(tuple.to_raw_data(), raw_buffer);
 }
@@ -295,12 +295,12 @@ pub fn test_push_two_signed_bigint_to_u8() {
 
 
 #[test]
-pub fn test_tuple_get_string_on_position() {
+pub fn test_tuple_get_varchar_on_position() {
     let data: String = String::from("simple_string");
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
 
-    assert_eq!(tuple.get_string(0).unwrap(), data);
+    assert_eq!(tuple.get_varchar(0).unwrap(), data);
 }
 
 #[test]
@@ -387,12 +387,12 @@ pub fn test_tuple_insert_three_cell_and_get_signed_bigint_on_position() {
 }
 
 #[test]
-pub fn test_tuple_insert_two_number_and_one_string_and_get_string_on_position() {
+pub fn test_tuple_insert_two_number_and_one_string_and_get_varchar_on_position() {
     let data: String = String::from("simple_string");
     let mut tuple = Tuple::new();
     tuple.push_signed_bigint(51i64);
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuple.push_signed_bigint(52i64);
 
-    assert_eq!(tuple.get_string(1).unwrap(), data);
+    assert_eq!(tuple.get_varchar(1).unwrap(), data);
 }

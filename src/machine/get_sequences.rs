@@ -27,7 +27,7 @@ pub fn get_sequences(machine: &mut Machine, database_name: &String) -> Vec<Seque
         .collect();
 
     for elem in tuples.into_iter() {
-        sequences.push(Sequence::new(elem.get_string(4).unwrap()));
+        sequences.push(Sequence::new(elem.get_varchar(4).unwrap()));
     }
 
     return sequences;

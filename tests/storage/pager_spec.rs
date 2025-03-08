@@ -75,7 +75,7 @@ pub fn test2_insert_tuples_on_pager() {
     buffer.push(1);
     buffer.push(0);
     buffer.push(20);
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(0);
     buffer.push(13);
     buffer.append(&mut bytes_array);
@@ -87,7 +87,7 @@ pub fn test2_insert_tuples_on_pager() {
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut pager = Pager::new();
@@ -120,7 +120,7 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
     buffer.push(1);
     buffer.push(0);
     buffer.push(20);
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(0);
     buffer.push(13);
     buffer.append(&mut bytes_array);
@@ -128,7 +128,7 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
     buffer.push(1);
     buffer.push(0);
     buffer.push(20);
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(0);
     buffer.push(13);
     let mut bytes_array = data.clone().into_bytes();
@@ -141,12 +141,12 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut tuples2: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut pager = Pager::new();
@@ -180,7 +180,7 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
     buffer.push(1);
     buffer.push(0);
     buffer.push(20);
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(0);
     buffer.push(13);
     buffer.append(&mut bytes_array);
@@ -188,7 +188,7 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
     buffer.push(1);
     buffer.push(0);
     buffer.push(20);
-    buffer.push(CellType::String as u8);
+    buffer.push(CellType::Varchar as u8);
     buffer.push(0);
     buffer.push(13);
     let mut bytes_array = data.clone().into_bytes();
@@ -201,12 +201,12 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut tuples2: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut pager = Pager::new();

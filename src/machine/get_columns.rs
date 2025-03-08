@@ -40,9 +40,9 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
                 table.database_alias.clone(),
                 table.name.clone(),
                 table.alias.clone(),
-                elem.get_string(3).unwrap(),
-                elem.get_string(3).unwrap(),
-                match elem.get_string(4).unwrap().as_str() {
+                elem.get_varchar(3).unwrap(),
+                elem.get_varchar(3).unwrap(),
+                match elem.get_varchar(4).unwrap().as_str() {
                     "UNSIGNED TINYINT" => ColumnType::UnsignedTinyint,
                     "SIGNED TINYINT" => ColumnType::SignedTinyint,
                     "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint,
@@ -58,7 +58,7 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
                 elem.get_boolean(5).unwrap(),
                 elem.get_boolean(6).unwrap(),
                 elem.get_boolean(7).unwrap(),
-                elem.get_string(8).unwrap()
+                elem.get_varchar(8).unwrap()
             )
         );
     }

@@ -48,7 +48,7 @@ pub enum Expression2Type {
 
 fn _get_type(column_type: ColumnType) -> CellType {
    match column_type {
-       ColumnType::Varchar => CellType::String,
+       ColumnType::Varchar => CellType::Varchar,
        _ => CellType::Null
    }
 }
@@ -104,7 +104,7 @@ impl Expression {
                     &RawVal::Int(number) => {
                         return Cell::new_type(CellType::UnsignedBigint, number.to_be_bytes().to_vec())
                     },
-                    RawVal::Str(value) => { return Cell::new_string(value) },
+                    RawVal::Str(value) => { return Cell::new_varchar(value) },
                     &RawVal::Float(_) | &RawVal::Null => return Cell::new_null()
                 };
             },

@@ -61,7 +61,7 @@ pub fn test_if_expression_equal_operator_with_string() {
     ];
 
     let mut tuple = Tuple::new();
-    tuple.push_string(&String::from("value1"));
+    tuple.push_varchar(&String::from("value1"));
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -151,7 +151,7 @@ pub fn test_if_expression_not_equal_operator_with_string() {
     ];
 
     let mut tuple = Tuple::new();
-    tuple.push_string(&String::from("value1"));
+    tuple.push_varchar(&String::from("value1"));
     
     let cell: Cell = expression.result(&tuple, &columns);
 

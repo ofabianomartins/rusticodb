@@ -48,7 +48,7 @@ impl Tuple {
                 return Cell::new();
             }
 
-            if self.data[position_index as usize] == (CellType::String as u8) {
+            if self.data[position_index as usize] == (CellType::Varchar as u8) {
                 let byte_array: [u8; 2] = [self.data[position_index + 1], self.data[position_index + 2]];
                 cell_size = (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
             } else if self.data[position_index as usize] == (CellType::Text as u8) {
@@ -89,9 +89,9 @@ impl Tuple {
         self.append_cell(cell);
     }
 
-    pub fn push_string(&mut self, raw_data: &String) {
+    pub fn push_varchar(&mut self, raw_data: &String) {
         let mut cell = Cell::new();
-        cell.string_to_bin(&raw_data);
+        cell.varchar_to_bin(&raw_data);
         self.append_cell(cell);
     }
 
@@ -163,12 +163,12 @@ impl Tuple {
         return self.get_cell(position).get_bin();
     }
 
-    pub fn get_string(&self, position: u16) -> Result<String, ExecutionError> {
+    pub fn get_varchar(&self, position: u16) -> Result<String, ExecutionError> {
         if position >= self.cell_count() {
             return Ok(String::from(""));
         }
 
-        return self.get_cell(position).bin_to_string();
+        return self.get_cell(position).bin_to_varchar();
     }
 
     pub fn get_text(&self, position: u16) -> Result<String, ExecutionError> {
@@ -314,16 +314,16 @@ impl fmt::Display for Tuple {
 
 pub fn get_tuple_database(name: &String) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(name);
+    tuple.push_varchar(name);
     return tuple;
 }
 
 pub fn get_tuple_table(db_name: &String, name: &String) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(db_name);
-    tuple.push_string(name);
-    tuple.push_string(&String::from("table"));
-    tuple.push_string(&String::from(""));
+    tuple.push_varchar(db_name);
+    tuple.push_varchar(name);
+    tuple.push_varchar(&String::from("table"));
+    tuple.push_varchar(&String::from(""));
     return tuple;
 }
 
@@ -340,14 +340,14 @@ pub fn get_tuple_column(
 ) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
     tuple.push_unsigned_bigint(id);
-    tuple.push_string(db_name);
-    tuple.push_string(tbl_name);
-    tuple.push_string(name);
-    tuple.push_string(ctype);
+    tuple.push_varchar(db_name);
+    tuple.push_varchar(tbl_name);
+    tuple.push_varchar(name);
+    tuple.push_varchar(ctype);
     tuple.push_boolean(not_null);
     tuple.push_boolean(unique);
     tuple.push_boolean(primary_key);
-    tuple.push_string(default);
+    tuple.push_varchar(default);
     return tuple;
 }
 
@@ -362,14 +362,14 @@ pub fn get_tuple_column_without_id(
     default: &String
 ) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(db_name);
-    tuple.push_string(tbl_name);
-    tuple.push_string(name);
-    tuple.push_string(ctype);
+    tuple.push_varchar(db_name);
+    tuple.push_varchar(tbl_name);
+    tuple.push_varchar(name);
+    tuple.push_varchar(ctype);
     tuple.push_boolean(not_null);
     tuple.push_boolean(unique);
     tuple.push_boolean(primary_key);
-    tuple.push_string(default);
+    tuple.push_varchar(default);
     return tuple;
 }
 
@@ -383,10 +383,10 @@ pub fn get_tuple_sequence(
 ) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
     tuple.push_unsigned_bigint(id);
-    tuple.push_string(db_name);
-    tuple.push_string(tbl_name);
-    tuple.push_string(col_name);
-    tuple.push_string(name);
+    tuple.push_varchar(db_name);
+    tuple.push_varchar(tbl_name);
+    tuple.push_varchar(col_name);
+    tuple.push_varchar(name);
     tuple.push_unsigned_bigint(next_id);
     return tuple;
 }
@@ -399,10 +399,10 @@ pub fn get_tuple_sequence_without_id(
     next_id: u64
 ) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(db_name);
-    tuple.push_string(tbl_name);
-    tuple.push_string(col_name);
-    tuple.push_string(name);
+    tuple.push_varchar(db_name);
+    tuple.push_varchar(tbl_name);
+    tuple.push_varchar(col_name);
+    tuple.push_varchar(name);
     tuple.push_unsigned_bigint(next_id);
     return tuple;
 }
@@ -415,11 +415,11 @@ pub fn get_tuple_index(
     itype: &String
 ) -> Tuple {
     let mut tuple: Tuple = Tuple::new();
-    tuple.push_string(db_name);
-    tuple.push_string(tbl_name);
-    tuple.push_string(col_name);
-    tuple.push_string(name);
-    tuple.push_string(itype);
+    tuple.push_varchar(db_name);
+    tuple.push_varchar(tbl_name);
+    tuple.push_varchar(col_name);
+    tuple.push_varchar(name);
+    tuple.push_varchar(itype);
     return tuple;
 }
 

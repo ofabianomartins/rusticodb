@@ -22,10 +22,10 @@ pub fn create_view(
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple: Tuple = Tuple::new();
     tuple.push_unsigned_bigint(1u64);
-    tuple.push_string(&table.database_name);
-    tuple.push_string(&table.name);
-    tuple.push_string(&String::from("view"));
-    tuple.push_string(query);
+    tuple.push_varchar(&table.database_name);
+    tuple.push_varchar(&table.name);
+    tuple.push_varchar(&String::from("view"));
+    tuple.push_varchar(query);
     tuples.push(tuple);
 
     insert_tuples(machine, &SysDb::table_tables(), &mut tuples);

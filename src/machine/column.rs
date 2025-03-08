@@ -1,6 +1,10 @@
 use std::fmt;
 
+use crate::storage::CellType;
+
 use crate::config::Config;
+
+pub type ColumnType = CellType;
 
 #[derive(Debug, Clone)]
 pub struct Column {
@@ -17,22 +21,6 @@ pub struct Column {
     pub default: String
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum ColumnType {
-    Undefined = 0,
-    Null = 1,
-    Boolean = 2,
-    UnsignedTinyint = 3,
-    UnsignedSmallint = 4,
-    UnsignedInt = 5,
-    UnsignedBigint = 6,
-    SignedTinyint = 7,
-    SignedSmallint = 8,
-    SignedInt = 9,
-    SignedBigint = 10,
-    Varchar = 11,
-    Text = 12
-}
 
 impl Column {
     pub fn new(

@@ -27,7 +27,7 @@ pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> 
         .collect();
 
     for elem in tuples.into_iter() {
-        indexes.push(Index::new(elem.get_string(4).unwrap()));
+        indexes.push(Index::new(elem.get_varchar(4).unwrap()));
     }
 
     return indexes;

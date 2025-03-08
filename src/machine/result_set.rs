@@ -65,7 +65,7 @@ impl ResultSet {
     pub fn get_string(&self, index: usize, column_name: &String) -> Result<String, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_string(*position as u16),
+                Some(tuple) => tuple.get_varchar(*position as u16),
                 None => Err(ExecutionError::TupleNotExists(index))
             },
             None => Err(ExecutionError::ColumnNotExists(column_name.clone()))

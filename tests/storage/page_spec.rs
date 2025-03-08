@@ -7,12 +7,12 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
 
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut tuples2: Vec<Tuple> = Vec::new();
     let mut tuple = Tuple::new();
-    tuple.push_string(&data);
+    tuple.push_varchar(&data);
     tuples.push(tuple);
 
     let mut page = Page::new(0);

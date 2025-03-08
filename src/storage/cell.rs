@@ -11,7 +11,7 @@ pub struct Cell {
 }
 
 // Should be save in one byte
-#[derive(Debug,Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug,Eq,Clone,PartialEq, Ord, PartialOrd)]
 pub enum CellType {
     Undefined = 0,
     Null = 1,
@@ -24,7 +24,7 @@ pub enum CellType {
     SignedSmallint = 8,
     SignedInt = 9,
     SignedBigint = 10,
-    String = 11,
+    Varchar = 11,
     Text = 12,
 }
 
@@ -50,9 +50,9 @@ impl Cell {
         Cell { data: [vec![cell_type as u8], values].concat() }
     }
 
-    pub fn new_string(value: &String) -> Self {
+    pub fn new_varchar(value: &String) -> Self {
         let mut cell = Cell { data: Vec::new() };
-        cell.string_to_bin(value);
+        cell.varchar_to_bin(value);
         cell
     }
 
@@ -68,12 +68,12 @@ impl Cell {
         self.data.push(CellType::Null as u8);
     }
 
-    pub fn string_to_bin(&mut self,raw_data: &String) {
+    pub fn varchar_to_bin(&mut self,raw_data: &String) {
         let mut bytes_array = raw_data.clone().into_bytes();
 
         let size = bytes_array.len() as u16;  
 
-        self.data.push(CellType::String as u8);
+        self.data.push(CellType::Varchar as u8);
         self.data.append(&mut size.to_be_bytes().to_vec());
         self.data.append(&mut bytes_array);
     }
@@ -142,7 +142,7 @@ impl Cell {
             return Err(ExecutionError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::String as u8) {
+        if self.data[0] != (CellType::Varchar as u8) {
             return Err(ExecutionError::WrongFormat)
         } 
 
@@ -164,12 +164,12 @@ impl Cell {
         return Ok(bytes);
     }
 
-    pub fn bin_to_string(&self) -> Result<String, ExecutionError> {
+    pub fn bin_to_varchar(&self) -> Result<String, ExecutionError> {
         if self.data.len() <= 1 {
             return Err(ExecutionError::WrongLength)
         } 
 
-        if self.data[0] != (CellType::String as u8) {
+        if self.data[0] != (CellType::Varchar as u8) {
             return Err(ExecutionError::WrongFormat)
         } 
 
@@ -376,7 +376,7 @@ impl Cell {
             return 0;
         }
 
-        if self.data[0] == (CellType::String as u8) {
+        if self.data[0] == (CellType::Varchar as u8) {
             let byte_array: [u8; 2] = [self.data[1], self.data[2]];
             return (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
         }
@@ -454,8 +454,8 @@ impl Cell {
             }
         }
 
-        if self.data[0] == (CellType::String as u8) {
-            if let Ok(value) = self.bin_to_string() {
+        if self.data[0] == (CellType::Varchar as u8) {
+            if let Ok(value) = self.bin_to_varchar() {
                 return value.to_string();
             }
         }
@@ -479,7 +479,7 @@ impl Cell {
             8 => CellType::SignedSmallint,
             9 => CellType::SignedInt,
             10 => CellType::SignedBigint,
-            11 => CellType::String,
+            11 => CellType::Varchar,
             12 => CellType::Text,
             _ => CellType::Undefined
         }
