@@ -1,14 +1,10 @@
-mod load_databases;
-mod load_tables;
-mod load_sequences;
-mod load_indexes;
+mod load_base;
+mod load_base_tables;
 
 use crate::config::Config;
 
-use crate::setup::load_databases::setup_databases_table;
-use crate::setup::load_tables::setup_tables_table;
-use crate::setup::load_sequences::setup_sequences_table;
-use crate::setup::load_indexes::setup_indexes_table;
+use crate::setup::load_base_tables::setup_base_tables;
+use crate::setup::load_base::setup_base;
 
 use crate::machine::Machine;
 use crate::machine::path_exists;
@@ -36,18 +32,11 @@ pub fn load_context(machine: &mut Machine) {
     }
 
     if path_exists(machine,&SysDb::table_sequences()) == false {
-        setup_sequences_table(machine);
-    }
-
-    if path_exists(machine,&SysDb::table_indexes()) == false {
-        setup_indexes_table(machine);
+        setup_base(machine);
     }
 
     if path_exists(machine,&SysDb::table_databases()) == false {
-        setup_databases_table(machine);
+        setup_base_tables(machine);
     }
 
-    if path_exists(machine,&SysDb::table_tables()) == false {
-        setup_tables_table(machine);
-    }
 }

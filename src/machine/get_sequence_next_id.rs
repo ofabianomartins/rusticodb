@@ -1,9 +1,6 @@
-use crate::config::Config;
-
 use crate::machine::Attribution;
 use crate::machine::Column;
 use crate::machine::ColumnType;
-use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
 use crate::machine::get_columns;
@@ -13,12 +10,9 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
+use crate::sys_db::SysDb;
 
 pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u64> {
-    let table_sequences = Table::new(
-        Config::sysdb(),
-        Config::sysdb_table_sequences()
-    );
     let condition = Expression::Func2(
         Expression2Type::And,
         Box::new(Expression::Func2(
@@ -41,8 +35,8 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         ))
     );
 
-    let columns = get_columns(machine, &table_sequences);
-    let tuples: Vec<Tuple> = read_tuples(machine, &table_sequences)
+    let columns = get_columns(machine, &SysDb::table_sequences());
+    let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_sequences())
         .into_iter()
         .filter(|tuple| condition.result(tuple, &columns).is_true())
         .collect();
@@ -54,8 +48,8 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         let next_id_value = elem.get_unsigned_bigint(5).unwrap();
 
         let column = Column::new(
-            table_sequences.database_name.clone(),
-            table_sequences.name.clone(),
+            SysDb::table_sequences().database_name.clone(),
+            SysDb::table_sequences().name.clone(),
             String::from("next_id"),
             ColumnType::UnsignedBigint,
             false,
@@ -73,7 +67,7 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         );
 
         new_elem.push_unsigned_bigint(next_id_value);
-        let _ = update_row(machine, &table_sequences, &mut vec![attribution], selection);
+        let _ = update_row(machine, &SysDb::table_sequences(), &mut vec![attribution], selection);
         next_id = Some(elem.get_unsigned_bigint(5).unwrap());
 
         break;

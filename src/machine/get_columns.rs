@@ -1,5 +1,3 @@
-use crate::config::Config;
-
 use crate::machine::Column;
 use crate::machine::ColumnType;
 use crate::machine::Table;
@@ -11,13 +9,9 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
+use crate::sys_db::SysDb;
 
 pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
-    let table_columns = Table::new(
-        Config::sysdb(),
-        Config::sysdb_table_columns()
-    );
-
     let condition = Expression::Func2(
         Expression2Type::And,
         Box::new(Expression::Func2(
@@ -32,7 +26,7 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
         ))
     );
 
-    let tuples: Vec<Tuple> = read_tuples(machine, &table_columns)
+    let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_columns())
         .into_iter()
         .filter(|tuple| condition.result(tuple, &get_columns_table_definition()).is_true())
         .collect();

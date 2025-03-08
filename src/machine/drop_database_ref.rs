@@ -1,6 +1,3 @@
-use crate::config::Config;
-
-use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
 use crate::machine::get_columns;
@@ -8,13 +5,10 @@ use crate::machine::drop_tuples;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
-pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
-    let table_databases = Table::new(
-        Config::sysdb(),
-        Config::sysdb_table_databases()
-    );
+use crate::sys_db::SysDb;
 
-    let columns = get_columns(machine, &table_databases);
+pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
+    let columns = get_columns(machine, &SysDb::table_databases());
 
     let condition = Expression::Func2(
         Expression2Type::Equal,
@@ -22,5 +16,5 @@ pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
         Box::new(Expression::Const(RawVal::Str(database_name.clone())))
     );
 
-    drop_tuples(machine, &table_databases, columns, &condition);
+    drop_tuples(machine, &SysDb::table_databases(), columns, &condition);
 }

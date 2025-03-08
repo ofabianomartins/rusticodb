@@ -11,7 +11,7 @@ use crate::storage::get_tuple_column;
 use crate::sys_db::SysDb;
 use crate::utils::Logger;
 
-pub fn setup_sequences_table(machine: &mut Machine) {
+pub fn setup_base(machine: &mut Machine) {
     Logger::info("setup sequences table");
 
     let mut tuples: Vec<Tuple> = Vec::new();

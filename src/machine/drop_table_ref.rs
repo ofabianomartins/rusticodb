@@ -1,5 +1,3 @@
-use crate::config::Config;
-
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
@@ -8,13 +6,10 @@ use crate::machine::drop_tuples;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
-pub fn drop_table_ref(machine: &mut Machine, table: &Table) {
-    let table_tables = Table::new(
-        Config::sysdb(),
-        Config::sysdb_table_tables()
-    );
+use crate::sys_db::SysDb;
 
-    let columns = get_columns(machine, &table_tables);
+pub fn drop_table_ref(machine: &mut Machine, table: &Table) {
+    let columns = get_columns(machine, &SysDb::table_tables());
 
     let condition = Expression::Func2(
         Expression2Type::And,
@@ -30,5 +25,5 @@ pub fn drop_table_ref(machine: &mut Machine, table: &Table) {
         ))
     );
 
-    drop_tuples(machine, &table_tables, columns, &condition);
+    drop_tuples(machine, &SysDb::table_tables(), columns, &condition);
 }
