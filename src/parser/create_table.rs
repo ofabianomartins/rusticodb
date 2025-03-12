@@ -95,6 +95,7 @@ pub fn create_table(machine: &mut Machine, create_table: CreateTable) -> Result<
             };
 
             let tcolumn = Column::new(
+                0u64,
                 table.database_name.clone(),
                 table.name.clone(),
                 column.name.to_string().clone(),

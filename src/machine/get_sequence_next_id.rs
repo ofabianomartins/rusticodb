@@ -1,6 +1,5 @@
 use crate::machine::Attribution;
 use crate::machine::Column;
-use crate::machine::ColumnType;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
 use crate::machine::get_columns;
@@ -8,6 +7,7 @@ use crate::machine::read_tuples;
 use crate::machine::update_row;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;
+use crate::machine::get_sequences_next_id_column_definition;
 
 use crate::storage::Tuple;
 
@@ -48,16 +48,7 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         let mut new_elem = elem.clone();
         let next_id_value = elem.get_unsigned_bigint(5).unwrap();
 
-        let column = Column::new(
-            SysDb::table_sequences().database_name.clone(),
-            SysDb::table_sequences().name.clone(),
-            String::from("next_id"),
-            ColumnType::UnsignedBigint,
-            false,
-            false,
-            false,
-            String::from("")
-        );
+        let column: Column = get_sequences_next_id_column_definition().get(0).unwrap().clone();
         let expression = Expression::Const(RawVal::Int(next_id_value + 1));
         let attribution = Attribution::new(column, expression);
 

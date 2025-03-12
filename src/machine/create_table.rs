@@ -1,7 +1,6 @@
 
 use crate::machine::Table;
 use crate::machine::Column;
-use crate::machine::ColumnType;
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
@@ -40,21 +39,7 @@ pub fn create_table(
     let mut column_tuples: Vec<Tuple> = vec![];
 
     for column in columns.iter() {
-        let type_column: String = match column.column_type {
-            ColumnType::UnsignedTinyint => String::from("UNSIGNED TINYINT"),
-            ColumnType::SignedTinyint => String::from("SIGNED TINYINT"),
-            ColumnType::UnsignedSmallint => String::from("UNSIGNED SMALLINT"),
-            ColumnType::SignedSmallint => String::from("SIGNED SMALLINT"),
-            ColumnType::UnsignedInt => String::from("UNSIGNED INT"),
-            ColumnType::SignedInt => String::from("SIGNED INT"),
-            ColumnType::UnsignedBigint => String::from("UNSIGNED BIGINT"),
-            ColumnType::SignedBigint => String::from("SIGNED BIGINT"),
-            ColumnType::Varchar => String::from("VARCHAR"),
-            ColumnType::Text => String::from("TEXT"),
-            ColumnType::Boolean => String::from("UNSIGNED TINYINT"),
-            _ => String::from("UNDEFINED")
-        };
-
+        let type_column: String = column.clone().get_type_column();
         column_tuples.push(
             get_tuple_column_without_id(
                 &table.database_name,

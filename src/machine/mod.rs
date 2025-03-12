@@ -68,8 +68,19 @@ pub use self::result_set::ResultSet;
 pub use self::result_set::ResultSetType;
 pub use self::database::{ Database, get_databases_table_definition, get_databases_table_definition_without_id };
 pub use self::table::{ Table, get_tables_table_definition, get_tables_table_definition_without_id };
-pub use self::column::{ Column, ColumnType, get_columns_table_definition, get_columns_table_definition_without_id };
-pub use self::sequence::{ Sequence, get_sequences_table_definition, get_sequences_table_definition_without_id };
+pub use self::column::{
+    Column,
+    ColumnType,
+    get_columns_table_definition,
+    get_columns_table_definition_without_id,
+    map_column_type
+};
+pub use self::sequence::{ 
+    Sequence,
+    get_sequences_table_definition,
+    get_sequences_table_definition_without_id,
+    get_sequences_next_id_column_definition
+};
 pub use self::index::{ Index, get_indexes_table_definition, get_indexes_table_definition_without_id };
 
 pub use create_file::create_file;
@@ -116,8 +127,6 @@ pub use update_row::update_row;
 
 use crate::storage::Pager;
 
-use crate::utils::ExecutionError;
-
 #[derive(Debug)]
 pub struct Machine { 
     pub pager: Pager,
@@ -136,12 +145,8 @@ impl Machine {
         }
     }
 
-    pub fn set_actual_database(&mut self, name: String) -> Result<ResultSet, ExecutionError> {
-        if check_database_exists(self, &name) == false {
-            return Err(ExecutionError::DatabaseNotExists(name));
-        }
+    pub fn set_actual_database(&mut self, name: String) {
         self.actual_database = Some(name);
-        Ok(ResultSet::new_command(ResultSetType::Change, String::from("USE DATABASE")))
     }
 
 }

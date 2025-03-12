@@ -1,10 +1,10 @@
 use crate::machine::Column;
-use crate::machine::ColumnType;
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::raw_val::RawVal;
 use crate::machine::read_tuples;
 use crate::machine::get_columns_table_definition;
+use crate::machine::map_column_type;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
@@ -37,25 +37,14 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
     for elem in tuples.into_iter() {
         columns.push(
             Column::new_with_alias(
+                elem.get_unsigned_bigint(0).unwrap(),
                 table.database_name.clone(),
                 table.database_alias.clone(),
                 table.name.clone(),
                 table.alias.clone(),
                 elem.get_varchar(3).unwrap(),
                 elem.get_varchar(3).unwrap(),
-                match elem.get_varchar(4).unwrap().as_str() {
-                    "UNSIGNED TINYINT" => ColumnType::UnsignedTinyint,
-                    "SIGNED TINYINT" => ColumnType::SignedTinyint,
-                    "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint,
-                    "SIGNED SMALLINT" => ColumnType::SignedSmallint,
-                    "UNSIGNED INT" => ColumnType::UnsignedInt,
-                    "SIGNED INT" => ColumnType::SignedInt,
-                    "UNSIGNED BIGINT" => ColumnType::UnsignedBigint,
-                    "SIGNED BIGINT" => ColumnType::SignedBigint,
-                    "VARCHAR" => ColumnType::Varchar,
-                    "TEXT" => ColumnType::Text,
-                    _ => ColumnType::Varchar
-                },
+                map_column_type(elem.get_varchar(4).unwrap()),
                 elem.get_boolean(5).unwrap(),
                 elem.get_boolean(6).unwrap(),
                 elem.get_boolean(7).unwrap(),

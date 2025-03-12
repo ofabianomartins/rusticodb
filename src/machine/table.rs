@@ -50,6 +50,7 @@ impl fmt::Display for Table {
 pub fn get_tables_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
+            03u64,
             SysDb::dbname(),
             SysDb::tblname_tables(),
             String::from("id"),
@@ -67,6 +68,7 @@ pub fn get_tables_table_definition() -> Vec<Column> {
 pub fn get_tables_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
+            04u64,
             SysDb::dbname(),
             SysDb::tblname_tables(),
             String::from("database_name"),
@@ -77,6 +79,7 @@ pub fn get_tables_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            05u64,
             SysDb::dbname(),
             SysDb::tblname_tables(),
             String::from("name"),
@@ -87,6 +90,7 @@ pub fn get_tables_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            06u64,
             SysDb::dbname(),
             SysDb::tblname_tables(),
             String::from("type"),
@@ -97,6 +101,7 @@ pub fn get_tables_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            07u64,
             SysDb::dbname(),
             SysDb::tblname_tables(),
             String::from("query"),

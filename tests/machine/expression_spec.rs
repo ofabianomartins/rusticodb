@@ -19,6 +19,7 @@ pub fn test_if_expression_equal_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -49,6 +50,7 @@ pub fn test_if_expression_equal_operator_with_string() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -79,6 +81,7 @@ pub fn test_if_expression_equal_operator_with_null() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -109,6 +112,7 @@ pub fn test_if_expression_not_equal_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -139,6 +143,7 @@ pub fn test_if_expression_not_equal_operator_with_string() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -169,6 +174,7 @@ pub fn test_if_expression_not_equal_operator_with_null() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -207,6 +213,7 @@ pub fn test_if_expression_and_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -245,6 +252,7 @@ pub fn test_if_expression_or_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -275,6 +283,7 @@ pub fn test_if_expression_greather_or_equal_operator_with_equal_value() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -305,6 +314,7 @@ pub fn test_if_expression_less_or_equal_operator_with_equal_value() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -335,6 +345,7 @@ pub fn test_if_expression_greather_or_equal_operator_with_diff_value() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -365,6 +376,7 @@ pub fn test_if_expression_less_or_equal_operator_with_diff_value() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -395,6 +407,7 @@ pub fn test_if_expression_greather_than_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -425,6 +438,7 @@ pub fn test_if_expression_less_than_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -455,6 +469,7 @@ pub fn test_if_expression_add_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -485,6 +500,7 @@ pub fn test_if_expression_add_operator_inverse() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -515,6 +531,7 @@ pub fn test_if_expression_sub_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -545,6 +562,7 @@ pub fn test_if_expression_sub_operator_inverse() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -575,6 +593,7 @@ pub fn test_if_expression_mul_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -606,6 +625,7 @@ pub fn test_if_expression_mul_operator_inverse() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -636,6 +656,7 @@ pub fn test_if_expression_div_operator() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),
@@ -667,6 +688,7 @@ pub fn test_if_expression_div_operator_inverse() {
 
     let columns = vec![
         Column::new(
+            0u64,
             String::from("rusitcodb"),
             String::from("columns"),
             String::from("id"),

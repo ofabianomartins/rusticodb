@@ -38,6 +38,7 @@ impl fmt::Display for Sequence {
 pub fn get_sequences_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
+            17u64,
             SysDb::dbname(),
             SysDb::tblname_sequences(),
             String::from("id"),
@@ -52,9 +53,26 @@ pub fn get_sequences_table_definition() -> Vec<Column> {
     return data;
 }
 
-pub fn get_sequences_table_definition_without_id() -> Vec<Column> {
+pub fn get_sequences_next_id_column_definition() -> Vec<Column> {
     return vec![
         Column::new(
+            22u64,
+            SysDb::dbname(),
+            SysDb::tblname_sequences(),
+            String::from("next_id"),
+            ColumnType::UnsignedBigint,
+            false,
+            false,
+            false,
+            String::from("")
+        )
+    ];
+}
+
+pub fn get_sequences_table_definition_without_id() -> Vec<Column> {
+    let mut data = vec![
+        Column::new(
+            18u64,
             SysDb::dbname(),
             SysDb::tblname_sequences(),
             String::from("database_name"),
@@ -65,6 +83,7 @@ pub fn get_sequences_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            19u64,
             SysDb::dbname(),
             SysDb::tblname_sequences(),
             String::from("table_name"),
@@ -75,6 +94,7 @@ pub fn get_sequences_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            20u64,
             SysDb::dbname(),
             SysDb::tblname_sequences(),
             String::from("column_name"),
@@ -85,6 +105,7 @@ pub fn get_sequences_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            21u64,
             SysDb::dbname(),
             SysDb::tblname_sequences(),
             String::from("name"),
@@ -94,15 +115,7 @@ pub fn get_sequences_table_definition_without_id() -> Vec<Column> {
             false,
             String::from("")
         ),
-        Column::new(
-            SysDb::dbname(),
-            SysDb::tblname_sequences(),
-            String::from("next_id"),
-            ColumnType::UnsignedBigint,
-            true,
-            false,
-            false,
-            String::from("")
-        )
     ];
+    data.append(&mut get_sequences_next_id_column_definition());
+    return data;
 }

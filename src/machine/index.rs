@@ -38,6 +38,7 @@ impl fmt::Display for Index {
 pub fn get_indexes_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
+            23u64,
             SysDb::dbname(),
             SysDb::tblname_indexes(),
             String::from("id"),
@@ -55,6 +56,7 @@ pub fn get_indexes_table_definition() -> Vec<Column> {
 pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
+            24u64,
             SysDb::dbname(),
             SysDb::tblname_indexes(),
             String::from("database_name"),
@@ -65,6 +67,7 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            25u64,
             SysDb::dbname(),
             SysDb::tblname_indexes(),
             String::from("table_name"),
@@ -75,6 +78,7 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            26u64,
             SysDb::dbname(),
             SysDb::tblname_indexes(),
             String::from("column_name"),
@@ -85,6 +89,7 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            27u64,
             SysDb::dbname(),
             SysDb::tblname_indexes(),
             String::from("name"),
@@ -95,6 +100,7 @@ pub fn get_indexes_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            28u64,
             SysDb::dbname(),
             SysDb::tblname_indexes(),
             String::from("type"),

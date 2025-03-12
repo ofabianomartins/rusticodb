@@ -5,17 +5,14 @@ use crate::machine::ColumnType;
 
 #[derive(Debug)]
 pub struct Database {
-    name: String
+    pub id: u64,
+    pub name: String
 }
 
 impl Database {
 
-    pub fn new(name: String) -> Self {
-        Database { name } 
-    }
-
-    pub fn check_name(&self, other_name: &String) -> bool {
-        return self.name == *other_name; 
+    pub fn new(id: u64, name: String) -> Self {
+        Database { id, name } 
     }
 
 }
@@ -30,6 +27,7 @@ impl Eq for Database {}
 pub fn get_databases_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
+            01u64,
             SysDb::dbname(),
             SysDb::tblname_databases(),
             String::from("id"),
@@ -47,6 +45,7 @@ pub fn get_databases_table_definition() -> Vec<Column> {
 pub fn get_databases_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
+            02u64,
             SysDb::dbname(),
             SysDb::tblname_databases(),
             String::from("name"),

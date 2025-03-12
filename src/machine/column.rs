@@ -8,6 +8,7 @@ pub type ColumnType = CellType;
 
 #[derive(Debug, Clone)]
 pub struct Column {
+    pub id: u64,
     pub database_name: String,
     pub database_alias: String,
     pub table_name: String,
@@ -24,6 +25,7 @@ pub struct Column {
 
 impl Column {
     pub fn new(
+        id: u64,
         database_name: String,
         table_name: String,
         name: String,
@@ -34,6 +36,7 @@ impl Column {
         default: String
     ) -> Self {
         Column { 
+            id,
             database_name: database_name.clone(), 
             database_alias: database_name,
             table_name: table_name.clone(), 
@@ -49,6 +52,7 @@ impl Column {
     }
 
     pub fn new_with_alias(
+        id: u64,
         database_name: String,
         database_alias: String,
         table_name: String,
@@ -62,6 +66,7 @@ impl Column {
         default: String
     ) -> Self {
         Column { 
+            id,
             database_name, 
             database_alias, 
             table_name, 
@@ -76,17 +81,28 @@ impl Column {
         }
     }
 
-    pub fn check_name(&self, database_name: &String, table_name: &String, other_name: &String) -> bool {
-        return self.database_name == *database_name && 
-            self.table_name == *table_name && 
-            self.name == *other_name; 
+    pub fn get_type_column(self) -> String {
+        return match self.column_type {
+            ColumnType::UnsignedTinyint => String::from("UNSIGNED TINYINT"),
+            ColumnType::SignedTinyint => String::from("SIGNED TINYINT"),
+            ColumnType::UnsignedSmallint => String::from("UNSIGNED SMALLINT"),
+            ColumnType::SignedSmallint => String::from("SIGNED SMALLINT"),
+            ColumnType::UnsignedInt => String::from("UNSIGNED INT"),
+            ColumnType::SignedInt => String::from("SIGNED INT"),
+            ColumnType::UnsignedBigint => String::from("UNSIGNED BIGINT"),
+            ColumnType::SignedBigint => String::from("SIGNED BIGINT"),
+            ColumnType::Varchar => String::from("VARCHAR"),
+            ColumnType::Text => String::from("TEXT"),
+            ColumnType::Boolean => String::from("UNSIGNED TINYINT"),
+            _ => String::from("UNDEFINED")
+        };
     }
 
     pub fn check_column_name(&self, other_name: &String) -> bool {
         return self.name == *other_name; 
     }
 
-    pub fn is_number(&self) -> bool {
+    pub fn is_number(self) -> bool {
         return self.column_type == ColumnType::UnsignedTinyint ||
         self.column_type == ColumnType::UnsignedSmallint ||
         self.column_type == ColumnType::UnsignedInt ||
@@ -111,9 +127,27 @@ impl fmt::Display for Column {
     }
 }
 
+
+pub fn map_column_type(value: String) -> ColumnType {
+    match value.as_str() {
+        "UNSIGNED TINYINT" => ColumnType::UnsignedTinyint,
+        "SIGNED TINYINT" => ColumnType::SignedTinyint,
+        "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint,
+        "SIGNED SMALLINT" => ColumnType::SignedSmallint,
+        "UNSIGNED INT" => ColumnType::UnsignedInt,
+        "SIGNED INT" => ColumnType::SignedInt,
+        "UNSIGNED BIGINT" => ColumnType::UnsignedBigint,
+        "SIGNED BIGINT" => ColumnType::SignedBigint,
+        "VARCHAR" => ColumnType::Varchar,
+        "TEXT" => ColumnType::Text,
+        _ => ColumnType::Varchar
+    }
+}
+
 pub fn get_columns_table_definition() -> Vec<Column> {
     let mut data = vec![
         Column::new(
+            08u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("id"),
@@ -131,6 +165,7 @@ pub fn get_columns_table_definition() -> Vec<Column> {
 pub fn get_columns_table_definition_without_id() -> Vec<Column> {
     return vec![
         Column::new(
+            09u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("database_name"),
@@ -141,6 +176,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            10u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("table_name"),
@@ -151,6 +187,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            11u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("name"),
@@ -161,6 +198,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            12u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("type"),
@@ -171,6 +209,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            13u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("not_null"),
@@ -181,16 +220,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
-            SysDb::dbname(),
-            SysDb::tblname_columns(),
-            String::from("primary_key"),
-            ColumnType::Boolean,
-            true,
-            false,
-            false,
-            String::from("")
-        ),
-        Column::new(
+            14u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("unique"),
@@ -201,6 +231,18 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             String::from("")
         ),
         Column::new(
+            15u64,
+            SysDb::dbname(),
+            SysDb::tblname_columns(),
+            String::from("primary_key"),
+            ColumnType::Boolean,
+            true,
+            false,
+            false,
+            String::from("")
+        ),
+        Column::new(
+            16u64,
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("default"),

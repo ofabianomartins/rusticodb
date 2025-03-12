@@ -115,6 +115,7 @@ pub fn get_columns(
             SelectItem::UnnamedExpr(e) => {
                 columns.push(
                     Column::new(
+                        0u64,
                         tables[0].database_name.clone(),
                         String::from(""),
                         e.to_string(),
@@ -129,6 +130,7 @@ pub fn get_columns(
             SelectItem::ExprWithAlias { expr, alias } => {
                 columns.push(
                     Column::new_with_alias(
+                        0u64,
                         tables[0].database_name.clone(),
                         tables[0].database_alias.clone(),
                         tables[0].name.clone(),

@@ -44,7 +44,7 @@ fn get_tuples(
                         match items.get(column_position) {
                             Some(Expr::Identifier(_)) => {},
                             Some(Expr::Value(Value::Number(value, _))) => {
-                                if tcolumn.is_number() {
+                                if tcolumn.clone().is_number() {
                                     let my_integer: Result<u64, _> = value.parse();
                                     match my_integer {
                                         Ok(number) => tuple.push_unsigned_bigint(number),

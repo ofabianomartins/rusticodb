@@ -27,6 +27,7 @@ fn get_attributions(
         match &assignment.target {
             AssignmentTarget::ColumnName(name) => {
                 let column = Column::new(
+                    0u64,
                     db_name.clone(),
                     table_name.clone(),
                     name.to_string(),
