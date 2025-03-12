@@ -1,10 +1,8 @@
 mod load_base;
-mod load_base_tables;
 
 use crate::config::Config;
 use crate::config::SysDb;
 
-use crate::setup::load_base_tables::setup_base_tables;
 use crate::setup::load_base::setup_base;
 
 use crate::machine::Machine;
@@ -32,10 +30,6 @@ pub fn load_context(machine: &mut Machine) {
 
     if path_exists(machine,&SysDb::table_sequences()) == false {
         setup_base(machine);
-    }
-
-    if path_exists(machine,&SysDb::table_databases()) == false {
-        setup_base_tables(machine);
     }
 
 }
