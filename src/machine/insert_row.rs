@@ -12,6 +12,10 @@ use crate::storage::CellType;
 use crate::storage::format_table_name;
 use crate::storage::insert_tuples;
 use crate::storage::flush_page;
+use crate::storage::tuple_push_unsigned_bigint;
+use crate::storage::tuple_get_cell;
+use crate::storage::tuple_append_cell;
+use crate::storage::tuple_new;
 
 use crate::utils::ExecutionError;
 
@@ -51,7 +55,7 @@ fn validate_tuples(
         for (_idx, column) in table_columns.iter().enumerate() {
             let index_result = columns.iter().position(|e| e == column);
             if let Some(index) = index_result {
-                if column.not_null == true && tuple.get_cell(index as u16).data[0] == (CellType::Null as u8) {
+                if column.not_null == true && tuple_get_cell(&tuple, index as u16).data[0] == (CellType::Null as u8) {
                     return Err(ExecutionError::ColumnCantBeNull(
                             table.database_name.clone(),
                             table.name.clone(),
@@ -75,15 +79,15 @@ fn adjust_tuples(
 
     let new_tuples: Vec<Tuple> = tuples.iter()
         .map(|tuple| { 
-            let mut new_tuple = Tuple::new();
+            let mut new_tuple = tuple_new();
 
             for (_idx, column) in table_columns.iter().enumerate() {
                 let index_result = columns.iter().position(|e| e == column);
                 if let Some(index) = index_result {
-                    new_tuple.append_cell(tuple.get_cell(index as u16));
+                    tuple_append_cell(&mut new_tuple, tuple_get_cell(&tuple, index as u16));
                 } else {
                     if let Some(next_id) = get_sequence_next_id(machine, column) {
-                        new_tuple.push_unsigned_bigint(next_id);
+                        tuple_push_unsigned_bigint(&mut new_tuple, next_id);
                     }
                 }
             }

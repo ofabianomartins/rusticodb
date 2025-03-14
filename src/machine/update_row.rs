@@ -9,6 +9,9 @@ use crate::machine::read_tuples;
 use crate::machine::update_tuples;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_append_cell;
+use crate::storage::tuple_get_cell;
+use crate::storage::tuple_new;
 
 use crate::utils::ExecutionError;
 
@@ -57,14 +60,14 @@ fn adjust_tuples(
     let new_tuples: Vec<Tuple> = tuples.iter_mut()
         .map(|tuple| { 
             if expression.result(tuple, &table_columns).is_true() {
-                let mut new_tuple = Tuple::new();
+                let mut new_tuple = tuple_new();
                 for (idx, column) in table_columns.iter().enumerate() {
                     let index_result = attributions.iter().position(|e| e.target == *column);
                     if let Some(index) = index_result {
                         let attr = attributions.get(index).unwrap();
-                        new_tuple.append_cell(attr.expr.result(&tuple, &table_columns));
+                        tuple_append_cell(&mut new_tuple, attr.expr.result(&tuple, &table_columns));
                     } else {
-                        new_tuple.append_cell(tuple.get_cell(idx as u16));
+                        tuple_append_cell(&mut new_tuple, tuple_get_cell(tuple, idx as u16));
                     } 
                 }
                 new_tuple

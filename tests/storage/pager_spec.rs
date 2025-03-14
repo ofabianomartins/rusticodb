@@ -14,6 +14,11 @@ use rusticodb::storage::read_data;
 use rusticodb::storage::write_data;
 use rusticodb::storage::insert_tuples;
 use rusticodb::storage::read_tuples;
+use rusticodb::storage::page_new;
+use rusticodb::storage::page_tuple_count;
+use rusticodb::storage::page_set_tuple_count;
+use rusticodb::storage::tuple_push_varchar;
+use rusticodb::storage::tuple_new;
 
 use crate::test_utils::create_tmp_test_folder;
 use crate::test_utils::read_from_file;
@@ -31,12 +36,12 @@ pub fn test_set_tuple_count_bigger_than_255() {
         raw_buffer[idx] = *elem;
     }
 
-    let mut page = Page::new(0);
+    let mut page = page_new(0);
 
-    page.set_tuple_count(300u16);
+    page_set_tuple_count(&mut page, 300u16);
 
-    assert_eq!(page.data, raw_buffer);
-    assert_eq!(page.tuple_count(), 300u16);
+    assert_eq!(page, raw_buffer);
+    assert_eq!(page_tuple_count(&page), 300u16);
 }
 
 #[test]
@@ -52,9 +57,9 @@ pub fn test_a_empty_page() {
         raw_buffer[idx] = *elem;
     }
 
-    let page = Page::new(0);
+    let page = page_new(0);
 
-    assert_eq!(page.data, raw_buffer);
+    assert_eq!(page, raw_buffer);
 }
 
 #[test]
@@ -86,8 +91,8 @@ pub fn test2_insert_tuples_on_pager() {
     }
 
     let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&data);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &data);
     tuples.push(tuple);
 
     let mut pager = Pager::new();
@@ -99,7 +104,7 @@ pub fn test2_insert_tuples_on_pager() {
     let page_key = format!("{}/{}/{}.db", Config::data_folder(), database1, table1);
     let page: &Page = pager.get(&page_key).unwrap();
 
-    assert_eq!(page.data, raw_buffer);
+    assert_eq!(*page, raw_buffer);
 }
 
 #[test]
@@ -140,13 +145,13 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
     }
 
     let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&data);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &data);
     tuples.push(tuple);
 
     let mut tuples2: Vec<Tuple> = Vec::new();
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&data);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &data);
     tuples.push(tuple);
 
     let mut pager = Pager::new();
@@ -159,7 +164,7 @@ pub fn test_insert_tuples_on_pager_and_add_more_tuples() {
     let page_key = format!("{}/{}/{}.db", Config::data_folder(), database1, table1);
     let page: &Page = pager.get(&page_key).unwrap();
 
-    assert_eq!(page.data, raw_buffer);
+    assert_eq!(*page, raw_buffer);
 }
 
 #[test]
@@ -200,13 +205,13 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
     }
 
     let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&data);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &data);
     tuples.push(tuple);
 
     let mut tuples2: Vec<Tuple> = Vec::new();
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&data);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &data);
     tuples.push(tuple);
 
     let mut pager = Pager::new();
@@ -221,7 +226,7 @@ pub fn test2_insert_two_tuples_on_pager_and_read_both() {
     let page_key = format!("{}/{}/{}.db", Config::data_folder(), database1, table1);
     let page: &Page = pager.get(&page_key).unwrap();
 
-    assert_eq!(page.data, raw_buffer);
+    assert_eq!(*page, raw_buffer);
     assert_eq!(tuples.len(), 2);
 }
 

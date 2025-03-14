@@ -8,6 +8,10 @@ use rusticodb::machine::Expression2Type;
 use rusticodb::storage::Cell;
 use rusticodb::storage::CellType;
 use rusticodb::storage::Tuple;
+use rusticodb::storage::tuple_push_unsigned_bigint;
+use rusticodb::storage::tuple_push_varchar;
+use rusticodb::storage::tuple_push_null;
+use rusticodb::storage::tuple_new;
 
 #[test]
 pub fn test_if_expression_equal_operator() {
@@ -31,8 +35,8 @@ pub fn test_if_expression_equal_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -62,8 +66,8 @@ pub fn test_if_expression_equal_operator_with_string() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("value1"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("value1"));
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -93,8 +97,8 @@ pub fn test_if_expression_equal_operator_with_null() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_null();
+    let mut tuple = tuple_new();
+    tuple_push_null(&mut tuple);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -124,8 +128,8 @@ pub fn test_if_expression_not_equal_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -155,8 +159,8 @@ pub fn test_if_expression_not_equal_operator_with_string() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("value1"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("value1"));
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -186,8 +190,8 @@ pub fn test_if_expression_not_equal_operator_with_null() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_null();
+    let mut tuple = tuple_new();
+    tuple_push_null(&mut tuple);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -225,8 +229,8 @@ pub fn test_if_expression_and_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -264,8 +268,8 @@ pub fn test_if_expression_or_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -295,8 +299,8 @@ pub fn test_if_expression_greather_or_equal_operator_with_equal_value() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -326,8 +330,8 @@ pub fn test_if_expression_less_or_equal_operator_with_equal_value() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -357,8 +361,8 @@ pub fn test_if_expression_greather_or_equal_operator_with_diff_value() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(100u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 100u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -388,8 +392,8 @@ pub fn test_if_expression_less_or_equal_operator_with_diff_value() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -419,8 +423,8 @@ pub fn test_if_expression_greather_than_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(20u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 20u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -450,8 +454,8 @@ pub fn test_if_expression_less_than_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(20u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 20u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -481,8 +485,8 @@ pub fn test_if_expression_add_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(20u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 20u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -512,8 +516,8 @@ pub fn test_if_expression_add_operator_inverse() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(20u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 20u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -543,8 +547,8 @@ pub fn test_if_expression_sub_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(200u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 200u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -574,8 +578,8 @@ pub fn test_if_expression_sub_operator_inverse() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(100u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 100u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -605,8 +609,8 @@ pub fn test_if_expression_mul_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(200u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 200u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -637,8 +641,8 @@ pub fn test_if_expression_mul_operator_inverse() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(200u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 200u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -668,8 +672,8 @@ pub fn test_if_expression_div_operator() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(200u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 200u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -700,8 +704,8 @@ pub fn test_if_expression_div_operator_inverse() {
         ),
     ];
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(200u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 200u64);
     
     let cell: Cell = expression.result(&tuple, &columns);
 
@@ -716,7 +720,7 @@ pub fn test_if_expression_not_operator_inverse() {
         Box::new(Expression::Const(RawVal::Int(1u64))),
     );
 
-    let cell: Cell = expression.result(&Tuple::new(), &Vec::new());
+    let cell: Cell = expression.result(&tuple_new(), &Vec::new());
 
     assert_eq!(cell.get_type(), CellType::Boolean);
     assert_eq!(cell.bin_to_boolean().unwrap(), false);
@@ -729,7 +733,7 @@ pub fn test_if_expression_negate_operator_inverse() {
         Box::new(Expression::Const(RawVal::Int(1u64))),
     );
 
-    let cell: Cell = expression.result(&Tuple::new(), &Vec::new());
+    let cell: Cell = expression.result(&tuple_new(), &Vec::new());
 
     assert_eq!(cell.get_type(), CellType::SignedBigint);
     assert_eq!(cell.bin_to_signed_bigint().unwrap(), -1);

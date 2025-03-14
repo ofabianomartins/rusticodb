@@ -7,6 +7,9 @@ use crate::machine::insert_tuples;
 use crate::storage::os_interface::create_file;
 use crate::storage::Tuple;
 use crate::storage::format_table_name;
+use crate::storage::tuple_push_varchar;
+use crate::storage::tuple_push_unsigned_bigint;
+use crate::storage::tuple_new;
 
 use crate::utils::ExecutionError;
 
@@ -20,12 +23,12 @@ pub fn create_view(
     create_file(&format_table_name(&table.database_name, &table.name));
 
     let mut tuples: Vec<Tuple> = Vec::new();
-    let mut tuple: Tuple = Tuple::new();
-    tuple.push_unsigned_bigint(1u64);
-    tuple.push_varchar(&table.database_name);
-    tuple.push_varchar(&table.name);
-    tuple.push_varchar(&String::from("view"));
-    tuple.push_varchar(query);
+    let mut tuple: Tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 1u64);
+    tuple_push_varchar(&mut tuple, &table.database_name);
+    tuple_push_varchar(&mut tuple, &table.name);
+    tuple_push_varchar(&mut tuple, &String::from("view"));
+    tuple_push_varchar(&mut tuple, query);
     tuples.push(tuple);
 
     insert_tuples(machine, &SysDb::table_tables(), &mut tuples);

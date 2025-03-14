@@ -5,6 +5,7 @@ use crate::machine::ColumnType;
 use crate::machine::RawVal;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_get_cell;
 use crate::storage::Cell;
 use crate::storage::CellType;
 
@@ -94,7 +95,7 @@ impl Expression {
             Expression::ColName(colname)=> {
                 for (idx, column) in columns.iter().enumerate() {
                     if column.name == *colname {
-                        return tuple.get_cell(idx as u16);
+                        return tuple_get_cell(tuple, idx as u16);
                     }
                 }
                 return Cell::new_null();

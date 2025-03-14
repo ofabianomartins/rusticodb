@@ -4,6 +4,7 @@ use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::Pager;
+use rusticodb::storage::tuple_cell_count;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -179,7 +180,7 @@ pub fn test_select_with_two_tables() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 784);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 18);
+    assert_eq!(tuple_cell_count(&result_set.unwrap()[0].tuples[0]), 18);
 }
 
 #[test]
@@ -196,7 +197,7 @@ pub fn test_select_with_three_tables() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 21952);
-    assert_eq!(result_set.unwrap()[0].tuples[0].cell_count(), 27);
+    assert_eq!(tuple_cell_count(&result_set.unwrap()[0].tuples[0]), 27);
 }
 
 #[test]

@@ -5,6 +5,21 @@ use crate::machine::Column;
 use crate::machine::Expression;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_append_cell;
+use crate::storage::tuple_get_cell;
+use crate::storage::tuple_cell_count;
+use crate::storage::tuple_get_signed_bigint;
+use crate::storage::tuple_get_signed_smallint;
+use crate::storage::tuple_get_signed_int;
+use crate::storage::tuple_get_signed_tinyint;
+use crate::storage::tuple_get_unsigned_bigint;
+use crate::storage::tuple_get_unsigned_smallint;
+use crate::storage::tuple_get_unsigned_int;
+use crate::storage::tuple_get_unsigned_tinyint;
+use crate::storage::tuple_get_varchar;
+use crate::storage::tuple_get_text;
+use crate::storage::tuple_get_boolean;
+use crate::storage::tuple_new;
 
 use crate::utils::ExecutionError;
 
@@ -65,7 +80,7 @@ impl ResultSet {
     pub fn get_string(&self, index: usize, column_name: &String) -> Result<String, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_varchar(*position as u16),
+                Some(tuple) => tuple_get_varchar(&tuple, *position as u16),
                 None => Err(ExecutionError::TupleNotExists(index))
             },
             None => Err(ExecutionError::ColumnNotExists(column_name.clone()))
@@ -75,7 +90,7 @@ impl ResultSet {
     pub fn get_text(&self, index: usize, column_name: &String) -> Result<String, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_text(*position as u16),
+                Some(tuple) => tuple_get_text(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -85,7 +100,7 @@ impl ResultSet {
     pub fn get_boolean(&self, index: usize, column_name: &String) -> Result<bool, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_boolean(*position as u16),
+                Some(tuple) => tuple_get_boolean(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -95,7 +110,7 @@ impl ResultSet {
     pub fn get_unsigned_tinyint(&self, index: usize, column_name: &String) -> Result<u8, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_unsigned_tinyint(*position as u16),
+                Some(tuple) => tuple_get_unsigned_tinyint(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -105,7 +120,7 @@ impl ResultSet {
     pub fn get_unsigned_smallint(&self, index: usize, column_name: &String) -> Result<u16, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_unsigned_smallint(*position as u16),
+                Some(tuple) => tuple_get_unsigned_smallint(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -115,7 +130,7 @@ impl ResultSet {
     pub fn get_unsigned_int(&self, index: usize, column_name: &String) -> Result<u32, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_unsigned_int(*position as u16),
+                Some(tuple) => tuple_get_unsigned_int(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -125,7 +140,7 @@ impl ResultSet {
     pub fn get_unsigned_bigint(&self, index: usize, column_name: &String) -> Result<u64, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_unsigned_bigint(*position as u16),
+                Some(tuple) => tuple_get_unsigned_bigint(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -135,7 +150,7 @@ impl ResultSet {
     pub fn get_signed_tinyint(&self, index: usize, column_name: &String) -> Result<i8, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_signed_tinyint(*position as u16),
+                Some(tuple) => tuple_get_signed_tinyint(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -145,7 +160,7 @@ impl ResultSet {
     pub fn get_signed_smallint(&self, index: usize, column_name: &String) -> Result<i16, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_signed_smallint(*position as u16),
+                Some(tuple) => tuple_get_signed_smallint(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -155,7 +170,7 @@ impl ResultSet {
     pub fn get_signed_int(&self, index: usize, column_name: &String) -> Result<i32, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_signed_int(*position as u16),
+                Some(tuple) => tuple_get_signed_int(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -165,7 +180,7 @@ impl ResultSet {
     pub fn get_signed_bigint(&self, index: usize, column_name: &String) -> Result<i64, ExecutionError> {
         match &mut self.get_column_position(column_name) {
             Some(position) => match self.tuples.get(index) {
-                Some(tuple) => tuple.get_signed_bigint(*position as u16),
+                Some(tuple) => tuple_get_signed_bigint(&tuple, *position as u16),
                 None => Err(ExecutionError::NoneExists)
             },
             None => Err(ExecutionError::NoneExists)
@@ -197,7 +212,7 @@ impl ResultSet {
             let mut cell_index: usize = 0;
 
             while cell_index < column_length.len() {
-                let cell_length = tuple_item.get_cell(cell_index as u16).to_string().len() as u64;
+                let cell_length = tuple_get_cell(&tuple_item, cell_index as u16).to_string().len() as u64;
 
                 let old_version = column_length.get_mut(cell_index).unwrap();
 
@@ -224,10 +239,10 @@ impl ResultSet {
         let mut new_set: ResultSet = ResultSet::new_select(projection_columns, vec![]);
 
         for (_idxr, partial) in self.tuples.iter().enumerate() {
-            let mut new_tuple: Tuple = Tuple::new();
+            let mut new_tuple: Tuple = tuple_new();
 
             for (_idxr, cell_index) in column_indexes.iter().enumerate() {
-                new_tuple.append_cell(partial.get_cell(*cell_index));
+                tuple_append_cell(&mut new_tuple, tuple_get_cell(&partial, *cell_index));
             }
             
             new_set.tuples.push(new_tuple);
@@ -297,12 +312,12 @@ impl ResultSet {
 
         if self.empty() && other_set.full() {
             for (_idx2, element) in other_set.tuples.iter().enumerate() {
-                let mut new_tuple: Tuple = Tuple::new();
+                let mut new_tuple: Tuple = tuple_new();
 
                 let mut cell_index = 0;
-                while cell_index < element.cell_count() {
-                    let cell = element.get_cell(cell_index);
-                    new_tuple.append_cell(cell);
+                while cell_index < tuple_cell_count(&element) {
+                    let cell = tuple_get_cell(&element, cell_index);
+                    tuple_append_cell(&mut new_tuple, cell);
                     cell_index += 1;
                 }
                 
@@ -320,9 +335,9 @@ impl ResultSet {
                     let mut new_tuple: Tuple = partial.clone();
 
                     let mut cell_index = 0;
-                    while cell_index < element.cell_count() {
-                        let cell = element.get_cell(cell_index);
-                        new_tuple.append_cell(cell);
+                    while cell_index < tuple_cell_count(&element) {
+                        let cell = tuple_get_cell(&element, cell_index);
+                        tuple_append_cell(&mut new_tuple, cell);
                         cell_index += 1;
                     }
                     
@@ -397,7 +412,7 @@ impl fmt::Display for ResultSet {
                 for tuple_item in &self.tuples {
                     let mut cell_index: usize = 0;
                     while cell_index < column_length.len() {
-                        let cell_value = tuple_item.get_cell(cell_index as u16).to_string();
+                        let cell_value = tuple_get_cell(&tuple_item, cell_index as u16).to_string();
                         let _ = write!(f, "| {} ", cell_value);
 
                         let adjust_column_size = column_length.get(cell_index).unwrap() - (cell_value.len() as u64);

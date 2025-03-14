@@ -9,6 +9,7 @@ use crate::machine::Expression2Type;
 use crate::config::SysDb;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_get_varchar;
 
 pub fn get_sequences(machine: &mut Machine, database_name: &String) -> Vec<Sequence> {
     let mut sequences: Vec<Sequence> = Vec::new();
@@ -27,7 +28,7 @@ pub fn get_sequences(machine: &mut Machine, database_name: &String) -> Vec<Seque
         .collect();
 
     for elem in tuples.into_iter() {
-        sequences.push(Sequence::new(elem.get_varchar(4).unwrap()));
+        sequences.push(Sequence::new(tuple_get_varchar(&elem, 4).unwrap()));
     }
 
     return sequences;

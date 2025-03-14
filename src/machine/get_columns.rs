@@ -9,6 +9,9 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_get_unsigned_bigint;
+use crate::storage::tuple_get_varchar;
+use crate::storage::tuple_get_boolean;
 
 use crate::config::SysDb;
 
@@ -37,18 +40,18 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
     for elem in tuples.into_iter() {
         columns.push(
             Column::new_with_alias(
-                elem.get_unsigned_bigint(0).unwrap(),
+                tuple_get_unsigned_bigint(&elem, 0).unwrap(),
                 table.database_name.clone(),
                 table.database_alias.clone(),
                 table.name.clone(),
                 table.alias.clone(),
-                elem.get_varchar(3).unwrap(),
-                elem.get_varchar(3).unwrap(),
-                map_column_type(elem.get_varchar(4).unwrap()),
-                elem.get_boolean(5).unwrap(),
-                elem.get_boolean(6).unwrap(),
-                elem.get_boolean(7).unwrap(),
-                elem.get_varchar(8).unwrap()
+                tuple_get_varchar(&elem, 3).unwrap(),
+                tuple_get_varchar(&elem, 3).unwrap(),
+                map_column_type(tuple_get_varchar(&elem, 4).unwrap()),
+                tuple_get_boolean(&elem, 5).unwrap(),
+                tuple_get_boolean(&elem, 6).unwrap(),
+                tuple_get_boolean(&elem, 7).unwrap(),
+                tuple_get_varchar(&elem, 8).unwrap()
             )
         );
     }

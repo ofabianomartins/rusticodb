@@ -10,6 +10,8 @@ use crate::machine::Expression2Type;
 use crate::machine::get_sequences_next_id_column_definition;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_push_unsigned_bigint;
+use crate::storage::tuple_get_unsigned_bigint;
 
 use crate::config::SysDb;
 
@@ -46,7 +48,7 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
 
     for elem in tuples.into_iter() {
         let mut new_elem = elem.clone();
-        let next_id_value = elem.get_unsigned_bigint(5).unwrap();
+        let next_id_value = tuple_get_unsigned_bigint(&elem, 5).unwrap();
 
         let column: Column = get_sequences_next_id_column_definition().get(0).unwrap().clone();
         let expression = Expression::Const(RawVal::Int(next_id_value + 1));
@@ -55,12 +57,12 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         let selection = Expression::Func2(
             Expression2Type::Equal,
             Box::new(Expression::ColName(String::from("id"))),
-            Box::new(Expression::Const(RawVal::Int(elem.get_unsigned_bigint(0).unwrap())))
+            Box::new(Expression::Const(RawVal::Int(tuple_get_unsigned_bigint(&elem, 0).unwrap())))
         );
 
-        new_elem.push_unsigned_bigint(next_id_value);
+        tuple_push_unsigned_bigint(&mut new_elem, next_id_value);
         let _ = update_row(machine, &SysDb::table_sequences(), &mut vec![attribution], selection);
-        next_id = Some(elem.get_unsigned_bigint(5).unwrap());
+        next_id = Some(tuple_get_unsigned_bigint(&elem, 5).unwrap());
 
         break;
     }

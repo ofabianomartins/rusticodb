@@ -5,6 +5,17 @@ use rusticodb::machine::Expression;
 use rusticodb::machine::Expression2Type;
 
 use rusticodb::storage::Tuple;
+use rusticodb::storage::tuple_push_signed_bigint;
+use rusticodb::storage::tuple_push_signed_smallint;
+use rusticodb::storage::tuple_push_signed_int;
+use rusticodb::storage::tuple_push_signed_tinyint;
+use rusticodb::storage::tuple_push_unsigned_bigint;
+use rusticodb::storage::tuple_push_unsigned_smallint;
+use rusticodb::storage::tuple_push_unsigned_int;
+use rusticodb::storage::tuple_push_unsigned_tinyint;
+use rusticodb::storage::tuple_push_varchar;
+use rusticodb::storage::tuple_push_text;
+use rusticodb::storage::tuple_new;
 
 use rusticodb::utils::ExecutionError;
 
@@ -27,8 +38,8 @@ pub fn test_check_string_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("database1"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database1"));
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -57,8 +68,8 @@ pub fn test_check_text_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_text(&String::from("database1"));
+    let mut tuple = tuple_new();
+    tuple_push_text(&mut tuple, &String::from("database1"));
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -87,8 +98,8 @@ pub fn test_check_unsigned_tinyint_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_tinyint(8u8);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_tinyint(&mut tuple, 8u8);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -117,8 +128,8 @@ pub fn test_check_unsigned_smallint_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_smallint(8u16);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_smallint(&mut tuple, 8u16);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -147,8 +158,8 @@ pub fn test_check_unsigned_int_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_int(8u32);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_int(&mut tuple, 8u32);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -177,8 +188,8 @@ pub fn test_check_unsigned_bigint_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(8u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 8u64);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -207,8 +218,8 @@ pub fn test_check_signed_tinyint_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_signed_tinyint(8i8);
+    let mut tuple = tuple_new();
+    tuple_push_signed_tinyint(&mut tuple, 8i8);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -237,8 +248,8 @@ pub fn test_check_signed_smallint_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_signed_smallint(8i16);
+    let mut tuple = tuple_new();
+    tuple_push_signed_smallint(&mut tuple, 8i16);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -267,8 +278,8 @@ pub fn test_check_signed_int_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_signed_int(8i32);
+    let mut tuple = tuple_new();
+    tuple_push_signed_int(&mut tuple, 8i32);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -297,8 +308,8 @@ pub fn test_check_signed_bigint_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_signed_bigint(8i64);
+    let mut tuple = tuple_new();
+    tuple_push_signed_bigint(&mut tuple, 8i64);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -340,9 +351,9 @@ pub fn test_check_signed_bigint_and_string_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(8u64);
-    tuple.push_varchar(&String::from("database1"));
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 8u64);
+    tuple_push_varchar(&mut tuple, &String::from("database1"));
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -372,8 +383,8 @@ pub fn test_check_signed_bigint_with_string_line_on_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_unsigned_bigint(8u64);
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_bigint(&mut tuple, 8u64);
     tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
@@ -402,13 +413,13 @@ pub fn test_check_result_on_result_set_with_two_lines() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("database2"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database2"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("database3"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database3"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
 
@@ -460,15 +471,15 @@ pub fn test_projection_in_one_column() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("fabiano"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuples.push(tuple);
 
     let mut projection_columns: Vec<Column> = Vec::new();
 
@@ -541,17 +552,17 @@ pub fn test_projection_in_two_columns() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("fabiano"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
     let mut projection_columns: Vec<Column> = Vec::new();
 
@@ -633,13 +644,13 @@ pub fn test_cartesian_product_between_a_empty_and_full_result_sets() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("database2"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database2"));
     tuples1.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("database3"));
-    tuples1.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database3"));
+    tuples1.push(tuple);
 
     let result_set = ResultSet::new_select(columns1, tuples1);
     let new_set = result_set.cartesian_product(&empty_set);
@@ -673,13 +684,13 @@ pub fn test_cartesian_product_between_two_result_sets() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("database2"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database2"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("database3"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("database3"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
     let new_set = result_set.cartesian_product(&result_set);
@@ -745,17 +756,17 @@ pub fn test_union_of_two_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("fabiano"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
@@ -802,17 +813,17 @@ pub fn test_union_of_two_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples2.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("fabiano"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples2.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples2.push(tuple);
 
     let result_set2 = ResultSet::new_select(columns, tuples2);
 
@@ -870,23 +881,23 @@ pub fn test_selection_of_two_result_set() {
         )
     );
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("Renato"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
-    let mut tuple2 = Tuple::new();
-    tuple2.push_varchar(&String::from("Renato"));
-    tuple2.push_varchar(&String::from("martins"));
-    tuple2.push_varchar(&String::from("United States"));
-    tuples.push(tuple2);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("United States"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
@@ -923,23 +934,23 @@ pub fn test_limit_to_two_of_result_set() {
             0u64,
             String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("Renato"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
-    let mut tuple2 = Tuple::new();
-    tuple2.push_varchar(&String::from("Renato"));
-    tuple2.push_varchar(&String::from("martins"));
-    tuple2.push_varchar(&String::from("United States"));
-    tuples.push(tuple2);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("United States"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
@@ -967,23 +978,23 @@ pub fn test_limit_bigger_than_of_result_set_size() {
             0u64,
             String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("Renato"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
-    let mut tuple2 = Tuple::new();
-    tuple2.push_varchar(&String::from("Renato"));
-    tuple2.push_varchar(&String::from("martins"));
-    tuple2.push_varchar(&String::from("United States"));
-    tuples.push(tuple2);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("United States"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
 
@@ -1011,23 +1022,23 @@ pub fn test_offset_to_two_of_result_set_size() {
             0u64,
             String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("Renato"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
-    let mut tuple2 = Tuple::new();
-    tuple2.push_varchar(&String::from("Renato"));
-    tuple2.push_varchar(&String::from("martins"));
-    tuple2.push_varchar(&String::from("United States"));
-    tuples.push(tuple2);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("United States"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns.clone(), tuples);
 
@@ -1060,23 +1071,23 @@ pub fn test_offset_bigger_of_result_set_size() {
             0u64,
             String::from("rusticodb"), String::from("databases"), String::from("country"), ColumnType::Varchar, false, false, false, String::from("")));
 
-    let mut tuple = Tuple::new();
-    tuple.push_varchar(&String::from("fabiano"));
-    tuple.push_varchar(&String::from("martins"));
-    tuple.push_varchar(&String::from("Brazil"));
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("fabiano"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
     tuples.push(tuple);
 
-    let mut tuple1 = Tuple::new();
-    tuple1.push_varchar(&String::from("Renato"));
-    tuple1.push_varchar(&String::from("martins"));
-    tuple1.push_varchar(&String::from("Brazil"));
-    tuples.push(tuple1);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("Brazil"));
+    tuples.push(tuple);
 
-    let mut tuple2 = Tuple::new();
-    tuple2.push_varchar(&String::from("Renato"));
-    tuple2.push_varchar(&String::from("martins"));
-    tuple2.push_varchar(&String::from("United States"));
-    tuples.push(tuple2);
+    let mut tuple = tuple_new();
+    tuple_push_varchar(&mut tuple, &String::from("Renato"));
+    tuple_push_varchar(&mut tuple, &String::from("martins"));
+    tuple_push_varchar(&mut tuple, &String::from("United States"));
+    tuples.push(tuple);
 
     let result_set = ResultSet::new_select(columns, tuples);
 

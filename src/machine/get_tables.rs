@@ -9,6 +9,7 @@ use crate::machine::Expression2Type;
 use crate::config::SysDb;
 
 use crate::storage::Tuple;
+use crate::storage::tuple_get_varchar;
 
 pub fn get_tables(machine: &mut Machine, database_name: &String) -> Vec<Table> {
     let mut tables: Vec<Table> = Vec::new();
@@ -31,8 +32,8 @@ pub fn get_tables(machine: &mut Machine, database_name: &String) -> Vec<Table> {
             Table::new_with_alias(
                 database_name.clone(),
                 database_name.clone(),
-                elem.get_varchar(2).unwrap(),
-                elem.get_varchar(2).unwrap()
+                tuple_get_varchar(&elem, 2).unwrap(),
+                tuple_get_varchar(&elem, 2).unwrap()
             )
         );
     }
