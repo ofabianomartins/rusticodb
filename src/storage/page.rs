@@ -5,91 +5,63 @@ use crate::storage::Tuple;
 
 pub type Page = [u8; BLOCK_SIZE];
 
-pub fn page_new(_index: u64) -> [u8; BLOCK_SIZE] {
-    let mut empty_data = [0u8; BLOCK_SIZE];
-    empty_data[3] = 4;
-    return empty_data;
+pub fn page_new() -> [u8; BLOCK_SIZE] {
+    [0u8; BLOCK_SIZE]
 }
 
-pub fn page_set_tuple_count(page: &mut Page, new_tuple_count: u16) {
-    if new_tuple_count > 255 {
-       page[0] = (new_tuple_count >> 8) as u8;
+pub fn page_set_u16_value(page: &mut Page, index: usize, position: u16) {
+    if position > 255 {
+        page[index] = (position >> 8) as u8;
     }
-    page[1] = (new_tuple_count % 256) as u8;
+    page[index+1] = (position % 256) as u8;
 }
 
-pub fn page_tuple_count(page: &Page) -> u16 {
-    let byte_array: [u8; 2] = [page[0], page[1]];
+pub fn page_get_u16_value(page: &Page, index: usize) -> u16 {
+    let byte_array: [u8; 2] = [page[index], page[index + 1]];
     return u16::from_be_bytes(byte_array); // or use `from_be_bytes` for big-endian
 }
 
-pub fn page_set_next_tuple_position(page: &mut Page, new_nex_tuple_position: u16) {
-    if new_nex_tuple_position > 255 {
-        page[2] = (new_nex_tuple_position >> 8) as u8;
-    }
-    page[3] = (new_nex_tuple_position % 256) as u8;
-}
+fn page_add_tuple(page: &mut Page, tuple: &Tuple) {
+    let tuple_count = page_get_u16_value(page, 0); // getting tuple count
+    page_set_u16_value(page, 0, tuple_count + 1); // saving tuple count
+    let mut tuple_position: u16 = if tuple_count == 0 {
+        BLOCK_SIZE as u16
+    } else {
+        page_get_u16_value(page, 2*(tuple_count as usize))
+    };
+    tuple_position = tuple_position - (tuple.len() as u16);
 
-pub fn page_next_tuple_position(page: &Page) -> u16 {
-    let byte_array: [u8; 2] = [page[2], page[3]];
-    return u16::from_be_bytes(byte_array); // or use `from_be_bytes` for big-endian
+    page_set_u16_value(page, 2*(tuple_count as usize + 1), tuple_position);
+    for (idx, elem) in &mut tuple.iter().enumerate() {
+        page[(tuple_position as usize) + idx] = *elem;
+    }
 }
 
 pub fn page_insert_tuples(page: &mut Page, tuples: &mut Vec<Tuple>) {
-    let tuple_count = page_tuple_count(page);
-    let next_tuple_position = page_next_tuple_position(page);
-
-    page_set_tuple_count(page, tuple_count + (tuples.len() as u16));
-
-    let mut buffer: Vec<u8> = Vec::new();
     for tuple in tuples {
-        buffer.append(tuple);
-    }
-
-    page_set_next_tuple_position(page, next_tuple_position + (buffer.len() as u16));
-
-    for (idx, elem) in &mut buffer.iter().enumerate() {
-        page[(next_tuple_position as usize) + idx] = *elem;
+        page_add_tuple(page, tuple);
     }
 }
 
 pub fn page_update_tuples(page: &mut Page, tuples: &mut Vec<Tuple>) {
-    page_set_tuple_count(page, tuples.len() as u16);
-
-    let mut buffer: Vec<u8> = Vec::new();
-    for tuple in tuples {
-        buffer.append(tuple);
-    }
-
-    page_set_next_tuple_position(page, 4u16 + (buffer.len() as u16));
-
-    for (idx, elem) in &mut buffer.iter().enumerate() {
-        page[4usize + idx] = *elem;
+    page_set_u16_value(page, 0, 0);
+    for tuple in tuples.iter() {
+        page_add_tuple(page, tuple);
     }
 }
 
 pub fn page_read_tuples(page: &Page) -> Vec<Tuple> {
     let mut tuples = Vec::new();
 
-    let tuple_count = page_tuple_count(page);
-    let mut tuple_index = 0;
-    let mut position_index: u16 = 4;
+    for tuple_index in 0..page_get_u16_value(page, 0) {
+        let tuple_position = page_get_u16_value(page, 2*(tuple_index as usize + 1));
+        let data_size = page_get_u16_value(page, tuple_position as usize + 2);
+        let mut buffer_array: Tuple = Tuple::new();
 
-    while tuple_index < tuple_count {
-        let byte_array2: [u8; 2] = [
-            page[(position_index as usize) + 2],
-            page[(position_index as usize) + 3]
-        ];
-        let data_size = u16::from_be_bytes(byte_array2); 
-
-        let mut buffer_array: Vec<u8> = Vec::new();
-
-        for n in position_index..(position_index + data_size) {
+        for n in tuple_position..(tuple_position + data_size) {
             buffer_array.push(page[n as usize]);
         }
         tuples.push(buffer_array);
-        tuple_index += 1;
-        position_index += data_size;
     }
 
     return tuples;

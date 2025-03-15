@@ -7,7 +7,6 @@ use rusticodb::machine::Expression2Type;
 
 use rusticodb::storage::Cell;
 use rusticodb::storage::CellType;
-use rusticodb::storage::Tuple;
 use rusticodb::storage::tuple_push_unsigned_bigint;
 use rusticodb::storage::tuple_push_varchar;
 use rusticodb::storage::tuple_push_null;

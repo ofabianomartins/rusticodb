@@ -7,8 +7,8 @@ use crate::machine::get_sequence_next_id;
 
 use crate::storage::Tuple;
 use crate::storage::format_table_name;
-use crate::storage::insert_tuples;
-use crate::storage::flush_page;
+use crate::storage::pager_insert_tuples;
+use crate::storage::pager_flush_page;
 use crate::storage::tuple_append_cell;
 use crate::storage::tuple_get_cell;
 use crate::storage::tuple_push_unsigned_bigint;
@@ -32,8 +32,8 @@ pub fn insert_full_row(
     let mut adjusted_tuples = adjusted_tuples_result.unwrap();
 
     let page_key = format_table_name(&table.database_name, &table.name);
-    insert_tuples(&mut machine.pager, &page_key, &mut adjusted_tuples);
-    flush_page(&mut machine.pager, &page_key);
+    pager_insert_tuples(&mut machine.pager, &page_key, &mut adjusted_tuples);
+    pager_flush_page(&mut machine.pager, &page_key);
 
     return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
 }

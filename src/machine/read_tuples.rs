@@ -3,7 +3,7 @@ use crate::machine::Table;
 
 use crate::storage::Tuple;
 use crate::storage::format_table_name;
-use crate::storage::read_tuples as read_tuples_storage;
+use crate::storage::pager_read_tuples;
 
 use crate::utils::Logger;
 
@@ -12,6 +12,6 @@ pub fn read_tuples(machine: &mut Machine, table: &Table) -> Vec<Tuple> {
 
     Logger::debug(format!("read tuples from {}",page_key).leak());
     
-    return read_tuples_storage(&mut machine.pager, &page_key)
+    return pager_read_tuples(&mut machine.pager, &page_key)
 }
 

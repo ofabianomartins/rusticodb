@@ -1,5 +1,4 @@
 use rusticodb::storage::cell::CellType;
-use rusticodb::storage::tuple::Tuple;
 use rusticodb::storage::os_interface::BLOCK_SIZE;
 use rusticodb::storage::tuple_push_signed_bigint;
 use rusticodb::storage::tuple_push_signed_smallint;
