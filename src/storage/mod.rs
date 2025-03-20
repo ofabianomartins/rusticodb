@@ -1,7 +1,9 @@
-pub mod page;
-pub mod pager;
 pub mod cell;
 pub mod tuple;
+
+pub mod header;
+pub mod pager;
+pub mod page;
 
 pub mod os_interface;
 
@@ -44,6 +46,7 @@ pub use self::tuple::tuple_cell_count;
 pub use self::tuple::tuple_set_data_size;
 pub use self::tuple::tuple_data_size;
 pub use self::tuple::tuple_to_raw_data;
+pub use self::tuple::tuple_display;
 pub use self::tuple::get_tuple_database;
 pub use self::tuple::get_tuple_column;
 pub use self::tuple::get_tuple_column_without_id;
@@ -59,15 +62,32 @@ pub use self::page::page_new;
 pub use self::page::page_insert_tuples;
 pub use self::page::page_update_tuples;
 pub use self::page::page_read_tuples;
+pub use self::page::page_read_tuple;
+pub use self::page::page_amount_left;
 pub use self::page::page_get_u16_value;
 pub use self::page::page_set_u16_value;
+pub use self::page::page_display;
+
+pub use self::header::Header;
+pub use self::header::header_new;
+pub use self::header::header_get_u16_value;
+pub use self::header::header_set_u16_value;
+pub use self::header::header_page_count;
+pub use self::header::header_set_page_count;
 
 pub use self::pager::Pager;
+pub use self::pager::pager_new;
 pub use self::pager::pager_insert_tuples;
 pub use self::pager::pager_update_tuples;
 pub use self::pager::pager_read_tuples;
 pub use self::pager::pager_flush_page;
 
 pub use self::os_interface::{ BLOCK_SIZE };
+pub use self::os_interface::create_file;
 pub use self::os_interface::read_data;
 pub use self::os_interface::write_data;
+pub use self::os_interface::destroy_folder;
+pub use self::os_interface::destroy_file;
+pub use self::os_interface::path_exists;
+pub use self::os_interface::create_folder;
+pub use self::os_interface::create_folder_if_not_exists;

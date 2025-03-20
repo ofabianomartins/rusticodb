@@ -7,7 +7,7 @@ use crate::machine::drop_table_ref;
 use crate::machine::drop_database_ref;
 use crate::machine::check_database_exists;
 
-use crate::storage::os_interface::destroy_folder;
+use crate::storage::destroy_folder;
 use crate::storage::format_database_name;
 
 use crate::utils::ExecutionError;

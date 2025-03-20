@@ -1,7 +1,7 @@
 use crate::machine::Machine;
 use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
-use crate::machine::raw_val::RawVal;
+use crate::machine::RawVal;
 use crate::machine::drop_tuples;
 use crate::machine::get_columns;
 use crate::machine::Expression;

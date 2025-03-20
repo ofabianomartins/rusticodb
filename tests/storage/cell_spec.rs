@@ -1,6 +1,6 @@
-use rusticodb::storage::cell::Cell;
-use rusticodb::storage::cell::CellType;
-use rusticodb::utils::execution_error::ExecutionError;
+use rusticodb::storage::Cell;
+use rusticodb::storage::CellType;
+use rusticodb::utils::ExecutionError;
 
 #[test]
 pub fn test_cell_insert_string_to_u8() {

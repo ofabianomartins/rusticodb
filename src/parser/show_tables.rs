@@ -1,6 +1,6 @@
 use crate::machine::Machine;
 use crate::machine::ResultSet;
-use crate::machine::raw_val::RawVal;
+use crate::machine::RawVal;
 use crate::machine::product_cartesian;
 use crate::machine::Expression;
 use crate::machine::Expression2Type;

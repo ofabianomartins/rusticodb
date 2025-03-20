@@ -11,11 +11,12 @@ use std::io::Write;
 use crate::setup::setup_system;
 use crate::machine::Machine;
 use crate::storage::Pager;
+use crate::storage::pager_new;
 
 use crate::parser::parse_command;
 
 fn main() {
-    let pager = Pager::new();
+    let pager: Pager = pager_new();
     let mut machine = Machine::new(pager);
 
     setup_system(&mut machine);

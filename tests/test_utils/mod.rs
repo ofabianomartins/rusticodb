@@ -6,7 +6,7 @@ use std::fs::remove_dir_all;
 use std::fs::create_dir_all;
 
 use rusticodb::config::Config;
-use rusticodb::storage::os_interface::BLOCK_SIZE;
+use rusticodb::storage::BLOCK_SIZE;
 
 pub fn create_tmp_test_folder() {
     destroy_tmp_test_folder();

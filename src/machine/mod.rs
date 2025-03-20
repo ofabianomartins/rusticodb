@@ -61,7 +61,7 @@ pub mod update_row;
 pub mod product_cartesian;
 
 pub use self::expression::{ Expression, Expression1Type, Expression2Type };
-pub use self::raw_val::{ RawVal };
+pub use self::raw_val::RawVal;
 pub use self::attribution::Attribution;
 
 pub use self::result_set::ResultSet;

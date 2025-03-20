@@ -1,7 +1,7 @@
 use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::raw_val::RawVal;
+use crate::machine::RawVal;
 use crate::machine::read_tuples;
 use crate::machine::get_columns_table_definition;
 use crate::machine::map_column_type;

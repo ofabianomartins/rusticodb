@@ -1,6 +1,6 @@
 use crate::machine::Index;
 use crate::machine::Machine;
-use crate::machine::raw_val::RawVal;
+use crate::machine::RawVal;
 use crate::machine::get_columns;
 use crate::machine::read_tuples;
 use crate::machine::Expression;

@@ -1,5 +1,6 @@
 use rusticodb::storage::Tuple;
 use rusticodb::storage::page_new;
+use rusticodb::storage::page_amount_left;
 use rusticodb::storage::page_insert_tuples;
 use rusticodb::storage::page_read_tuples;
 use rusticodb::storage::page_set_u16_value;
@@ -12,37 +13,74 @@ use rusticodb::storage::tuple_push_varchar;
 use rusticodb::storage::tuple_new;
 
 #[test]
-pub fn test_a_empty_page() {
+pub fn test_a_new_page() {
     let page = page_new();
 
     assert_eq!(page, [0u8; BLOCK_SIZE]);
 }
 
 #[test]
-pub fn test_insert_two_tuples_on_pager_and_read_both() {
+pub fn test_a_empty_page_amount_left() {
+    let page = page_new();
+
+    assert_eq!(page_amount_left(&page) as usize, BLOCK_SIZE - 2);
+}
+
+#[test]
+pub fn test_insert_one_tuple_and_with_page_amount_left() {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple = tuple_new();
-    tuple_push_unsigned_tinyint(&mut tuple, 01);
-    tuples.push(tuple);
-
-    let mut tuples2: Vec<Tuple> = Vec::new();
-    let mut tuple = tuple_new();
-    tuple_push_unsigned_tinyint(&mut tuple, 01);
+    tuple_push_unsigned_tinyint(&mut tuple, 2u8);
     tuples.push(tuple);
 
     let mut page = page_new();
     page_insert_tuples(&mut page, &mut tuples);
-    page_insert_tuples(&mut page, &mut tuples2);
 
-    let tuples = page_read_tuples(&page);
-
-    assert_eq!(tuples.len(), 2);
-    assert_eq!(tuple_cell_count(&tuples[0]), 1);
-    assert_eq!(tuple_cell_count(&tuples[1]), 1);
+    assert_eq!(page_amount_left(&page) as usize, BLOCK_SIZE - 10);
 }
 
 #[test]
-pub fn test_insert_one_tuple_in_the_end_of_page() {
+pub fn test_insert_one_tuple_and_with_two_cells_page_amount_left() {
+    let mut tuples: Vec<Tuple> = Vec::new();
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_tinyint(&mut tuple, 2u8);
+    tuple_push_unsigned_tinyint(&mut tuple, 2u8);
+    tuples.push(tuple);
+
+    let mut page = page_new();
+    page_insert_tuples(&mut page, &mut tuples);
+
+    assert_eq!(page_amount_left(&page) as usize, BLOCK_SIZE - 12);
+}
+
+#[test]
+pub fn test_insert_two_tuples_and_page_amount_left() {
+    let mut tuples: Vec<Tuple> = Vec::new();
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_tinyint(&mut tuple, 2u8);
+    tuples.push(tuple);
+
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_tinyint(&mut tuple, 2u8);
+    tuples.push(tuple);
+
+    let mut page = page_new();
+    page_insert_tuples(&mut page, &mut tuples);
+
+    assert_eq!(page_amount_left(&page) as usize, BLOCK_SIZE - 18);
+}
+
+#[test]
+pub fn test_set_set_u16_value_bigger_than_255() {
+    let mut page = page_new();
+
+    page_set_u16_value(&mut page, 0, 300u16);
+
+    assert_eq!(page_get_u16_value(&page, 0), 300u16);
+}
+
+#[test]
+pub fn test_insert_tuple_with_tinyint() {
     let mut tuples: Vec<Tuple> = Vec::new();
     let mut tuple = tuple_new();
     tuple_push_unsigned_tinyint(&mut tuple, 2u8);
@@ -67,16 +105,30 @@ pub fn test_insert_one_tuple_in_the_end_of_page() {
 }
 
 #[test]
-pub fn test_set_set_u16_value_bigger_than_255() {
+pub fn test_insert_two_tuples_with_tinyint() {
+    let mut tuples: Vec<Tuple> = Vec::new();
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_tinyint(&mut tuple, 01);
+    tuples.push(tuple);
+
+    let mut tuples2: Vec<Tuple> = Vec::new();
+    let mut tuple = tuple_new();
+    tuple_push_unsigned_tinyint(&mut tuple, 01);
+    tuples.push(tuple);
+
     let mut page = page_new();
+    page_insert_tuples(&mut page, &mut tuples);
+    page_insert_tuples(&mut page, &mut tuples2);
 
-    page_set_u16_value(&mut page, 0, 300u16);
+    let tuples = page_read_tuples(&page);
 
-    assert_eq!(page_get_u16_value(&page, 0), 300u16);
+    assert_eq!(tuples.len(), 2);
+    assert_eq!(tuple_cell_count(&tuples[0]), 1);
+    assert_eq!(tuple_cell_count(&tuples[1]), 1);
 }
 
 #[test]
-pub fn test2_insert_tuples_on_pager() {
+pub fn test_insert_tuple_with_string() {
     let data: String = String::from("simple_string");
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -106,7 +158,7 @@ pub fn test2_insert_tuples_on_pager() {
 }
 
 #[test]
-pub fn test2_insert_two_tuples_on_pager_and_read_both() {
+pub fn test_insert_two_tuples_with_string() {
     let data: String = String::from("simple_string");
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];

@@ -6,7 +6,7 @@ use crate::machine::drop_columns;
 use crate::machine::drop_table_ref;
 use crate::machine::check_table_exists;
 
-use crate::storage::os_interface::destroy_file;
+use crate::storage::destroy_file;
 use crate::storage::format_table_name;
 
 use crate::utils::ExecutionError;

@@ -4,11 +4,11 @@ use sqlparser::ast::Query as Select;
 use sqlparser::ast::{Expr as ASTNode, *};
 
 use crate::machine::Machine;
-use crate::machine::result_set::ResultSet;
+use crate::machine::ResultSet;
 use crate::machine::Table;
 use crate::machine::Column;
 use crate::machine::ColumnType;
-use crate::machine::raw_val::RawVal;
+use crate::machine::RawVal;
 use crate::machine::get_columns as machine_get_columns;
 use crate::machine::check_table_exists;
 use crate::machine::product_cartesian;

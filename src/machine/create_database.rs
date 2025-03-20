@@ -5,7 +5,7 @@ use crate::machine::check_database_exists;
 use crate::machine::insert_row;
 use crate::machine::get_databases_table_definition_without_id;
 
-use crate::storage::os_interface::create_folder;
+use crate::storage::create_folder;
 use crate::storage::format_database_name;
 use crate::storage::get_tuple_database;
 

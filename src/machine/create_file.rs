@@ -1,7 +1,7 @@
 use crate::machine::Table;
 use crate::machine::Machine;
 
-use crate::storage::os_interface::create_file as create_file_storage;
+use crate::storage::create_file as create_file_storage;
 use crate::storage::format_table_name;
 
 pub fn create_file(_machine: &mut Machine, table: &Table) {

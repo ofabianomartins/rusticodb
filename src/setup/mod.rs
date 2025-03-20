@@ -9,7 +9,7 @@ use crate::machine::Machine;
 use crate::machine::path_exists;
 use crate::machine::database_exists;
 
-use crate::storage::os_interface::create_folder_if_not_exists;
+use crate::storage::create_folder_if_not_exists;
 use crate::storage::format_database_name;
 
 use crate::utils::Logger;

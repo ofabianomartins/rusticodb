@@ -279,28 +279,24 @@ pub fn tuple_to_raw_data(tuple: &Tuple) -> [u8; BLOCK_SIZE] {
     return raw_buffer;
 }
 
-/*
-impl fmt::Display for Tuple {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let cell_count = self.cell_count();
-        let data_size = self.data_size();
-        let mut cell_index = 0;
+pub fn tuple_display(tuple: &Tuple) {
+    let cell_count = tuple_cell_count(tuple);
+    let data_size = tuple_data_size(tuple);
+    let mut cell_index = 0;
 
-        let _ = write!(f, "Tuple [{}, {}, (", cell_count, data_size);
+    print!("Tuple [{}, {}, (", cell_count, data_size);
 
-        while cell_index < cell_count {
-            let _ = write!(f, "{}", self.get_cell(cell_index));
+    while cell_index < cell_count {
+        print!("{}", tuple_get_cell(tuple, cell_index));
 
-            if cell_index != cell_count - 1 {
-              let _ = write!(f, ",");
-            }
-
-            cell_index += 1;
+        if cell_index != cell_count - 1 {
+          print!(",");
         }
-        write!(f, ")]")
+
+        cell_index += 1;
     }
+    print!(")]")
 }
-*/
 
 pub fn get_tuple_database(name: &String) -> Tuple {
     let mut tuple: Tuple = tuple_new();

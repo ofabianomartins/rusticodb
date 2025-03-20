@@ -4,7 +4,7 @@ use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
 use crate::machine::insert_tuples;
 
-use crate::storage::os_interface::create_file;
+use crate::storage::create_file;
 use crate::storage::Tuple;
 use crate::storage::format_table_name;
 use crate::storage::tuple_push_varchar;

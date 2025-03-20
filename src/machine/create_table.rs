@@ -9,7 +9,7 @@ use crate::machine::get_tables_table_definition_without_id;
 use crate::machine::get_columns_table_definition_without_id;
 use crate::machine::create_sequence;
 
-use crate::storage::os_interface::create_file;
+use crate::storage::create_file;
 use crate::storage::Tuple;
 use crate::storage::get_tuple_column_without_id;
 use crate::storage::get_tuple_table;

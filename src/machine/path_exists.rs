@@ -1,7 +1,7 @@
 use crate::machine::Table;
 use crate::machine::Machine;
 
-use crate::storage::os_interface::path_exists as path_exists_storage;
+use crate::storage::path_exists as path_exists_storage;
 use crate::storage::format_table_name;
 
 pub fn path_exists(_machine: &mut Machine, table: &Table) -> bool {
