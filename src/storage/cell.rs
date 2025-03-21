@@ -34,105 +34,14 @@ impl Cell {
         Cell { data: Vec::new() }
     }
 
-    pub fn new_null() -> Self {
-        Cell { data: vec![1u8] }
-    }
-
-    pub fn new_true() -> Self {
-        Cell { data: vec![2u8, 1u8] }
-    }
-
-    pub fn new_false() -> Self {
-        Cell { data: vec![2u8, 0u8] }
-    }
-
     pub fn new_type(cell_type: CellType, values: Vec<u8>) -> Self {
         Cell { data: [vec![cell_type as u8], values].concat() }
-    }
-
-    pub fn new_varchar(value: &String) -> Self {
-        let mut cell = Cell { data: Vec::new() };
-        cell.varchar_to_bin(value);
-        cell
     }
 
     pub fn load_cell(data: Vec<u8>) -> Self {
         Cell { data }
     }
 
-    pub fn load(&mut self, data: Vec<u8>) {
-        self.data = data;
-    }
-
-    pub fn null_to_bin(&mut self) {
-        self.data.push(CellType::Null as u8);
-    }
-
-    pub fn varchar_to_bin(&mut self,raw_data: &String) {
-        let mut bytes_array = raw_data.clone().into_bytes();
-
-        let size = bytes_array.len() as u16;  
-
-        self.data.push(CellType::Varchar as u8);
-        self.data.append(&mut size.to_be_bytes().to_vec());
-        self.data.append(&mut bytes_array);
-    }
-
-    pub fn text_to_bin(&mut self, raw_data: &String) {
-        let mut bytes_array = raw_data.clone().into_bytes();
-
-        let size = bytes_array.len() as u32;  
-
-        self.data.push(CellType::Text as u8);
-        self.data.append(&mut size.to_be_bytes().to_vec());
-        self.data.append(&mut bytes_array);
-    }
-
-    pub fn boolean_to_bin(&mut self, value: bool) {
-        self.data.push(CellType::Boolean as u8);
-        self.data.push(value as u8);
-    }
-
-    pub fn unsigned_tinyint_to_bin(&mut self, value: u8) {
-        self.data.push(CellType::UnsignedTinyint as u8);
-        self.data.push(value as u8);
-    }
-
-    pub fn unsigned_smallint_to_bin(&mut self, value: u16) {
-        self.data.push(CellType::UnsignedSmallint as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-
-    pub fn unsigned_int_to_bin(&mut self, value: u32) {
-        self.data.push(CellType::UnsignedInt as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-
-    pub fn unsigned_bigint_to_bin(&mut self, value: u64) {
-        self.data.push(CellType::UnsignedBigint as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-
-    pub fn signed_tinyint_to_bin(&mut self, value: i8) {
-        self.data.push(CellType::SignedTinyint as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-
-    pub fn signed_smallint_to_bin(&mut self, value: i16) {
-        self.data.push(CellType::SignedSmallint as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-
-    pub fn signed_int_to_bin(&mut self, value: i32) {
-        self.data.push(CellType::SignedInt as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-
-    pub fn signed_bigint_to_bin(&mut self, value: i64) {
-        self.data.push(CellType::SignedBigint as u8);
-        self.data.append(&mut value.to_be_bytes().to_vec());
-    }
-    
     pub fn is_true(&self) -> bool {
         self.data[0] == (CellType::Boolean as u8) && self.data[1] == 1
     }
@@ -369,98 +278,6 @@ impl Cell {
             return 9;
         }
         return 1
-    }
-
-    pub fn data_size(&mut self) -> u32 {
-        if self.data.len() < 1 {
-            return 0;
-        }
-
-        if self.data[0] == (CellType::Varchar as u8) {
-            let byte_array: [u8; 2] = [self.data[1], self.data[2]];
-            return (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
-        }
-
-        if self.data[0] == (CellType::Text as u8) {
-            let byte_array: [u8; 4] = [
-                self.data[1], self.data[2], self.data[3], self.data[4]
-            ];
-            return u32::from_be_bytes(byte_array) + 5u32;
-        }
-
-        return Cell::count_data_size(self.data[0]);
-    }
-
-    pub fn to_string(&self) -> String {
-        if self.data.len() == 0 {
-            return String::from("NULL");
-        }
-
-        if self.data[0] == (CellType::Null as u8) {
-            return String::from("NULL");
-        }
-
-        if self.data[0] == (CellType::Boolean as u8) {
-            if let Ok(value) = self.bin_to_boolean() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::UnsignedTinyint as u8) {
-            if let Ok(value) = self.bin_to_unsigned_tinyint() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::SignedTinyint as u8) {
-            if let Ok(value) = self.bin_to_signed_tinyint() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::UnsignedSmallint as u8) {
-            if let Ok(value) = self.bin_to_unsigned_smallint() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::SignedSmallint as u8) {
-            if let Ok(value) = self.bin_to_signed_smallint() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::UnsignedInt as u8) {
-            if let Ok(value) = self.bin_to_unsigned_int() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::SignedInt as u8) {
-            if let Ok(value) = self.bin_to_signed_int() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::UnsignedBigint as u8) {
-            if let Ok(value) = self.bin_to_unsigned_bigint() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::SignedBigint as u8) {
-            if let Ok(value) = self.bin_to_signed_bigint() {
-                return value.to_string();
-            }
-        }
-
-        if self.data[0] == (CellType::Varchar as u8) {
-            if let Ok(value) = self.bin_to_varchar() {
-                return value.to_string();
-            }
-        }
-
-        return String::from("");
     }
 
     pub fn get_type(&self) -> CellType {

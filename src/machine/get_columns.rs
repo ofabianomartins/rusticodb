@@ -12,6 +12,7 @@ use crate::storage::Tuple;
 use crate::storage::tuple_get_unsigned_bigint;
 use crate::storage::tuple_get_varchar;
 use crate::storage::tuple_get_boolean;
+use crate::storage::is_true;
 
 use crate::config::SysDb;
 
@@ -32,7 +33,7 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
 
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_columns())
         .into_iter()
-        .filter(|tuple| condition.result(tuple, &get_columns_table_definition()).is_true())
+        .filter(|tuple| is_true(&condition.result(tuple, &get_columns_table_definition())))
         .collect();
 
     let mut columns: Vec<Column> = Vec::new();

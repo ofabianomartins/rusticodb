@@ -11,10 +11,8 @@ use crate::storage::page_insert_tuples;
 use crate::storage::page_update_tuples;
 use crate::storage::page_read_tuples;
 use crate::storage::page_new;
-use crate::storage::page_display;
 use crate::storage::page_amount_left;
 use crate::storage::write_data;
-use crate::storage::read_data;
 
 use crate::utils::Logger;
 
@@ -141,7 +139,7 @@ pub fn pager_update_tuples(pager: &mut Pager, page_key: &String, tuples: &mut Ve
     pager.headers.entry(page_key.clone()).and_modify(|_| {}).or_insert(header_new());
 
     pager.headers.entry(page_key.clone())
-        .and_modify(|header| {
+        .and_modify(|_header| {
             pager.pages.entry(page_key.clone())
                 .and_modify(|pager_item| {
                     pager_update_pager_item_tuples(pager_item, tuples)

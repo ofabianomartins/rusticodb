@@ -55,7 +55,7 @@ fn validate_tuples(
         for (_idx, column) in table_columns.iter().enumerate() {
             let index_result = columns.iter().position(|e| e == column);
             if let Some(index) = index_result {
-                if column.not_null == true && tuple_get_cell(&tuple, index as u16).data[0] == (CellType::Null as u8) {
+                if column.not_null == true && tuple_get_cell(&tuple, index as u16)[0] == (CellType::Null as u8) {
                     return Err(ExecutionError::ColumnCantBeNull(
                             table.database_name.clone(),
                             table.name.clone(),

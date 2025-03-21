@@ -12,6 +12,7 @@ use crate::storage::Tuple;
 use crate::storage::tuple_append_cell;
 use crate::storage::tuple_get_cell;
 use crate::storage::tuple_new;
+use crate::storage::is_true;
 
 use crate::utils::ExecutionError;
 
@@ -59,7 +60,7 @@ fn adjust_tuples(
 
     let new_tuples: Vec<Tuple> = tuples.iter_mut()
         .map(|tuple| { 
-            if expression.result(tuple, &table_columns).is_true() {
+            if is_true(&expression.result(tuple, &table_columns)) {
                 let mut new_tuple = tuple_new();
                 for (idx, column) in table_columns.iter().enumerate() {
                     let index_result = attributions.iter().position(|e| e.target == *column);

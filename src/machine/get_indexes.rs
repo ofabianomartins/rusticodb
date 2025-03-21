@@ -10,6 +10,7 @@ use crate::config::SysDb;
 
 use crate::storage::Tuple;
 use crate::storage::tuple_get_varchar;
+use crate::storage::is_true;
 
 pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> {
     let mut indexes: Vec<Index> = Vec::new();
@@ -24,7 +25,7 @@ pub fn get_indexes(machine: &mut Machine, database_name: &String) -> Vec<Index> 
 
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_indexes())
         .into_iter()
-        .filter(|tuple| condition.result(tuple, &columns).is_true())
+        .filter(|tuple| is_true(&condition.result(tuple, &columns)))
         .collect();
 
     for elem in tuples.into_iter() {

@@ -20,6 +20,7 @@ use crate::storage::tuple_get_varchar;
 use crate::storage::tuple_get_text;
 use crate::storage::tuple_get_boolean;
 use crate::storage::tuple_new;
+use crate::storage::is_true;
 
 use crate::utils::ExecutionError;
 
@@ -212,7 +213,7 @@ impl ResultSet {
             let mut cell_index: usize = 0;
 
             while cell_index < column_length.len() {
-                let cell_length = tuple_get_cell(&tuple_item, cell_index as u16).to_string().len() as u64;
+                let cell_length = tuple_get_cell(&tuple_item, cell_index as u16).len() as u64;
 
                 let old_version = column_length.get_mut(cell_index).unwrap();
 
@@ -260,7 +261,7 @@ impl ResultSet {
         }
 
         for tuple in &self.tuples {
-            if condition.result(tuple, &self.columns).is_true() {
+            if is_true(&condition.result(tuple, &self.columns)) {
                 tuples.push(tuple.clone());
             }
         }
@@ -412,8 +413,8 @@ impl fmt::Display for ResultSet {
                 for tuple_item in &self.tuples {
                     let mut cell_index: usize = 0;
                     while cell_index < column_length.len() {
-                        let cell_value = tuple_get_cell(&tuple_item, cell_index as u16).to_string();
-                        let _ = write!(f, "| {} ", cell_value);
+                        let cell_value = tuple_get_cell(&tuple_item, cell_index as u16);
+                        let _ = write!(f, "| {:?} ", cell_value);
 
                         let adjust_column_size = column_length.get(cell_index).unwrap() - (cell_value.len() as u64);
                         print_complete_cell(f, adjust_column_size);

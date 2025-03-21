@@ -15,17 +15,17 @@ pub fn tuple_new() -> Tuple {
     data
 }
 
-pub fn tuple_append_cell(tuple: &mut Tuple, mut cell: Cell) {
+pub fn tuple_append_cell(tuple: &mut Tuple, mut data: Vec<u8>) {
     tuple_set_cell_count(tuple, tuple_cell_count(tuple) + 1);
-    tuple_set_data_size(tuple, tuple_data_size(tuple) + (cell.data_size() as u16));
-    tuple.append(&mut cell.data);
+    tuple_set_data_size(tuple, tuple_data_size(tuple) + (data.len() as u16));
+    tuple.append(&mut data);
 }
 
-pub fn tuple_get_cell(tuple: &Tuple, position: u16) -> Cell {
+pub fn tuple_get_cell(tuple: &Tuple, position: u16) -> Vec<u8> {
     let cell_count = tuple_cell_count(tuple);
 
     if position >= cell_count {
-        return Cell::new();
+        return Vec::new();
     }
 
     let mut cell_index = 0;
@@ -34,7 +34,7 @@ pub fn tuple_get_cell(tuple: &Tuple, position: u16) -> Cell {
 
     loop {
         if position_index >= tuple.len() {
-            return Cell::new();
+            return Vec::new();
         }
 
         if tuple[position_index as usize] == (CellType::Varchar as u8) {
@@ -69,79 +69,94 @@ pub fn tuple_get_cell(tuple: &Tuple, position: u16) -> Cell {
     for n in position_index..(position_index + (cell_size as usize)) {
         buffer_array.push(tuple[n as usize]);
     }
-    return Cell::load_cell(buffer_array);
+    return buffer_array;
 }
 
 pub fn tuple_push_null(tuple: &mut Tuple) {
-    let mut cell = Cell::new();
-    cell.null_to_bin();
-    tuple_append_cell(tuple, cell);
+    tuple_append_cell(tuple, vec![CellType::Null as u8]);
 }
 
 pub fn tuple_push_varchar(tuple: &mut Tuple, raw_data: &String) {
-    let mut cell = Cell::new();
-    cell.varchar_to_bin(&raw_data);
-    tuple_append_cell(tuple, cell);
+    let mut bytes_array = raw_data.clone().into_bytes();
+
+    let size = bytes_array.len() as u16;  
+
+    let mut data = Vec::new();
+
+    data.push(CellType::Varchar as u8);
+    data.append(&mut size.to_be_bytes().to_vec());
+    data.append(&mut bytes_array);
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_text(tuple: &mut Tuple, raw_data: &String) {
-    let mut cell = Cell::new();
-    cell.text_to_bin(&raw_data);
-    tuple_append_cell(tuple, cell);
+    let mut bytes_array = raw_data.clone().into_bytes();
+
+    let size = bytes_array.len() as u32;  
+
+    let mut data = Vec::new();
+
+    data.push(CellType::Text as u8);
+    data.append(&mut size.to_be_bytes().to_vec());
+    data.append(&mut bytes_array);
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_boolean(tuple: &mut Tuple, value: bool) {
-    let mut cell = Cell::new();
-    cell.boolean_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    tuple_append_cell(tuple, vec![CellType::Boolean as u8, value as u8]);
 }
 
 pub fn tuple_push_unsigned_tinyint(tuple: &mut Tuple, value: u8) {
-    let mut cell = Cell::new();
-    cell.unsigned_tinyint_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    tuple_append_cell(tuple, vec![CellType::UnsignedTinyint as u8, value]);
 }
 
 pub fn tuple_push_unsigned_smallint(tuple: &mut Tuple, value: u16) {
-    let mut cell = Cell::new();
-    cell.unsigned_smallint_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::UnsignedSmallint as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_unsigned_int(tuple: &mut Tuple, value: u32) {
-    let mut cell = Cell::new();
-    cell.unsigned_int_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::UnsignedInt as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_unsigned_bigint(tuple: &mut Tuple, value: u64) {
-    let mut cell = Cell::new();
-    cell.unsigned_bigint_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::UnsignedBigint as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_signed_tinyint(tuple: &mut Tuple, value: i8) {
-    let mut cell = Cell::new();
-    cell.signed_tinyint_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::SignedTinyint as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_signed_smallint(tuple: &mut Tuple, value: i16) {
-    let mut cell = Cell::new();
-    cell.signed_smallint_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::SignedSmallint as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_signed_int(tuple: &mut Tuple, value: i32) {
-    let mut cell = Cell::new();
-    cell.signed_int_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::SignedInt as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_push_signed_bigint(tuple: &mut Tuple, value: i64) {
-    let mut cell = Cell::new();
-    cell.signed_bigint_to_bin(value);
-    tuple_append_cell(tuple, cell);
+    let mut data = Vec::new();
+    data.push(CellType::SignedBigint as u8);
+    data.append(&mut value.to_be_bytes().to_vec());
+    tuple_append_cell(tuple, data);
 }
 
 pub fn tuple_get_vec_u8(tuple: &Tuple, position: u16) -> Result<Vec<u8>, ExecutionError> {
@@ -149,7 +164,7 @@ pub fn tuple_get_vec_u8(tuple: &Tuple, position: u16) -> Result<Vec<u8>, Executi
         return Ok(Vec::new());
     }
 
-    return tuple_get_cell(tuple, position).get_bin();
+    return Ok(tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_varchar(tuple: &Tuple, position: u16) -> Result<String, ExecutionError> {
@@ -157,7 +172,7 @@ pub fn tuple_get_varchar(tuple: &Tuple, position: u16) -> Result<String, Executi
         return Ok(String::from(""));
     }
 
-    return tuple_get_cell(tuple, position).bin_to_varchar();
+    return bin_to_varchar(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_text(tuple: &Tuple, position: u16) -> Result<String, ExecutionError> {
@@ -165,7 +180,7 @@ pub fn tuple_get_text(tuple: &Tuple, position: u16) -> Result<String, ExecutionE
         return Ok(String::from(""));
     }
 
-    return tuple_get_cell(tuple, position).bin_to_text();
+    return bin_to_text(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_boolean(tuple: &Tuple, position: u16) -> Result<bool, ExecutionError> {
@@ -173,7 +188,7 @@ pub fn tuple_get_boolean(tuple: &Tuple, position: u16) -> Result<bool, Execution
         return Ok(false);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_boolean();
+    return bin_to_boolean(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_unsigned_tinyint(tuple: &Tuple, position: u16) -> Result<u8, ExecutionError> {
@@ -181,7 +196,7 @@ pub fn tuple_get_unsigned_tinyint(tuple: &Tuple, position: u16) -> Result<u8, Ex
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_unsigned_tinyint();
+    return bin_to_unsigned_tinyint(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_unsigned_smallint(tuple: &Tuple, position: u16) -> Result<u16, ExecutionError> {
@@ -189,7 +204,7 @@ pub fn tuple_get_unsigned_smallint(tuple: &Tuple, position: u16) -> Result<u16, 
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_unsigned_smallint();
+    return bin_to_unsigned_smallint(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_unsigned_int(tuple: &Tuple, position: u16) -> Result<u32, ExecutionError> {
@@ -197,7 +212,7 @@ pub fn tuple_get_unsigned_int(tuple: &Tuple, position: u16) -> Result<u32, Execu
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_unsigned_int();
+    return bin_to_unsigned_int(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_unsigned_bigint(tuple: &Tuple, position: u16) -> Result<u64, ExecutionError> {
@@ -205,7 +220,7 @@ pub fn tuple_get_unsigned_bigint(tuple: &Tuple, position: u16) -> Result<u64, Ex
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_unsigned_bigint();
+    return bin_to_unsigned_bigint(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_signed_tinyint(tuple: &Tuple, position: u16) -> Result<i8, ExecutionError> {
@@ -213,7 +228,7 @@ pub fn tuple_get_signed_tinyint(tuple: &Tuple, position: u16) -> Result<i8, Exec
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_signed_tinyint();
+    return bin_to_signed_tinyint(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_signed_smallint(tuple: &Tuple, position: u16) -> Result<i16, ExecutionError> {
@@ -221,7 +236,7 @@ pub fn tuple_get_signed_smallint(tuple: &Tuple, position: u16) -> Result<i16, Ex
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_signed_smallint();
+    return bin_to_signed_smallint(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_signed_int(tuple: &Tuple, position: u16) -> Result<i32, ExecutionError> {
@@ -229,7 +244,7 @@ pub fn tuple_get_signed_int(tuple: &Tuple, position: u16) -> Result<i32, Executi
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_signed_int();
+    return bin_to_signed_int(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_get_signed_bigint(tuple: &Tuple, position: u16) -> Result<i64, ExecutionError> {
@@ -237,7 +252,7 @@ pub fn tuple_get_signed_bigint(tuple: &Tuple, position: u16) -> Result<i64, Exec
         return Ok(0);
     }
 
-    return tuple_get_cell(tuple, position).bin_to_signed_bigint();
+    return bin_to_signed_bigint(&tuple_get_cell(tuple, position));
 }
 
 pub fn tuple_set_cell_count(tuple: &mut Tuple, new_cell_count: u16) {
@@ -287,7 +302,7 @@ pub fn tuple_display(tuple: &Tuple) {
     print!("Tuple [{}, {}, (", cell_count, data_size);
 
     while cell_index < cell_count {
-        print!("{}", tuple_get_cell(tuple, cell_index));
+        print!("{:?}", tuple_get_cell(tuple, cell_index));
 
         if cell_index != cell_count - 1 {
           print!(",");
@@ -297,6 +312,192 @@ pub fn tuple_display(tuple: &Tuple) {
     }
     print!(")]")
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+pub fn is_true(data: &Vec<u8>) -> bool {
+    data[0] == (CellType::Boolean as u8) && data[1] == 1
+}
+
+pub fn bin_to_varchar(data: &Vec<u8>) -> Result<String, ExecutionError> {
+    if data.len() <= 1 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::Varchar as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 2] = [data[1], data[2]];
+    let string_size = u16::from_be_bytes(byte_array);
+
+    if data.len() != ((string_size + 3) as usize) {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    let mut bytes: Vec<u8> = Vec::new();
+    let mut index: usize = 3;
+
+    while index < data.len() {
+        bytes.push(*data.get(index).unwrap());
+        index += 1;
+    }
+
+    match String::from_utf8(bytes) {
+        Ok(new_data) => Ok(new_data),
+        Err(_error) => Err(ExecutionError::StringParseFailed)
+    }
+}
+
+pub fn bin_to_text(data: &Vec<u8>) -> Result<String, ExecutionError> {
+    if data.len() <= 1 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::Text as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 4] = [data[1], data[2], data[3], data[4]];
+    let string_size = u32::from_be_bytes(byte_array);
+
+    if data.len() != ((string_size + 5) as usize) {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    let mut bytes: Vec<u8> = Vec::new();
+    let mut index: usize = 5;
+
+    while index < data.len() {
+        bytes.push(*data.get(index).unwrap());
+        index += 1;
+    }
+
+    match String::from_utf8(bytes) {
+        Ok(new_data) => Ok(new_data),
+        Err(_error) => Err(ExecutionError::StringParseFailed)
+    }
+}
+
+pub fn bin_to_boolean(data: &Vec<u8>) -> Result<bool, ExecutionError> {
+    if data.len() != 2 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::Boolean as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    Ok(data[1] == 1u8)
+}
+
+pub fn bin_to_unsigned_tinyint(data: &Vec<u8>) -> Result<u8, ExecutionError> {
+    if data.len() != 2 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::UnsignedTinyint as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+    
+    return Ok(data[1]);
+}
+
+pub fn bin_to_unsigned_smallint(data: &Vec<u8>) -> Result<u16, ExecutionError> {
+    if data.len() != 3 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::UnsignedSmallint as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 2] = [data[1], data[2]];
+    return Ok(u16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+}
+
+pub fn bin_to_unsigned_int(data: &Vec<u8>) -> Result<u32, ExecutionError> {
+    if data.len() != 5 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::UnsignedInt as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 4] = [data[1], data[2], data[3], data[4]];
+    return Ok(u32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+}
+
+pub fn bin_to_unsigned_bigint(data: &Vec<u8>) -> Result<u64, ExecutionError> {
+    if data.len() != 9 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::UnsignedBigint as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 8] = [
+        data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]
+    ];
+    return Ok(u64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+}
+
+pub fn bin_to_signed_tinyint(data: &Vec<u8>) -> Result<i8, ExecutionError> {
+    if data.len() != 2 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::SignedTinyint as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+    
+    return Ok(data[1] as i8);
+}
+
+pub fn bin_to_signed_smallint(data: &Vec<u8>) -> Result<i16, ExecutionError> {
+    if data.len() != 3 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::SignedSmallint as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 2] = [data[1], data[2]];
+    return Ok(i16::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+}
+
+pub fn bin_to_signed_int(data: &Vec<u8>) -> Result<i32, ExecutionError> {
+    if data.len() != 5 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::SignedInt as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 4] = [data[1], data[2], data[3], data[4]];
+    return Ok(i32::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+}
+
+pub fn bin_to_signed_bigint(data: &Vec<u8>) -> Result<i64, ExecutionError> {
+    if data.len() != 9 {
+        return Err(ExecutionError::WrongLength)
+    } 
+
+    if data[0] != (CellType::SignedBigint as u8) {
+        return Err(ExecutionError::WrongFormat)
+    } 
+
+    let byte_array: [u8; 8] = [
+        data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]
+    ];
+    return Ok(i64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 pub fn get_tuple_database(name: &String) -> Tuple {
     let mut tuple: Tuple = tuple_new();

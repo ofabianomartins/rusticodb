@@ -54,6 +54,7 @@ pub use self::tuple::get_tuple_table;
 pub use self::tuple::get_tuple_sequence;
 pub use self::tuple::get_tuple_sequence_without_id;
 pub use self::tuple::get_tuple_index;
+pub use self::tuple::is_true;
 
 pub use self::cell::{ Cell, CellType };
 

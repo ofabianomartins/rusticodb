@@ -6,6 +6,7 @@ use crate::machine::Expression;
 use crate::machine::Expression2Type;
 
 use crate::storage::Tuple;
+use crate::storage::is_true;
 
 use crate::config::SysDb;
 
@@ -19,7 +20,7 @@ pub fn check_database_exists(machine: &mut Machine, database_name: &String) -> b
     let columns = get_columns(machine, &SysDb::table_databases());
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_databases())
         .into_iter()
-        .filter(|tuple| condition.result(tuple, &columns).is_true())
+        .filter(|tuple| is_true(&condition.result(tuple, &columns)))
         .collect();
 
     return tuples.len() > 0;
