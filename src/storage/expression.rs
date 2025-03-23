@@ -1,9 +1,6 @@
 use std::fmt;
 
-use crate::machine::Column;
-use crate::machine::ColumnType;
-use crate::machine::RawVal;
-
+use crate::storage::RawVal;
 use crate::storage::Tuple;
 use crate::storage::tuple_get_cell;
 use crate::storage::Cell;
@@ -47,13 +44,6 @@ pub enum Expression2Type {
     Div
 }
 
-fn _get_type(column_type: ColumnType) -> CellType {
-   match column_type {
-       ColumnType::Varchar => CellType::Varchar,
-       _ => CellType::Null
-   }
-}
-
 fn logic_result(result: bool) -> Cell {
     return Cell { data: vec![CellType::Boolean as u8, result as u8] };
 }
@@ -89,12 +79,12 @@ fn compare_func2(operator: &Expression2Type, opr1: Cell, opr2: Cell) -> Vec<u8> 
 }
 
 impl Expression {
-    pub fn result(&self, tuple: &Tuple, columns: &Vec<Column>) -> Vec<u8> {
+    pub fn result(&self, tuple: &Tuple, columns: &Vec<String>) -> Vec<u8> {
         match self {
             Expression::Empty => vec![CellType::Null as u8],
             Expression::ColName(colname)=> {
                 for (idx, column) in columns.iter().enumerate() {
-                    if column.name == *colname {
+                    if *column == *colname {
                         return tuple_get_cell(tuple, idx as u16);
                     }
                 }

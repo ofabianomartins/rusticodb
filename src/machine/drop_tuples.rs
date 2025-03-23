@@ -1,8 +1,8 @@
 use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::Expression;
 
+use crate::storage::Expression;
 use crate::storage::Tuple;
 use crate::storage::format_table_name;
 use crate::storage::pager_read_tuples;
@@ -15,7 +15,7 @@ pub fn drop_tuples(machine: &mut Machine, table: &Table, columns: Vec<Column>, c
 
     let mut tuples: Vec<Tuple> = pager_read_tuples(&mut machine.pager, &page_key)
         .into_iter()
-        .filter(|tuple| !is_true(&condition.result(tuple, &columns)))
+        .filter(|tuple| !is_true(&condition.result(tuple, &columns.iter().map(|e| e.name.clone() ).collect())))
         .collect();
 
     pager_update_tuples(&mut machine.pager, &page_key, &mut tuples);

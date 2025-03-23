@@ -9,10 +9,11 @@ use crate::machine::ResultSet;
 use crate::machine::Attribution;
 use crate::machine::Column;
 use crate::machine::ColumnType;
-use crate::machine::Expression;
-use crate::machine::RawVal;
 use crate::machine::Table;
 use crate::machine::update_row;
+
+use crate::storage::Expression;
+use crate::storage::RawVal;
 
 use crate::utils::ExecutionError;
 

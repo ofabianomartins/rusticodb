@@ -1,14 +1,14 @@
 use crate::machine::Attribution;
 use crate::machine::Column;
 use crate::machine::Machine;
-use crate::machine::RawVal;
 use crate::machine::get_columns;
 use crate::machine::read_tuples;
 use crate::machine::update_row;
-use crate::machine::Expression;
-use crate::machine::Expression2Type;
 use crate::machine::get_sequences_next_id_column_definition;
 
+use crate::storage::RawVal;
+use crate::storage::Expression;
+use crate::storage::Expression2Type;
 use crate::storage::Tuple;
 use crate::storage::tuple_push_unsigned_bigint;
 use crate::storage::tuple_get_unsigned_bigint;
@@ -39,7 +39,7 @@ pub fn get_sequence_next_id(machine: &mut Machine, column: &Column) -> Option<u6
         ))
     );
 
-    let columns = get_columns(machine, &SysDb::table_sequences());
+    let columns = get_columns(machine, &SysDb::table_sequences()).iter().map(|e| e.name.clone()).collect();
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_sequences())
         .into_iter()
         .filter(|tuple| is_true(&condition.result(tuple, &columns)))

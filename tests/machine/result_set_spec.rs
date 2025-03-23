@@ -1,9 +1,9 @@
 use rusticodb::machine::ResultSet;
-use rusticodb::machine::column::{Column, ColumnType};
-use rusticodb::machine::raw_val::RawVal;
-use rusticodb::machine::Expression;
-use rusticodb::machine::Expression2Type;
+use rusticodb::machine::{Column, ColumnType};
 
+use rusticodb::storage::RawVal;
+use rusticodb::storage::Expression;
+use rusticodb::storage::Expression2Type;
 use rusticodb::storage::Tuple;
 use rusticodb::storage::tuple_push_signed_bigint;
 use rusticodb::storage::tuple_push_signed_smallint;

@@ -5,6 +5,9 @@ pub mod header;
 pub mod pager;
 pub mod page;
 
+pub mod raw_val;
+pub mod expression;
+
 pub mod os_interface;
 
 pub mod format_database_name;
@@ -12,6 +15,9 @@ pub mod format_table_name;
 
 pub use self::format_database_name::format_database_name;
 pub use self::format_table_name::format_table_name;
+
+pub use self::expression::{ Expression, Expression1Type, Expression2Type };
+pub use self::raw_val::RawVal;
 
 pub use self::tuple::Tuple;
 pub use self::tuple::tuple_new;

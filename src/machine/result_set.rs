@@ -2,8 +2,8 @@ use std::fmt;
 use std::vec::Vec;
 
 use crate::machine::Column;
-use crate::machine::Expression;
 
+use crate::storage::Expression;
 use crate::storage::Tuple;
 use crate::storage::tuple_append_cell;
 use crate::storage::tuple_get_cell;
@@ -260,8 +260,10 @@ impl ResultSet {
             columns.push(column.clone());
         }
 
+        let column_names = self.columns.iter().map(|e| e.name.clone()).collect();
+
         for tuple in &self.tuples {
-            if is_true(&condition.result(tuple, &self.columns)) {
+            if is_true(&condition.result(tuple, &column_names)) {
                 tuples.push(tuple.clone());
             }
         }

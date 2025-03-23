@@ -8,13 +8,14 @@ use crate::machine::ResultSet;
 use crate::machine::Table;
 use crate::machine::Column;
 use crate::machine::ColumnType;
-use crate::machine::RawVal;
 use crate::machine::get_columns as machine_get_columns;
 use crate::machine::check_table_exists;
 use crate::machine::product_cartesian;
-use crate::machine::Expression;
-use crate::machine::Expression1Type;
-use crate::machine::Expression2Type;
+
+use crate::storage::RawVal;
+use crate::storage::Expression;
+use crate::storage::Expression1Type;
+use crate::storage::Expression2Type;
 
 use crate::utils::ExecutionError;
 use crate::utils::QueryError;

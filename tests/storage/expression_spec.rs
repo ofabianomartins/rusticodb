@@ -1,10 +1,10 @@
 use rusticodb::machine::Column;
 use rusticodb::machine::ColumnType;
-use rusticodb::machine::RawVal;
-use rusticodb::machine::Expression;
-use rusticodb::machine::Expression1Type;
-use rusticodb::machine::Expression2Type;
 
+use rusticodb::storage::RawVal;
+use rusticodb::storage::Expression;
+use rusticodb::storage::Expression1Type;
+use rusticodb::storage::Expression2Type;
 use rusticodb::storage::Cell;
 use rusticodb::storage::CellType;
 use rusticodb::storage::tuple_push_unsigned_bigint;
@@ -32,7 +32,7 @@ pub fn test_if_expression_equal_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -63,7 +63,7 @@ pub fn test_if_expression_equal_operator_with_string() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_varchar(&mut tuple, &String::from("value1"));
@@ -94,7 +94,7 @@ pub fn test_if_expression_equal_operator_with_null() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_null(&mut tuple);
@@ -125,7 +125,7 @@ pub fn test_if_expression_not_equal_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -156,7 +156,7 @@ pub fn test_if_expression_not_equal_operator_with_string() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_varchar(&mut tuple, &String::from("value1"));
@@ -187,7 +187,7 @@ pub fn test_if_expression_not_equal_operator_with_null() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_null(&mut tuple);
@@ -226,7 +226,7 @@ pub fn test_if_expression_and_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -265,7 +265,7 @@ pub fn test_if_expression_or_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -296,7 +296,7 @@ pub fn test_if_expression_greather_or_equal_operator_with_equal_value() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -327,7 +327,7 @@ pub fn test_if_expression_less_or_equal_operator_with_equal_value() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -358,7 +358,7 @@ pub fn test_if_expression_greather_or_equal_operator_with_diff_value() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 100u64);
@@ -389,7 +389,7 @@ pub fn test_if_expression_less_or_equal_operator_with_diff_value() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 1u64);
@@ -420,7 +420,7 @@ pub fn test_if_expression_greather_than_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 20u64);
@@ -451,7 +451,7 @@ pub fn test_if_expression_less_than_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 20u64);
@@ -482,7 +482,7 @@ pub fn test_if_expression_add_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 20u64);
@@ -513,7 +513,7 @@ pub fn test_if_expression_add_operator_inverse() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 20u64);
@@ -544,7 +544,7 @@ pub fn test_if_expression_sub_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 200u64);
@@ -575,7 +575,7 @@ pub fn test_if_expression_sub_operator_inverse() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 100u64);
@@ -606,7 +606,7 @@ pub fn test_if_expression_mul_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 200u64);
@@ -638,7 +638,7 @@ pub fn test_if_expression_mul_operator_inverse() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 200u64);
@@ -669,7 +669,7 @@ pub fn test_if_expression_div_operator() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 200u64);
@@ -701,7 +701,7 @@ pub fn test_if_expression_div_operator_inverse() {
             true,
             String::from("")
         ),
-    ];
+    ].iter().map(|e| e.name.clone()).collect();
 
     let mut tuple = tuple_new();
     tuple_push_unsigned_bigint(&mut tuple, 200u64);

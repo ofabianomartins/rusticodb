@@ -3,7 +3,6 @@ pub mod database;
 pub mod table;
 pub mod column;
 pub mod result_set;
-pub mod raw_val;
 
 // FILE FUNCTIONS
 pub mod create_file;
@@ -53,15 +52,12 @@ pub mod insert_full_row;
 pub mod insert_tuples;
 pub mod update_tuples;
 pub mod drop_tuples;
-pub mod expression;
 pub mod attribution;
 pub mod update_row;
 
 // SELECT FUNCTIONS
 pub mod product_cartesian;
 
-pub use self::expression::{ Expression, Expression1Type, Expression2Type };
-pub use self::raw_val::RawVal;
 pub use self::attribution::Attribution;
 
 pub use self::result_set::ResultSet;
@@ -148,5 +144,4 @@ impl Machine {
     pub fn set_actual_database(&mut self, name: String) {
         self.actual_database = Some(name);
     }
-
 }

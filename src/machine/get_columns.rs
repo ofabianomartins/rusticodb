@@ -1,13 +1,13 @@
 use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::RawVal;
 use crate::machine::read_tuples;
 use crate::machine::get_columns_table_definition;
 use crate::machine::map_column_type;
-use crate::machine::Expression;
-use crate::machine::Expression2Type;
 
+use crate::storage::RawVal;
+use crate::storage::Expression;
+use crate::storage::Expression2Type;
 use crate::storage::Tuple;
 use crate::storage::tuple_get_unsigned_bigint;
 use crate::storage::tuple_get_varchar;
@@ -31,9 +31,11 @@ pub fn get_columns(machine: &mut Machine, table: &Table) -> Vec<Column> {
         ))
     );
 
+    let column_names: Vec<String> = get_columns_table_definition().iter().map(|e| e.name.clone()).collect();
+
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_columns())
         .into_iter()
-        .filter(|tuple| is_true(&condition.result(tuple, &get_columns_table_definition())))
+        .filter(|tuple| is_true(&condition.result(tuple, &column_names)))
         .collect();
 
     let mut columns: Vec<Column> = Vec::new();

@@ -1,10 +1,10 @@
 use crate::machine::Machine;
-use crate::machine::RawVal;
 use crate::machine::get_columns;
 use crate::machine::read_tuples;
-use crate::machine::Expression;
-use crate::machine::Expression2Type;
 
+use crate::storage::RawVal;
+use crate::storage::Expression;
+use crate::storage::Expression2Type;
 use crate::storage::Tuple;
 use crate::storage::is_true;
 
@@ -17,7 +17,7 @@ pub fn check_database_exists(machine: &mut Machine, database_name: &String) -> b
         Box::new(Expression::Const(RawVal::Str(database_name.clone())))
     );
 
-    let columns = get_columns(machine, &SysDb::table_databases());
+    let columns = get_columns(machine, &SysDb::table_databases()).iter().map(|e| e.name.clone()).collect();
     let tuples: Vec<Tuple> = read_tuples(machine, &SysDb::table_databases())
         .into_iter()
         .filter(|tuple| is_true(&condition.result(tuple, &columns)))
