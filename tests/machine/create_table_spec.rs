@@ -68,9 +68,8 @@ pub fn test_create_table_metadata_file() {
     assert!(Path::new(&table_filename).exists());
 
     let byte_array = read_data(&table_filename, 0);
-    println!("{:?}", byte_array);
     let header: Header = deserialize(&byte_array).expect("Deserialization failed");
     
-    assert_eq!(header.page_count, 0);
-    assert_eq!(header.next_rowid, 1);
+    assert_eq!(header.page_count, 0u64);
+    assert_eq!(header.next_rowid, 1u64);
 }

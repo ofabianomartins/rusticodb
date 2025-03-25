@@ -17,6 +17,7 @@ pub mod check_database_exists;
 
 // TABLE FUNCTIONS
 pub mod create_table;
+pub mod create_columns;
 pub mod drop_table;
 pub mod drop_table_ref;
 pub mod get_tables;
@@ -90,6 +91,7 @@ pub use check_database_exists::check_database_exists;
 
 pub use get_tables::get_tables;
 pub use create_table::create_table;
+pub use create_columns::create_columns;
 pub use drop_table::drop_table;
 pub use drop_table_ref::drop_table_ref;
 pub use check_table_exists::check_table_exists;

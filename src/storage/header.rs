@@ -7,12 +7,12 @@ use crate::storage::BLOCK_SIZE;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Header {
-    pub page_count: u16,
+    pub page_count: u64,
     pub next_rowid: u64
 }
 
 pub fn header_new() -> Header {
-    Header { page_count: 1, next_rowid: 1 }
+    Header { page_count: 0, next_rowid: 1 }
 }
 
 pub fn header_serialize(header: &Header) -> [u8; BLOCK_SIZE] {

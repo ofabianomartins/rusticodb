@@ -6,14 +6,15 @@ use crate::machine::ResultSet;
 use crate::machine::ResultSetType;
 use crate::machine::insert_row;
 use crate::machine::get_tables_table_definition_without_id;
-use crate::machine::get_columns_table_definition_without_id;
 use crate::machine::create_sequence;
+use crate::machine::create_columns;
 
 use crate::storage::create_file;
-use crate::storage::Tuple;
-use crate::storage::get_tuple_column_without_id;
 use crate::storage::get_tuple_table;
 use crate::storage::format_table_name;
+use crate::storage::header_serialize;
+use crate::storage::header_new;
+use crate::storage::write_data;
 
 use crate::utils::ExecutionError;
 
@@ -26,7 +27,6 @@ pub fn create_table(
     table: &Table, 
     columns: Vec<Column>
 ) -> Result<ResultSet, ExecutionError>{
-    create_file(&format_table_name(&table.database_name, &table.name));
 
     Logger::info(format!("CREATE TABLE {}", table.name).leak());
     let _ = insert_row(
@@ -36,30 +36,9 @@ pub fn create_table(
         &mut vec![get_tuple_table(&table.database_name, &table.name)]
     );
 
-    let mut column_tuples: Vec<Tuple> = vec![];
-
-    for column in columns.iter() {
-        let type_column: String = column.clone().get_type_column();
-        column_tuples.push(
-            get_tuple_column_without_id(
-                &table.database_name,
-                &table.name,
-                &column.name.to_string(),
-                &type_column,
-                column.not_null,
-                column.unique,
-                column.primary_key,
-                &column.default
-            )
-        );
+    if let Err(err) = create_columns(machine, table, &columns) {
+        return Err(err);
     }
-
-    let _ = insert_row(
-        machine,
-        &SysDb::table_columns(),
-        &get_columns_table_definition_without_id(),
-        &mut column_tuples
-    );
 
     for column in columns.iter() {
         if column.primary_key {
@@ -79,5 +58,10 @@ pub fn create_table(
             );
         }
     }
+
+    let table_key = format_table_name(&table.database_name, &table.name);
+    create_file(&table_key);
+    write_data(&table_key, 0, &header_serialize(&header_new()));
+
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE TABLE")))
 }

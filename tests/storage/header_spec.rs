@@ -8,7 +8,7 @@ pub fn test_empty_header() {
     let header = header_new();
 
     let mut buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
-    buffer[2] = 1u8;
+    buffer[8] = 1u8;
 
     assert_eq!(header_serialize(&header), buffer);
 }
@@ -20,7 +20,7 @@ pub fn test_header_serialize_with_diferent_page_count() {
 
     let mut buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     buffer[0] = 10u8;
-    buffer[2] = 1u8;
+    buffer[8] = 1u8;
 
     assert_eq!(header_serialize(&header), buffer);
 }
@@ -32,7 +32,7 @@ pub fn test_header_deserialize_weith_diferent_page_count() {
 
     let mut buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     buffer[0] = 10u8;
-    buffer[2] = 1u8;
+    buffer[8] = 1u8;
 
     assert_eq!(header_deserialize(&buffer), header);
 }
