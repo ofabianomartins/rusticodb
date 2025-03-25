@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use crate::storage::Tuple;
 use crate::storage::Header;
 use crate::storage::header_new;
-use crate::storage::header_page_count;
-use crate::storage::header_set_page_count;
+use crate::storage::header_serialize;
+use crate::storage::header_deserialize;
 
 use crate::storage::Page;
 use crate::storage::page_insert_tuples;
@@ -23,14 +23,14 @@ pub fn pager_new_pager_item() -> HashMap<usize, Page> {
 }
 
 pub fn pager_insert_pager_item_tuples(pager_item: &mut PagerItem, header: &mut Header, tuples: &mut Vec<Tuple>) {
-    let page_count = header_page_count(header);
+    let page_count = header.page_count;
 
     if page_count == 0 {
        let mut page = page_new();
 
        page_insert_tuples(&mut page, tuples);
        pager_item.insert(1, page);
-       header_set_page_count(header, 1);
+       header.page_count = 1;
     } else {
         let mut set_new_page = false;
         let tuple_data_size = tuples.iter().map(|item| item.len() as u64).sum::<u64>();
@@ -52,7 +52,7 @@ pub fn pager_insert_pager_item_tuples(pager_item: &mut PagerItem, header: &mut H
 
             page_insert_tuples(&mut page, tuples);
             pager_item.insert(page_count as usize + 1, page);
-            header_set_page_count(header, page_count + 1);
+            header.page_count += 1;
         }
     }
 }
@@ -70,7 +70,7 @@ pub fn pager_update_pager_item_tuples(pager_item: &mut PagerItem, tuples: &mut V
 
 pub fn pager_read_pager_item_tuples(pager_item: &mut PagerItem, header: &mut Header) -> Vec<Tuple> {
     let mut tuples: Vec<Tuple> = Vec::new();
-    let page_count = header_page_count(header);
+    let page_count = header.page_count;
 
     if page_count != 0 {
         for page_idx in 1..(page_count + 1) {
@@ -152,7 +152,7 @@ pub fn pager_update_tuples(pager: &mut Pager, page_key: &String, tuples: &mut Ve
 pub fn pager_flush_page(pager: &mut Pager, page_key: &String) {
     Logger::debug(format!("FLUSH {}", page_key).leak());
     if let Some(header) = &pager.headers.get(page_key) {
-        write_data(page_key, 0, &header);
+        write_data(page_key, 0, &header_serialize(header));
     }
     if let Some(pager_item) = &pager.pages.get(page_key) {
         for (idx, page) in *pager_item {

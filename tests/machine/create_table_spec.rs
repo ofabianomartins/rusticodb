@@ -1,4 +1,5 @@
 use std::path::Path;
+use bincode::deserialize;
 
 use rusticodb::config::Config;
 
@@ -7,40 +8,14 @@ use rusticodb::machine::Table;
 use rusticodb::machine::create_database;
 use rusticodb::machine::create_table;
 use rusticodb::machine::check_table_exists;
-use rusticodb::machine::check_database_exists;
 
+use rusticodb::storage::Header;
 use rusticodb::storage::Pager;
+use rusticodb::storage::read_data;
 
 use rusticodb::setup::setup_system;
 
 use crate::test_utils::create_tmp_test_folder;
-
-#[test]
-pub fn test_if_database_exists_is_true() {
-    let database1 = String::from("database1");
-    let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-
-    create_tmp_test_folder();
-
-    setup_system(&mut machine);
-
-    let _ = create_database(&mut machine, database1.clone(), false);
-    assert_eq!(check_database_exists(&mut machine, &database1), true);
-}
-
-#[test]
-pub fn test_if_database_exists_is_false() {
-    let database1 = String::from("database1");
-    let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-
-    create_tmp_test_folder();
-
-    setup_system(&mut machine);
-
-    assert_eq!(check_database_exists(&mut machine, &database1), false);
-}
 
 #[test]
 pub fn test_if_table_exists_is_true() {
@@ -76,22 +51,6 @@ pub fn test_if_table_exists_is_false() {
 }
 
 #[test]
-pub fn test_create_database_metadata_file_database1() {
-    let database1 = String::from("database1");
-    let pager = Pager::new();
-    let mut machine = Machine::new(pager);
-
-    create_tmp_test_folder();
-
-    setup_system(&mut machine);
-
-    let _ = create_database(&mut machine, database1.clone(), false);
-
-    let metadata_foldername = format!("{}/database1/", Config::data_folder());
-    assert!(Path::new(&metadata_foldername).exists());
-}
-
-#[test]
 pub fn test_create_table_metadata_file() {
     let database1 = String::from("database1");
     let pager = Pager::new();
@@ -107,4 +66,11 @@ pub fn test_create_table_metadata_file() {
 
     let table_filename = format!("{}/database1/table1.db", Config::data_folder());
     assert!(Path::new(&table_filename).exists());
+
+    let byte_array = read_data(&table_filename, 0);
+    println!("{:?}", byte_array);
+    let header: Header = deserialize(&byte_array).expect("Deserialization failed");
+    
+    assert_eq!(header.page_count, 0);
+    assert_eq!(header.next_rowid, 1);
 }

@@ -77,10 +77,8 @@ pub use self::page::page_display;
 
 pub use self::header::Header;
 pub use self::header::header_new;
-pub use self::header::header_get_u16_value;
-pub use self::header::header_set_u16_value;
-pub use self::header::header_page_count;
-pub use self::header::header_set_page_count;
+pub use self::header::header_serialize;
+pub use self::header::header_deserialize;
 
 pub use self::pager::Pager;
 pub use self::pager::pager_new;
