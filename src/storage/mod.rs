@@ -16,7 +16,9 @@ pub mod format_table_name;
 pub use self::format_database_name::format_database_name;
 pub use self::format_table_name::format_table_name;
 
-pub use self::expression::{ Expression, Expression1Type, Expression2Type };
+pub use self::expression::Expression;
+pub use self::expression::Expression1Type;
+pub use self::expression::Expression2Type;
 pub use self::raw_val::RawVal;
 
 pub use self::tuple::Tuple;
@@ -61,8 +63,10 @@ pub use self::tuple::get_tuple_sequence;
 pub use self::tuple::get_tuple_sequence_without_id;
 pub use self::tuple::get_tuple_index;
 pub use self::tuple::is_true;
+pub use self::tuple::cell_to_string;
 
-pub use self::cell::{ Cell, CellType };
+pub use self::cell::Cell;
+pub use self::cell::CellType;
 
 pub use self::page::Page;
 pub use self::page::page_new;

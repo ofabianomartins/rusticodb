@@ -12,7 +12,10 @@ use crate::storage::page_update_tuples;
 use crate::storage::page_read_tuples;
 use crate::storage::page_new;
 use crate::storage::page_amount_left;
+
 use crate::storage::write_data;
+use crate::storage::read_data;
+use crate::storage::path_exists;
 
 use crate::utils::Logger;
 
@@ -68,7 +71,7 @@ pub fn pager_update_pager_item_tuples(pager_item: &mut PagerItem, tuples: &mut V
         .or_insert(page_new());
 }
 
-pub fn pager_read_pager_item_tuples(pager_item: &mut PagerItem, header: &mut Header) -> Vec<Tuple> {
+pub fn pager_read_pager_item_tuples(pager_item: &mut PagerItem, page_key: &String, header: &mut Header) -> Vec<Tuple> {
     let mut tuples: Vec<Tuple> = Vec::new();
     let page_count = header.page_count;
 
@@ -76,6 +79,10 @@ pub fn pager_read_pager_item_tuples(pager_item: &mut PagerItem, header: &mut Hea
         for page_idx in 1..(page_count + 1) {
             if let Some(page) = pager_item.get(&(page_idx as usize)) {
                 tuples.append(&mut page_read_tuples(page))
+            } else {
+                let buffer: Page = read_data(page_key, page_idx as u64);
+                pager_item.insert(page_idx as usize, buffer);
+                tuples.append(&mut page_read_tuples(&buffer));
             }
         }
     }
@@ -102,6 +109,13 @@ pub fn pager_new() -> Pager {
 pub fn pager_read_tuples(pager: &mut Pager, page_key: &String) -> Vec<Tuple> {
     Logger::debug(format!("search page {} on pager", page_key).leak());
     let mut tuples = Vec::new();
+
+    if path_exists(page_key) {
+        if let None = pager.headers.get(page_key) {
+            pager.headers.insert(page_key.clone(), header_deserialize(&read_data(page_key, 0)));
+        }
+    }
+
     pager.headers.entry(page_key.clone()).and_modify(|_| {}).or_insert(header_new());
 
     pager.headers.entry(page_key.clone())
@@ -110,7 +124,7 @@ pub fn pager_read_tuples(pager: &mut Pager, page_key: &String) -> Vec<Tuple> {
 
             pager.pages.entry(page_key.clone())
                 .and_modify(|pager_item| {
-                    tuples.append(&mut pager_read_pager_item_tuples(pager_item, header));
+                    tuples.append(&mut pager_read_pager_item_tuples(pager_item, page_key, header));
                 })
                 .or_insert(pager_new_pager_item());
         })
@@ -156,7 +170,7 @@ pub fn pager_flush_page(pager: &mut Pager, page_key: &String) {
     }
     if let Some(pager_item) = &pager.pages.get(page_key) {
         for (idx, page) in *pager_item {
-            write_data(page_key, *idx as u64 + 1, &page);
+            write_data(page_key, *idx as u64, &page);
         }
     }
 }

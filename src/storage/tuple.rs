@@ -497,6 +497,74 @@ pub fn bin_to_signed_bigint(data: &Vec<u8>) -> Result<i64, ExecutionError> {
     return Ok(i64::from_be_bytes(byte_array)); // or use `from_be_bytes` for big-endian
 }
 
+pub fn cell_to_string(cell: &Vec<u8>) -> String {
+    if cell.len() == 0 || cell[0] ==  (CellType::Null as u8) {
+        return "NULL".to_string();
+    }
+
+    if cell[0] ==  (CellType::Boolean as u8) {
+        if let Ok(value) = bin_to_boolean(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::UnsignedTinyint as u8) {
+        if let Ok(value) = bin_to_unsigned_tinyint(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::SignedTinyint as u8) {
+        if let Ok(value) = bin_to_signed_tinyint(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::UnsignedSmallint as u8) {
+        if let Ok(value) = bin_to_unsigned_smallint(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::SignedSmallint as u8) {
+        if let Ok(value) = bin_to_signed_smallint(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::UnsignedInt as u8) {
+        if let Ok(value) = bin_to_unsigned_int(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::SignedInt as u8) {
+        if let Ok(value) = bin_to_signed_int(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::UnsignedBigint as u8) {
+        if let Ok(value) = bin_to_unsigned_bigint(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::SignedBigint as u8) {
+        if let Ok(value) = bin_to_signed_bigint(cell) {
+            return value.to_string();
+        }
+    }
+
+    if cell[0] ==  (CellType::Varchar as u8) {
+        if let Ok(value) = bin_to_varchar(cell) {
+            return value.to_string();
+        }
+    }
+
+    return "NULL".to_string();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 pub fn get_tuple_database(name: &String) -> Tuple {
