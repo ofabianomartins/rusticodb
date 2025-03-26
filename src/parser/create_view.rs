@@ -2,10 +2,11 @@ use sqlparser::ast::Query;
 
 use crate::machine::Machine;
 use crate::machine::Table;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::create_view as machine_create_view;
 use crate::machine::check_view_exists;
+
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

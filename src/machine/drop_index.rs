@@ -1,12 +1,12 @@
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::drop_tuples;
 use crate::machine::get_columns;
 
 use crate::storage::RawVal;
 use crate::storage::Expression;
 use crate::storage::Expression2Type;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

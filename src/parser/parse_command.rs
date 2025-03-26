@@ -5,8 +5,9 @@ use sqlparser::parser::ParserError;
 
 use crate::parser::process_command;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::utils::ExecutionError;
+
+use crate::storage::ResultSet;
 
 pub fn parse_command(machine: &mut Machine, sql_command: &str) -> Result<Vec<ResultSet>, ExecutionError> { 
     let dialect = PostgreSqlDialect {};

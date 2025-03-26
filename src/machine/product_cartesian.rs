@@ -1,10 +1,10 @@
 
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::machine::get_columns;
 use crate::machine::read_tuples;
 
+use crate::storage::ResultSet;
 use crate::storage::Tuple;
 
 pub fn product_cartesian(machine: &mut Machine, tables: Vec<Table>) -> ResultSet {

@@ -1,11 +1,12 @@
 use sqlparser::ast::CreateIndex;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::check_index_exists;
 use crate::machine::create_index as machine_create_index;
 use crate::utils::ExecutionError;
+
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 pub fn create_index(machine: &mut Machine, create_index: CreateIndex) -> Result<ResultSet, ExecutionError> { 
     if let Some(db_name) = machine.actual_database.clone() {

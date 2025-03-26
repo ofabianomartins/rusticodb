@@ -1,10 +1,10 @@
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::machine::product_cartesian;
 
 use crate::storage::RawVal;
 use crate::storage::Expression;
 use crate::storage::Expression2Type;
+use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
 

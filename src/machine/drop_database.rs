@@ -1,6 +1,4 @@
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::get_tables;
 use crate::machine::drop_columns;
 use crate::machine::drop_table_ref;
@@ -9,6 +7,8 @@ use crate::machine::check_database_exists;
 
 use crate::storage::destroy_folder;
 use crate::storage::format_database_name;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

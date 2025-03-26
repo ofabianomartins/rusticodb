@@ -1,6 +1,7 @@
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::machine::create_database as machine_create_database;
+
+use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
 

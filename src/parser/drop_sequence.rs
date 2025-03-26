@@ -1,10 +1,11 @@
 use sqlparser::ast::ObjectName;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::drop_sequence as machine_drop_sequence;
 use crate::machine::check_sequence_exists;
+
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

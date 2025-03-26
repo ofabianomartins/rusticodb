@@ -1,6 +1,4 @@
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::check_database_exists;
 use crate::machine::insert_row;
 use crate::machine::get_databases_table_definition_without_id;
@@ -8,6 +6,8 @@ use crate::machine::get_databases_table_definition_without_id;
 use crate::storage::create_folder;
 use crate::storage::format_database_name;
 use crate::storage::get_tuple_database;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

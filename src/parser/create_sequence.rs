@@ -3,10 +3,11 @@ use sqlparser::ast::DataType;
 use sqlparser::ast::SequenceOptions;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::create_sequence as machine_create_sequence;
 use crate::machine::check_sequence_exists;
+
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

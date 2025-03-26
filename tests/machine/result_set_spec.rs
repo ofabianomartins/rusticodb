@@ -1,5 +1,5 @@
-use rusticodb::machine::ResultSet;
-use rusticodb::machine::{Column, ColumnType};
+use rusticodb::machine::Column;
+use rusticodb::machine::ColumnType;
 
 use rusticodb::storage::RawVal;
 use rusticodb::storage::Expression;
@@ -16,6 +16,7 @@ use rusticodb::storage::tuple_push_unsigned_tinyint;
 use rusticodb::storage::tuple_push_varchar;
 use rusticodb::storage::tuple_push_text;
 use rusticodb::storage::tuple_new;
+use rusticodb::storage::ResultSet;
 
 use rusticodb::utils::ExecutionError;
 

@@ -1,13 +1,13 @@
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::drop_columns;
 use crate::machine::drop_table_ref;
 use crate::machine::check_table_exists;
 
 use crate::storage::destroy_file;
 use crate::storage::format_table_name;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

@@ -9,7 +9,6 @@ use sqlparser::ast::Value;
 
 use crate::machine::Machine;
 use crate::machine::Table;
-use crate::machine::ResultSet;
 use crate::machine::Column;
 use crate::machine::ColumnType;
 use crate::machine::check_table_exists;
@@ -30,6 +29,7 @@ use crate::storage::tuple_push_varchar;
 use crate::storage::tuple_push_text;
 use crate::storage::tuple_push_null;
 use crate::storage::tuple_new;
+use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
 

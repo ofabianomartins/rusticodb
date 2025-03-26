@@ -5,7 +5,6 @@ use sqlparser::ast::SelectItem;
 use sqlparser::ast::AssignmentTarget;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::machine::Attribution;
 use crate::machine::Column;
 use crate::machine::ColumnType;
@@ -14,6 +13,7 @@ use crate::machine::update_row;
 
 use crate::storage::Expression;
 use crate::storage::RawVal;
+use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
 

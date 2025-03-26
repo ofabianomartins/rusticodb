@@ -7,14 +7,6 @@ edition = "2021"
 name = "rusticodbshell"
 path = "src/main.rs"
 
-[[bin]]
-name = "rusticodbserver"
-path = "src/server.rs"
-
-[[bin]]
-name = "rusticodbclient"
-path = "src/client.rs"
-
 [lib]
 name = "rusticodb"
 path = "src/lib.rs"
@@ -29,4 +21,4 @@ tokio = { version = "1.43.0", features = ["full"] }
 
 [dependencies.serde]
 version = "1.0.197"
-features = [ 'derive']
+features = ['derive']

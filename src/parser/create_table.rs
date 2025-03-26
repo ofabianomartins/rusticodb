@@ -9,10 +9,11 @@ use crate::machine::Machine;
 use crate::machine::Column;
 use crate::machine::ColumnType;
 use crate::machine::Table;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::create_table as machine_create_table;
 use crate::machine::check_table_exists;
+
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

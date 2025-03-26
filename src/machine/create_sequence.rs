@@ -2,13 +2,13 @@ use sqlparser::ast::DataType;
 use sqlparser::ast::SequenceOptions;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::insert_row;
 use crate::machine::get_sequences_table_definition_without_id;
 
 use crate::storage::Tuple;
 use crate::storage::get_tuple_sequence_without_id;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::config::SysDb;
 

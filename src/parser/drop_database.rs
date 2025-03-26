@@ -1,8 +1,9 @@
 use sqlparser::ast::ObjectName;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::machine::drop_database as machine_drop_database;
+
+use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
 

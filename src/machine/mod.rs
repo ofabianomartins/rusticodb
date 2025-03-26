@@ -2,7 +2,6 @@
 pub mod database;
 pub mod table;
 pub mod column;
-pub mod result_set;
 
 // FILE FUNCTIONS
 pub mod create_file;
@@ -61,8 +60,6 @@ pub mod product_cartesian;
 
 pub use self::attribution::Attribution;
 
-pub use self::result_set::ResultSet;
-pub use self::result_set::ResultSetType;
 pub use self::database::{ Database, get_databases_table_definition, get_databases_table_definition_without_id };
 pub use self::table::{ Table, get_tables_table_definition, get_tables_table_definition_without_id };
 pub use self::column::{

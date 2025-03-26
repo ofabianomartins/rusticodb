@@ -1,10 +1,11 @@
 use sqlparser::ast::ObjectName;
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::drop_index as machine_drop_index;
 use crate::machine::check_index_exists;
+
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

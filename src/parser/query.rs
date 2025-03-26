@@ -4,7 +4,6 @@ use sqlparser::ast::Query as Select;
 use sqlparser::ast::{Expr as ASTNode, *};
 
 use crate::machine::Machine;
-use crate::machine::ResultSet;
 use crate::machine::Table;
 use crate::machine::Column;
 use crate::machine::ColumnType;
@@ -16,6 +15,7 @@ use crate::storage::RawVal;
 use crate::storage::Expression;
 use crate::storage::Expression1Type;
 use crate::storage::Expression2Type;
+use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
 use crate::utils::QueryError;

@@ -27,7 +27,7 @@ use crate::parser::update::update;
 use crate::parser::delete::delete;
 
 use crate::machine::Machine;
-use crate::machine::result_set::ResultSet;
+use crate::storage::ResultSet;
 use crate::utils::ExecutionError;
 
 pub fn process_command(machine: &mut Machine, statement: Statement) -> Result<ResultSet, ExecutionError> { 

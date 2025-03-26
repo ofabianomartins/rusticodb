@@ -2,8 +2,6 @@
 use crate::machine::Table;
 use crate::machine::Column;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::insert_row;
 use crate::machine::get_tables_table_definition_without_id;
 use crate::machine::create_sequence;
@@ -15,6 +13,8 @@ use crate::storage::format_table_name;
 use crate::storage::header_serialize;
 use crate::storage::header_new;
 use crate::storage::write_data;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

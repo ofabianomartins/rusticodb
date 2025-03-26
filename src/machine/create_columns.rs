@@ -1,13 +1,13 @@
 use crate::machine::Table;
 use crate::machine::Column;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::insert_row;
 use crate::machine::get_columns_table_definition_without_id;
 
 use crate::storage::Tuple;
 use crate::storage::get_tuple_column_without_id;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

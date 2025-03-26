@@ -1,7 +1,5 @@
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::insert_tuples;
 
 use crate::storage::create_file;
@@ -10,6 +8,8 @@ use crate::storage::format_table_name;
 use crate::storage::tuple_push_varchar;
 use crate::storage::tuple_push_unsigned_bigint;
 use crate::storage::tuple_new;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

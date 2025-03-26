@@ -2,8 +2,6 @@
 use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::get_sequence_next_id;
 use crate::machine::get_columns;
 
@@ -16,6 +14,8 @@ use crate::storage::tuple_push_unsigned_bigint;
 use crate::storage::tuple_get_cell;
 use crate::storage::tuple_append_cell;
 use crate::storage::tuple_new;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 

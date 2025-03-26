@@ -1,7 +1,5 @@
 use crate::machine::Table;
 use crate::machine::Machine;
-use crate::machine::ResultSet;
-use crate::machine::ResultSetType;
 use crate::machine::get_columns;
 use crate::machine::Attribution;
 use crate::machine::read_tuples;
@@ -13,6 +11,8 @@ use crate::storage::tuple_get_cell;
 use crate::storage::tuple_new;
 use crate::storage::is_true;
 use crate::storage::Expression;
+use crate::storage::ResultSet;
+use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
 
