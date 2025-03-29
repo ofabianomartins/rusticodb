@@ -6,13 +6,10 @@ use crate::machine::get_sequence_next_id;
 use crate::machine::get_columns;
 
 use crate::storage::Tuple;
-use crate::storage::CellType;
+use crate::storage::Data;
 use crate::storage::format_table_name;
 use crate::storage::pager_insert_tuples;
 use crate::storage::pager_flush_page;
-use crate::storage::tuple_push_unsigned_bigint;
-use crate::storage::tuple_get_cell;
-use crate::storage::tuple_append_cell;
 use crate::storage::tuple_new;
 use crate::storage::ResultSet;
 use crate::storage::ResultSetType;
@@ -55,7 +52,7 @@ fn validate_tuples(
         for (_idx, column) in table_columns.iter().enumerate() {
             let index_result = columns.iter().position(|e| e == column);
             if let Some(index) = index_result {
-                if column.not_null == true && tuple_get_cell(&tuple, index as u16)[0] == (CellType::Null as u8) {
+                if column.not_null == true && Data::Null == tuple.get(index).unwrap().clone() {
                     return Err(ExecutionError::ColumnCantBeNull(
                             table.database_name.clone(),
                             table.name.clone(),
@@ -84,10 +81,10 @@ fn adjust_tuples(
             for (_idx, column) in table_columns.iter().enumerate() {
                 let index_result = columns.iter().position(|e| e == column);
                 if let Some(index) = index_result {
-                    tuple_append_cell(&mut new_tuple, tuple_get_cell(&tuple, index as u16));
+                    new_tuple.push(tuple.get(index).unwrap().clone());
                 } else {
                     if let Some(next_id) = get_sequence_next_id(machine, column) {
-                        tuple_push_unsigned_bigint(&mut new_tuple, next_id);
+                        new_tuple.push(Data::UnsignedBigint(next_id));
                     }
                 }
             }

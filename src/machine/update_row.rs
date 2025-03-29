@@ -6,10 +6,8 @@ use crate::machine::read_tuples;
 use crate::machine::update_tuples;
 
 use crate::storage::Tuple;
-use crate::storage::tuple_append_cell;
-use crate::storage::tuple_get_cell;
+use crate::storage::Data;
 use crate::storage::tuple_new;
-use crate::storage::is_true;
 use crate::storage::Expression;
 use crate::storage::ResultSet;
 use crate::storage::ResultSetType;
@@ -60,15 +58,15 @@ fn adjust_tuples(
 
     let new_tuples: Vec<Tuple> = tuples.iter_mut()
         .map(|tuple| { 
-            if is_true(&expression.result(tuple, &table_columns)) {
+            if let Data::Boolean(true) = &expression.result(tuple, &table_columns) {
                 let mut new_tuple = tuple_new();
                 for (idx, column) in table_columns.iter().enumerate() {
                     let index_result = attributions.iter().position(|e| e.target.name == *column);
                     if let Some(index) = index_result {
                         let attr = attributions.get(index).unwrap();
-                        tuple_append_cell(&mut new_tuple, attr.expr.result(&tuple, &table_columns));
+                        new_tuple.push(attr.expr.result(&tuple, &table_columns));
                     } else {
-                        tuple_append_cell(&mut new_tuple, tuple_get_cell(tuple, idx as u16));
+                        new_tuple.push(tuple.get(idx).unwrap().clone());
                     } 
                 }
                 new_tuple

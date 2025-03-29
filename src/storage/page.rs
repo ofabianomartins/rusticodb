@@ -1,4 +1,5 @@
 use std::usize;
+use bincode::serialize;
 
 use crate::storage::BLOCK_SIZE;
 use crate::storage::Tuple;
@@ -44,8 +45,10 @@ fn page_add_tuple(page: &mut Page, tuple: &Tuple) {
     tuple_position = tuple_position - (tuple.len() as u16);
 
     page_set_u16_value(page, 2*(tuple_count as usize + 1), tuple_position);
-    for (idx, elem) in &mut tuple.iter().enumerate() {
-        page[(tuple_position as usize) + idx] = *elem;
+    for (idx, cell) in &mut serialize(tuple).iter().enumerate() {
+        for (idx2, elem) in &mut cell.iter().enumerate() {
+            page[(tuple_position as usize) + idx + idx2] = *elem;
+        }
     }
 }
 
@@ -63,13 +66,12 @@ pub fn page_update_tuples(page: &mut Page, tuples: &mut Vec<Tuple>) {
 }
 
 pub fn page_read_tuple(page: &Page, tuple_index: u16) -> Tuple {
-    let tuple_position = page_get_u16_value(page, 2*(tuple_index as usize + 1));
-    let data_size = page_get_u16_value(page, tuple_position as usize + 2);
-    let mut new_tuple: Tuple = Tuple::new();
+    //let tuple_position = page_get_u16_value(page, 2*(tuple_index as usize + 1));
+    //let data_size = page_get_u16_value(page, tuple_position as usize + 2);
+    let new_tuple: Tuple = Tuple::new();
 
-    for n in tuple_position..(tuple_position + data_size) {
-        new_tuple.push(page[n as usize]);
-    }
+    //for n in tuple_position..(tuple_position + data_size) {
+    //}
 
     return new_tuple;
 }

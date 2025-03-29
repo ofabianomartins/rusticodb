@@ -6,6 +6,7 @@ use rusticodb::machine::check_table_exists;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::Pager;
+use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -38,25 +39,25 @@ pub fn test_sequence_creation() {
 
     assert_eq!(result_set.as_ref().unwrap().get(0).unwrap().line_count(), 1);
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("database_name")).unwrap(),
-        String::from("database1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("database_name")).unwrap(),
+        Data::Varchar(String::from("database1"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("table_name")).unwrap(),
-        String::from("table1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("table_name")).unwrap(),
+        Data::Varchar(String::from("table1"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("column_name")).unwrap(),
-        String::from("attr1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("column_name")).unwrap(),
+        Data::Varchar(String::from("attr1"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("name")).unwrap(),
-        String::from("sequence1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("name")).unwrap(),
+        Data::Varchar(String::from("sequence1"))
     );
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_unsigned_bigint(0, &String::from("next_id")).unwrap(),
-        1
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("next_id")).unwrap(),
+        Data::UnsignedBigint(1)
     );
 
 }

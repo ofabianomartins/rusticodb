@@ -1,10 +1,10 @@
 use std::fmt;
 
-use crate::storage::CellType;
+use crate::storage::Data;
 
 use crate::config::SysDb;
 
-pub type ColumnType = CellType;
+pub type ColumnType = Data;
 
 #[derive(Debug, Clone)]
 pub struct Column {
@@ -83,17 +83,17 @@ impl Column {
 
     pub fn get_type_column(self) -> String {
         return match self.column_type {
-            ColumnType::UnsignedTinyint => String::from("UNSIGNED TINYINT"),
-            ColumnType::SignedTinyint => String::from("SIGNED TINYINT"),
-            ColumnType::UnsignedSmallint => String::from("UNSIGNED SMALLINT"),
-            ColumnType::SignedSmallint => String::from("SIGNED SMALLINT"),
-            ColumnType::UnsignedInt => String::from("UNSIGNED INT"),
-            ColumnType::SignedInt => String::from("SIGNED INT"),
-            ColumnType::UnsignedBigint => String::from("UNSIGNED BIGINT"),
-            ColumnType::SignedBigint => String::from("SIGNED BIGINT"),
-            ColumnType::Varchar => String::from("VARCHAR"),
-            ColumnType::Text => String::from("TEXT"),
-            ColumnType::Boolean => String::from("UNSIGNED TINYINT"),
+            ColumnType::UnsignedTinyint(_) => String::from("UNSIGNED TINYINT"),
+            ColumnType::SignedTinyint(_) => String::from("SIGNED TINYINT"),
+            ColumnType::UnsignedSmallint(_) => String::from("UNSIGNED SMALLINT"),
+            ColumnType::SignedSmallint(_) => String::from("SIGNED SMALLINT"),
+            ColumnType::UnsignedInt(_) => String::from("UNSIGNED INT"),
+            ColumnType::SignedInt(_) => String::from("SIGNED INT"),
+            ColumnType::UnsignedBigint(_) => String::from("UNSIGNED BIGINT"),
+            ColumnType::SignedBigint(_) => String::from("SIGNED BIGINT"),
+            ColumnType::Varchar(_) => String::from("VARCHAR"),
+            ColumnType::Text(_) => String::from("TEXT"),
+            ColumnType::Boolean(_) => String::from("UNSIGNED TINYINT"),
             _ => String::from("UNDEFINED")
         };
     }
@@ -103,14 +103,17 @@ impl Column {
     }
 
     pub fn is_number(self) -> bool {
-        return self.column_type == ColumnType::UnsignedTinyint ||
-        self.column_type == ColumnType::UnsignedSmallint ||
-        self.column_type == ColumnType::UnsignedInt ||
-        self.column_type == ColumnType::UnsignedBigint ||
-        self.column_type == ColumnType::SignedTinyint ||
-        self.column_type == ColumnType::SignedSmallint ||
-        self.column_type == ColumnType::SignedInt ||
-        self.column_type == ColumnType::SignedBigint;
+        return matches!(
+            self.column_type,
+            ColumnType::UnsignedTinyint(_) |
+            ColumnType::UnsignedSmallint(_) |
+            ColumnType::UnsignedInt(_) |
+            ColumnType::UnsignedBigint(_) |
+            ColumnType::SignedTinyint(_) |
+            ColumnType::SignedSmallint(_) |
+            ColumnType::SignedInt(_) |
+            ColumnType::SignedBigint(_)
+        );
     }
 }
 
@@ -130,17 +133,17 @@ impl fmt::Display for Column {
 
 pub fn map_column_type(value: String) -> ColumnType {
     match value.as_str() {
-        "UNSIGNED TINYINT" => ColumnType::UnsignedTinyint,
-        "SIGNED TINYINT" => ColumnType::SignedTinyint,
-        "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint,
-        "SIGNED SMALLINT" => ColumnType::SignedSmallint,
-        "UNSIGNED INT" => ColumnType::UnsignedInt,
-        "SIGNED INT" => ColumnType::SignedInt,
-        "UNSIGNED BIGINT" => ColumnType::UnsignedBigint,
-        "SIGNED BIGINT" => ColumnType::SignedBigint,
-        "VARCHAR" => ColumnType::Varchar,
-        "TEXT" => ColumnType::Text,
-        _ => ColumnType::Varchar
+        "UNSIGNED TINYINT" => ColumnType::UnsignedTinyint(0),
+        "SIGNED TINYINT" => ColumnType::SignedTinyint(0),
+        "UNSIGNED SMALLINT" => ColumnType::UnsignedSmallint(0),
+        "SIGNED SMALLINT" => ColumnType::SignedSmallint(0),
+        "UNSIGNED INT" => ColumnType::UnsignedInt(0),
+        "SIGNED INT" => ColumnType::SignedInt(0),
+        "UNSIGNED BIGINT" => ColumnType::UnsignedBigint(0),
+        "SIGNED BIGINT" => ColumnType::SignedBigint(0),
+        "VARCHAR" => ColumnType::Varchar("".to_string()),
+        "TEXT" => ColumnType::Text("".to_string()),
+        _ => ColumnType::Varchar("".to_string())
     }
 }
 
@@ -151,7 +154,7 @@ pub fn get_columns_table_definition() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("id"),
-            ColumnType::UnsignedBigint,
+            ColumnType::UnsignedBigint(0),
             true,
             true,
             true,
@@ -169,7 +172,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("database_name"),
-            ColumnType::Varchar,
+            ColumnType::Varchar("".to_string()),
             true,
             false,
             false,
@@ -180,7 +183,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("table_name"),
-            ColumnType::Varchar,
+            ColumnType::Varchar("".to_string()),
             true,
             false,
             false,
@@ -191,7 +194,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("name"),
-            ColumnType::Varchar,
+            ColumnType::Varchar("".to_string()),
             true,
             false,
             false,
@@ -202,7 +205,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("type"),
-            ColumnType::Varchar,
+            ColumnType::Varchar("".to_string()),
             true,
             false,
             false,
@@ -213,7 +216,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("not_null"),
-            ColumnType::Boolean,
+            ColumnType::Boolean(true),
             true,
             false,
             false,
@@ -224,7 +227,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("unique"),
-            ColumnType::Boolean,
+            ColumnType::Boolean(true),
             true,
             false,
             false,
@@ -235,7 +238,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("primary_key"),
-            ColumnType::Boolean,
+            ColumnType::Boolean(true),
             true,
             false,
             false,
@@ -246,7 +249,7 @@ pub fn get_columns_table_definition_without_id() -> Vec<Column> {
             SysDb::dbname(),
             SysDb::tblname_columns(),
             String::from("default"),
-            ColumnType::Varchar,
+            ColumnType::Varchar("".to_string()),
             true,
             false,
             false,

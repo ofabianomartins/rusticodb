@@ -4,12 +4,10 @@ use crate::machine::Machine;
 use crate::machine::get_sequence_next_id;
 
 use crate::storage::Tuple;
+use crate::storage::Data;
 use crate::storage::format_table_name;
 use crate::storage::pager_insert_tuples;
 use crate::storage::pager_flush_page;
-use crate::storage::tuple_append_cell;
-use crate::storage::tuple_get_cell;
-use crate::storage::tuple_push_unsigned_bigint;
 use crate::storage::tuple_new;
 use crate::storage::ResultSet;
 use crate::storage::ResultSetType;
@@ -51,12 +49,12 @@ fn adjust_tuples(
             for (_idx, column) in table_columns.iter().enumerate() {
                 let index_result = columns.iter().position(|e| e == column);
                 if let Some(index) = index_result {
-                    tuple_append_cell(&mut new_tuple, tuple_get_cell(tuple, index as u16));
+                    new_tuple.push(tuple.get(index).unwrap().clone());
                 } else {
                     Logger::debug(format!("Getting next id for column {}", column).leak());
                     if let Some(next_id) = get_sequence_next_id(machine, column) {
                         Logger::debug(format!("Next id for column {} is {}", column, next_id).leak());
-                        tuple_push_unsigned_bigint(&mut new_tuple, next_id);
+                        new_tuple.push(Data::UnsignedBigint(next_id));
                     }
                 }
             }

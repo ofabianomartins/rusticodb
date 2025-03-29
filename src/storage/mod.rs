@@ -1,4 +1,3 @@
-pub mod cell;
 pub mod tuple;
 
 pub mod header;
@@ -6,7 +5,6 @@ pub mod pager;
 pub mod page;
 pub mod result_set;
 
-pub mod raw_val;
 pub mod expression;
 
 pub mod os_interface;
@@ -23,42 +21,12 @@ pub use self::result_set::ResultSetType;
 pub use self::expression::Expression;
 pub use self::expression::Expression1Type;
 pub use self::expression::Expression2Type;
-pub use self::raw_val::RawVal;
 
 pub use self::tuple::Tuple;
+pub use self::tuple::Data;
 pub use self::tuple::tuple_new;
-pub use self::tuple::tuple_append_cell;
-pub use self::tuple::tuple_get_cell;
-pub use self::tuple::tuple_push_null;
-pub use self::tuple::tuple_push_varchar;
-pub use self::tuple::tuple_push_text;
-pub use self::tuple::tuple_push_boolean;
-pub use self::tuple::tuple_push_unsigned_tinyint;
-pub use self::tuple::tuple_push_unsigned_smallint;
-pub use self::tuple::tuple_push_unsigned_int;
-pub use self::tuple::tuple_push_unsigned_bigint;
-pub use self::tuple::tuple_push_signed_tinyint;
-pub use self::tuple::tuple_push_signed_smallint;
-pub use self::tuple::tuple_push_signed_int;
-pub use self::tuple::tuple_push_signed_bigint;
-pub use self::tuple::tuple_get_vec_u8;
-pub use self::tuple::tuple_get_varchar;
-pub use self::tuple::tuple_get_text;
-pub use self::tuple::tuple_get_boolean;
-pub use self::tuple::tuple_get_unsigned_tinyint;
-pub use self::tuple::tuple_get_unsigned_smallint;
-pub use self::tuple::tuple_get_unsigned_int;
-pub use self::tuple::tuple_get_unsigned_bigint;
-pub use self::tuple::tuple_get_signed_tinyint;
-pub use self::tuple::tuple_get_signed_smallint;
-pub use self::tuple::tuple_get_signed_int;
-pub use self::tuple::tuple_get_signed_bigint;
-pub use self::tuple::tuple_set_cell_count;
-pub use self::tuple::tuple_cell_count;
-pub use self::tuple::tuple_set_data_size;
-pub use self::tuple::tuple_data_size;
-pub use self::tuple::tuple_to_raw_data;
 pub use self::tuple::tuple_display;
+pub use self::tuple::tuple_to_raw_data;
 pub use self::tuple::get_tuple_database;
 pub use self::tuple::get_tuple_column;
 pub use self::tuple::get_tuple_column_without_id;
@@ -66,11 +34,6 @@ pub use self::tuple::get_tuple_table;
 pub use self::tuple::get_tuple_sequence;
 pub use self::tuple::get_tuple_sequence_without_id;
 pub use self::tuple::get_tuple_index;
-pub use self::tuple::is_true;
-pub use self::tuple::cell_to_string;
-
-pub use self::cell::Cell;
-pub use self::cell::CellType;
 
 pub use self::page::Page;
 pub use self::page::page_new;

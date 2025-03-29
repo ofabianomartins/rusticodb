@@ -1,29 +1,7 @@
-use rusticodb::storage::CellType;
 use rusticodb::storage::BLOCK_SIZE;
-use rusticodb::storage::tuple_push_signed_bigint;
-use rusticodb::storage::tuple_push_signed_smallint;
-use rusticodb::storage::tuple_push_signed_int;
-use rusticodb::storage::tuple_push_signed_tinyint;
-use rusticodb::storage::tuple_push_unsigned_bigint;
-use rusticodb::storage::tuple_push_unsigned_smallint;
-use rusticodb::storage::tuple_push_unsigned_int;
-use rusticodb::storage::tuple_push_unsigned_tinyint;
-use rusticodb::storage::tuple_push_varchar;
-use rusticodb::storage::tuple_push_text;
-use rusticodb::storage::tuple_push_null;
-use rusticodb::storage::tuple_push_boolean;
-use rusticodb::storage::tuple_get_signed_bigint;
-use rusticodb::storage::tuple_get_signed_smallint;
-use rusticodb::storage::tuple_get_signed_int;
-use rusticodb::storage::tuple_get_signed_tinyint;
-use rusticodb::storage::tuple_get_unsigned_bigint;
-use rusticodb::storage::tuple_get_unsigned_smallint;
-use rusticodb::storage::tuple_get_unsigned_int;
-use rusticodb::storage::tuple_get_unsigned_tinyint;
-use rusticodb::storage::tuple_get_varchar;
-use rusticodb::storage::tuple_get_text;
 use rusticodb::storage::tuple_new;
 use rusticodb::storage::tuple_to_raw_data;
+use rusticodb::storage::Data;
 
 #[test]
 pub fn test_tuple_push_null() {
@@ -31,7 +9,7 @@ pub fn test_tuple_push_null() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 5u16.to_be_bytes().to_vec());
-    buffer.push(CellType::Null as u8);
+    buffer.push(1);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
     for (idx, elem) in &mut buffer.iter().enumerate() {
@@ -39,7 +17,7 @@ pub fn test_tuple_push_null() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_null(&mut tuple);
+    tuple.push(Data::Null);
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -53,7 +31,7 @@ pub fn test_tuple_push_varchar() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 20u16.to_be_bytes().to_vec());
-    buffer.push(CellType::Varchar as u8);
+    buffer.push(11);
     buffer.append(&mut (bytes_array.len() as u16).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
@@ -63,7 +41,7 @@ pub fn test_tuple_push_varchar() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_varchar(&mut tuple, &data);
+    tuple.push(Data::Varchar(data));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -77,7 +55,7 @@ pub fn test_tuple_push_text() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 22u16.to_be_bytes().to_vec());
-    buffer.push(CellType::Text as u8);
+    buffer.push(12);
     buffer.append(&mut (bytes_array.len() as u32).to_be_bytes().to_vec());
     buffer.append(&mut bytes_array);
 
@@ -87,7 +65,7 @@ pub fn test_tuple_push_text() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_text(&mut tuple, &data);
+    tuple.push(Data::Varchar(data));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -98,7 +76,7 @@ pub fn test_push_boolean_true() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 6u16.to_be_bytes().to_vec());
-    buffer.push(CellType::Boolean as u8);
+    buffer.push(2);
     buffer.push(1u8);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -107,7 +85,7 @@ pub fn test_push_boolean_true() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_boolean(&mut tuple, true);
+    tuple.push(Data::Boolean(true));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -118,7 +96,7 @@ pub fn test_push_boolean_false() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 6u16.to_be_bytes().to_vec());
-    buffer.push(CellType::Boolean as u8);
+    buffer.push(2);
     buffer.push(0u8);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -127,7 +105,7 @@ pub fn test_push_boolean_false() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_boolean(&mut tuple, false);
+    tuple.push(Data::Boolean(false));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -138,7 +116,7 @@ pub fn test_push_unsigned_tinyint_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 6u16.to_be_bytes().to_vec());
-    buffer.push(CellType::UnsignedTinyint as u8);
+    buffer.push(3);
     buffer.push(50u8);
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -147,7 +125,7 @@ pub fn test_push_unsigned_tinyint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_unsigned_tinyint(&mut tuple, 50u8);
+    tuple.push(Data::UnsignedTinyint(50u8));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -158,7 +136,7 @@ pub fn test_push_unsigned_smallint_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 7u16.to_be_bytes().to_vec());
-    buffer.push(CellType::UnsignedSmallint as u8);
+    buffer.push(4);
     buffer.append(&mut 50u16.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -167,7 +145,7 @@ pub fn test_push_unsigned_smallint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_unsigned_smallint(&mut tuple, 50u16);
+    tuple.push(Data::UnsignedSmallint(50u16));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -178,7 +156,7 @@ pub fn test_push_unsigned_int_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 9u16.to_be_bytes().to_vec());
-    buffer.push(CellType::UnsignedInt as u8);
+    buffer.push(5);
     buffer.append(&mut 50u32.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -187,7 +165,7 @@ pub fn test_push_unsigned_int_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_unsigned_int(&mut tuple, 50u32);
+    tuple.push(Data::UnsignedInt(50u32));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -198,7 +176,7 @@ pub fn test_push_unsigned_bigint_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 13u16.to_be_bytes().to_vec());
-    buffer.push(CellType::UnsignedBigint as u8);
+    buffer.push(6);
     buffer.append(&mut 50u64.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -207,7 +185,7 @@ pub fn test_push_unsigned_bigint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_unsigned_bigint(&mut tuple, 50u64);
+    tuple.push(Data::UnsignedBigint(50u64));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -218,7 +196,7 @@ pub fn test_push_signed_tinyint_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 6u16.to_be_bytes().to_vec());
-    buffer.push(CellType::SignedTinyint as u8);
+    buffer.push(7);
     buffer.append(&mut 50i8.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -227,7 +205,7 @@ pub fn test_push_signed_tinyint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_signed_tinyint(&mut tuple, 50i8);
+    tuple.push(Data::SignedTinyint(50i8));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -238,7 +216,7 @@ pub fn test_push_signed_smallint_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 7u16.to_be_bytes().to_vec());
-    buffer.push(CellType::SignedSmallint as u8);
+    buffer.push(8);
     buffer.append(&mut 50i16.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -247,7 +225,7 @@ pub fn test_push_signed_smallint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_signed_smallint(&mut tuple, 50i16);
+    tuple.push(Data::SignedSmallint(50i16));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -259,7 +237,7 @@ pub fn test_push_signed_int_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 9u16.to_be_bytes().to_vec());
-    buffer.push(CellType::SignedInt as u8);
+    buffer.push(9);
     buffer.append(&mut 50i32.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -268,7 +246,7 @@ pub fn test_push_signed_int_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_signed_int(&mut tuple, 50i32);
+    tuple.push(Data::SignedInt(50i32));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -279,7 +257,7 @@ pub fn test_push_signed_bigint_to_u8() {
 
     buffer.append(&mut 1u16.to_be_bytes().to_vec());
     buffer.append(&mut 13u16.to_be_bytes().to_vec());
-    buffer.push(CellType::SignedBigint as u8);
+    buffer.push(10);
     buffer.append(&mut 50i64.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -288,7 +266,7 @@ pub fn test_push_signed_bigint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_signed_bigint(&mut tuple, 50i64);
+    tuple.push(Data::SignedBigint(50i64));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -299,9 +277,9 @@ pub fn test_push_two_signed_bigint_to_u8() {
 
     buffer.append(&mut 2u16.to_be_bytes().to_vec());
     buffer.append(&mut 22u16.to_be_bytes().to_vec());
-    buffer.push(CellType::SignedBigint as u8);
+    buffer.push(10);
     buffer.append(&mut 50i64.to_be_bytes().to_vec());
-    buffer.push(CellType::SignedBigint as u8);
+    buffer.push(10);
     buffer.append(&mut 51i64.to_be_bytes().to_vec());
 
     let mut raw_buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
@@ -310,8 +288,8 @@ pub fn test_push_two_signed_bigint_to_u8() {
     }
 
     let mut tuple = tuple_new();
-    tuple_push_signed_bigint(&mut tuple, 50i64);
-    tuple_push_signed_bigint(&mut tuple, 51i64);
+    tuple.push(Data::SignedBigint(50i64));
+    tuple.push(Data::SignedBigint(51i64));
 
     assert_eq!(tuple_to_raw_data(&tuple), raw_buffer);
 }
@@ -321,101 +299,101 @@ pub fn test_push_two_signed_bigint_to_u8() {
 pub fn test_tuple_get_varchar_on_position() {
     let data: String = String::from("simple_string");
     let mut tuple = tuple_new();
-    tuple_push_varchar(&mut tuple, &data);
+    tuple.push(Data::Varchar(data.clone()));
 
-    assert_eq!(tuple_get_varchar(&tuple, 0).unwrap(), data);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::Varchar(data));
 }
 
 #[test]
 pub fn test_tuple_get_text_on_position() {
     let data: String = String::from("simple_string");
     let mut tuple = tuple_new();
-    tuple_push_text(&mut tuple, &data);
+    tuple.push(Data::Varchar(data.clone()));
 
-    assert_eq!(tuple_get_text(&tuple, 0).unwrap(), data);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::Varchar(data));
 }
 
 #[test]
 pub fn test_tuple_get_unsigned_tinyint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_unsigned_tinyint(&mut tuple, 50u8);
+    tuple.push(Data::UnsignedTinyint(50u8));
 
-    assert_eq!(tuple_get_unsigned_tinyint(&tuple, 0).unwrap(), 50u8);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::UnsignedTinyint(50u8));
 }
 
 #[test]
 pub fn test_tuple_get_unsigned_smallint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_unsigned_smallint(&mut tuple, 50u16);
+    tuple.push(Data::UnsignedSmallint(50u16));
 
-    assert_eq!(tuple_get_unsigned_smallint(&tuple, 0).unwrap(), 50u16);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::UnsignedSmallint(50u16));
 }
 
 #[test]
 pub fn test_tuple_get_unsigned_int_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_unsigned_int(&mut tuple, 50u32);
+    tuple.push(Data::UnsignedInt(50u32));
 
-    assert_eq!(tuple_get_unsigned_int(&mut tuple, 0).unwrap(), 50u32);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::UnsignedInt(50u32));
 }
 
 #[test]
 pub fn test_tuple_get_unsigned_bigint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_unsigned_bigint(&mut tuple, 50u64);
+    tuple.push(Data::UnsignedBigint(50u64));
 
-    assert_eq!(tuple_get_unsigned_bigint(&mut tuple, 0).unwrap(), 50u64);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::UnsignedBigint(50u64));
 }
 
 #[test]
 pub fn test_tuple_get_signed_tinyint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_signed_tinyint(&mut tuple, 50i8);
+    tuple.push(Data::SignedTinyint(50i8));
 
-    assert_eq!(tuple_get_signed_tinyint(&mut tuple, 0).unwrap(), 50i8);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::SignedTinyint(50i8));
 }
 
 #[test]
 pub fn test_tuple_get_signed_smallint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_signed_smallint(&mut tuple, 50i16);
+    tuple.push(Data::SignedSmallint(50i16));
 
-    assert_eq!(tuple_get_signed_smallint(&tuple, 0).unwrap(), 50i16);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::SignedSmallint(50i16));
 }
 
 #[test]
 pub fn test_tuple_get_signed_int_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_signed_int(&mut tuple, 50i32);
+    tuple.push(Data::SignedInt(50i32));
 
-    assert_eq!(tuple_get_signed_int(&tuple, 0).unwrap(), 50i32);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::SignedInt(50i32));
 }
 
 #[test]
 pub fn test_tuple_get_signed_bigint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_signed_bigint(&mut tuple, 50i64);
+    tuple.push(Data::SignedBigint(50i64));
 
-    assert_eq!(tuple_get_signed_bigint(&mut tuple, 0).unwrap(), 50i64);
+    assert_eq!(tuple.get(0).unwrap().clone(), Data::SignedBigint(50i64));
 }
 
 #[test]
 pub fn test_tuple_insert_three_cell_and_get_signed_bigint_on_position() {
     let mut tuple = tuple_new();
-    tuple_push_signed_bigint(&mut tuple, 51i64);
-    tuple_push_signed_bigint(&mut tuple, 52i64);
-    tuple_push_signed_bigint(&mut tuple, 53i64);
+    tuple.push(Data::SignedBigint(51i64));
+    tuple.push(Data::SignedBigint(52i64));
+    tuple.push(Data::SignedBigint(53i64));
 
-    assert_eq!(tuple_get_signed_bigint(&mut tuple, 2).unwrap(), 53i64);
+    assert_eq!(tuple.get(2).unwrap().clone(), Data::SignedBigint(53i64));
 }
 
 #[test]
 pub fn test_tuple_insert_two_number_and_one_string_and_get_varchar_on_position() {
     let data: String = String::from("simple_string");
     let mut tuple = tuple_new();
-    tuple_push_signed_bigint(&mut tuple, 51i64);
-    tuple_push_varchar(&mut tuple, &data);
-    tuple_push_signed_bigint(&mut tuple, 52i64);
+    tuple.push(Data::SignedBigint(51i64));
+    tuple.push(Data::Varchar(data.clone()));
+    tuple.push(Data::SignedBigint(52i64));
 
-    assert_eq!(tuple_get_varchar(&mut tuple, 1).unwrap(), data);
+    assert_eq!(tuple.get(1).unwrap().clone(), Data::Varchar(data));
 }

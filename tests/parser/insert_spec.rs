@@ -1,8 +1,9 @@
 use rusticodb::machine::Machine;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
-use rusticodb::storage::Pager;
 use rusticodb::utils::ExecutionError;
+use rusticodb::storage::Pager;
+use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -56,18 +57,18 @@ pub fn test_in_two_columns_varchar_and_with_primary_key() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name1")).unwrap(),
-        String::from("fabiano")
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::Varchar(String::from("fabiano"))
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -121,13 +122,13 @@ pub fn test_in_two_columns_and_one_accept_null_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 
     assert!(matches!(result_set, Ok(_result_set)));
@@ -159,18 +160,18 @@ pub fn test_in_two_columns_one_with_default_varchar_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name1")).unwrap(),
-        String::from("fabiano1")
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::Varchar(String::from("fabiano1"))
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -200,18 +201,18 @@ pub fn test_in_two_columns_one_with_default_text_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_text(0, &String::from("name1")).unwrap(),
-        String::from("fabiano1")
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::Varchar(String::from("fabiano1"))
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -241,18 +242,18 @@ pub fn test_in_two_columns_one_with_default_unsigned_bigint_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("name1")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -282,18 +283,18 @@ pub fn test_in_two_columns_one_with_default_unsigned_int_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_int(0, &String::from("name1")).unwrap(),
-        1u32
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::UnsignedInt(1u32)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -323,18 +324,18 @@ pub fn test_in_two_columns_one_with_default_unsigned_smallint_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_smallint(0, &String::from("name1")).unwrap(),
-        1u16
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::UnsignedSmallint(1u16)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -364,18 +365,18 @@ pub fn test_in_two_columns_one_with_default_unsigned_tinyint_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_tinyint(0, &String::from("name1")).unwrap(),
-        1u8
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::UnsignedTinyint(1u8)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -405,18 +406,18 @@ pub fn test_in_two_columns_one_with_default_signed_bigint_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_signed_bigint(0, &String::from("name1")).unwrap(),
-        -1i64
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::SignedBigint(-1i64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -446,18 +447,18 @@ pub fn test_in_two_columns_one_with_default_signed_int_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_signed_int(0, &String::from("name1")).unwrap(),
-        -1i32
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::SignedInt(-1i32)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -487,18 +488,18 @@ pub fn test_in_two_columns_one_with_default_signed_smallint_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_signed_smallint(0, &String::from("name1")).unwrap(),
-        -1i16
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::SignedSmallint(-1i16)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
 
@@ -528,17 +529,17 @@ pub fn test_in_two_columns_one_with_default_signed_tinyint_value() {
     assert_eq!(rs[0].column_count(), 3);
 
     assert_eq!(
-        rs.get(0).unwrap().get_unsigned_bigint(0, &String::from("id")).unwrap(),
-        1u64
+        rs.get(0).unwrap().get_value(0, &String::from("id")).unwrap(),
+        Data::UnsignedBigint(1u64)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_signed_tinyint(0, &String::from("name1")).unwrap(),
-        -1i8
+        rs.get(0).unwrap().get_value(0, &String::from("name1")).unwrap(),
+        Data::SignedTinyint(-1i8)
     );
 
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name2")).unwrap(),
-        String::from("martins")
+        rs.get(0).unwrap().get_value(0, &String::from("name2")).unwrap(),
+        Data::Varchar(String::from("martins"))
     );
 }
