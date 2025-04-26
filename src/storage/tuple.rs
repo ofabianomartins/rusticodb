@@ -156,6 +156,8 @@ impl PartialEq for Data {
             (Data::Boolean(a), Data::Boolean(b)) =>  a == b,
             (Data::Varchar(a), Data::Varchar(b)) =>  a == b,
             (Data::Text(a), Data::Text(b)) =>  *a == *b,
+            (Data::Null, Data::Null) => true,
+            (Data::Undefined, Data::Undefined) => true,
             (Data::Text(a), Data::Varchar(b)) =>  *a == *b,
             (Data::Varchar(a), Data::Text(b)) =>  *a == *b,
             (Data::Null, Data::Varchar(_)) => false,
@@ -169,7 +171,6 @@ impl PartialEq for Data {
             (Data::Null, Data::SignedSmallint(_)) => false,
             (Data::Null, Data::SignedInt(_)) => false,
             (Data::Null, Data::Text(_)) => false,
-            (Data::Null, Data::Null) => true,
             other => panic!("Not implemented {:?}", other) 
         }
     }
@@ -224,7 +225,7 @@ impl ops::Not for Data {
 
     fn not(self) -> Data {
         return match self {
-            Data::UnsignedBigint(a) => Data::UnsignedBigint(if a != 0 { 0 } else { 1 }),
+            Data::UnsignedBigint(a) => Data::Boolean(a == 0),
             _ => panic!("Not implemented") 
         }
     }

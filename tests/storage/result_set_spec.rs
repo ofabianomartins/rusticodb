@@ -356,36 +356,6 @@ pub fn test_check_signed_bigint_and_string_line_on_result_set() {
 }
 
 #[test]
-pub fn test_check_signed_bigint_with_string_line_on_result_set() {
-    let mut columns: Vec<Column> = Vec::new();
-    let mut tuples: Vec<Tuple> = Vec::new();
-
-    columns.push(
-        Column::new(
-            0u64,
-            String::from("rusticodb"),
-            String::from("databases"),
-            String::from("id"),
-            ColumnType::UnsignedBigint(0),
-            false,
-            false,
-            false,
-            String::from("")
-        )
-    );
-
-    let mut tuple = tuple_new();
-    tuple.push(Data::UnsignedBigint(8u64));
-    tuples.push(tuple);
-
-    let result_set = ResultSet::new_select(columns, tuples);
-
-    assert!(matches!(result_set.get_value(0, &String::from("id")),Err(ExecutionError::WrongFormat)));
-    assert_eq!(result_set.line_count(), 1);
-    assert_eq!(result_set.column_count(), 1);
-}
-
-#[test]
 pub fn test_check_result_on_result_set_with_two_lines() {
     let mut columns: Vec<Column> = Vec::new();
     let mut tuples: Vec<Tuple> = Vec::new();

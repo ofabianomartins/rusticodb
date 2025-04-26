@@ -136,7 +136,11 @@ pub fn get_columns(
                         tables[0].database_alias.clone(),
                         tables[0].name.clone(),
                         tables[0].alias.clone(),
-                        expr.to_string(),
+                        match expr {
+                            ASTNode::CompoundIdentifier(quotes) => quotes[1].to_string(),
+                            ASTNode::Identifier(Ident { value, .. }) => value.clone(),
+                            other => other.to_string()
+                        }, 
                         alias.to_string(),
                         ColumnType::Undefined,
                         false,
@@ -207,10 +211,10 @@ fn map_binary_operator(o: &BinaryOperator) -> Result<Expression2Type, QueryError
 //        BinaryOperator::GtEq => Func2Type::GTE,
 //        BinaryOperator::Lt => Func2Type::LT,
 //        BinaryOperator::LtEq => Func2Type::LTE,
-        _ => {
+        other => {
             return Err(QueryError::NotImplemented(format!(
                 "Unsupported operator {:?}",
-                o
+                other
             )))
         }
     })
@@ -220,10 +224,10 @@ fn map_unary_operator(op: &UnaryOperator) -> Result<Expression1Type, QueryError>
     Ok(match op {
         UnaryOperator::Not => Expression1Type::Not,
         UnaryOperator::Minus => Expression1Type::Negate,
-        _ => {
+        other => {
             return Err(QueryError::NotImplemented(format!(
                 "Unsupported operator {:?}",
-                op
+                other
             )))
         }
     })

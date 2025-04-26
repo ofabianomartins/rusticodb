@@ -1,4 +1,3 @@
-use rusticodb::storage::BLOCK_SIZE;
 use rusticodb::storage::tuple_new;
 use rusticodb::storage::tuple_serialize;
 use rusticodb::storage::tuple_deserialize;

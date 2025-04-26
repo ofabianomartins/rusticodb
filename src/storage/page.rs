@@ -7,13 +7,6 @@ use crate::storage::tuple_serialize;
 use crate::storage::tuple_deserialize;
 
 use crate::utils::v_u8_to_u16;
-use crate::utils::v_u8_to_u32;
-use crate::utils::v_u8_to_u64;
-use crate::utils::v_u8_to_i16;
-use crate::utils::v_u8_to_i32;
-use crate::utils::v_u8_to_i64;
-use crate::utils::v_u8_to_string;
-use crate::utils::v_u8_to_text;
 use crate::utils::v_u8_to_vec_u8;
 
 #[derive(Debug)]
@@ -120,7 +113,6 @@ pub fn page_deserialize(raw_page: [u8; BLOCK_SIZE]) -> Page {
         let raw_tuple: Vec<u8> = v_u8_to_vec_u8(&raw_page, block_pointer,  size);
 
         tuples.push(tuple_deserialize(&raw_tuple));
-
     }
 
     return Page { tuples };

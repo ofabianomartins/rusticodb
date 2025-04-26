@@ -69,8 +69,13 @@ pub fn test_select_with_alias_database_tables() {
 
     assert!(matches!(use_database, Ok(_result_set)));
     // assert!(matches!(result_set, Ok(ref result_sets)));
-
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")), Ok(_database_name)));
+    
+    assert!(
+        matches!(
+            result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")),
+            Ok(_database_name)
+        )
+    );
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -145,8 +150,6 @@ pub fn test_select_with_defined_attr_and_alias_database_tables() {
     let result_set = parse_command(&mut machine, "SELECT columns.name as atr2, name as atr1 FROM columns");
 
     assert!(matches!(use_database, Ok(_result_set)));
-    // assert!(matches!(result_set, Ok(ref result_sets)));
-
     assert!(
         matches!(
             result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")),
