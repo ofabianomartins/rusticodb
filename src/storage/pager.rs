@@ -12,6 +12,10 @@ use crate::storage::page_update_tuples;
 use crate::storage::page_read_tuples;
 use crate::storage::page_new;
 use crate::storage::page_amount_left;
+use crate::storage::page_serialize;
+use crate::storage::page_deserialize;
+use crate::storage::tuple_size;
+
 
 use crate::storage::write_data;
 use crate::storage::read_data;
@@ -36,7 +40,7 @@ pub fn pager_insert_pager_item_tuples(pager_item: &mut PagerItem, header: &mut H
        header.page_count = 1;
     } else {
         let mut set_new_page = false;
-        let tuple_data_size = tuples.iter().map(|item| item.len() as u64).sum::<u64>();
+        let tuple_data_size = tuples.iter().map(|item| tuple_size(item) as u64).sum::<u64>();
 
         pager_item.entry(page_count as usize).and_modify(|_| {}).or_insert(page_new());
 
@@ -80,9 +84,9 @@ pub fn pager_read_pager_item_tuples(pager_item: &mut PagerItem, page_key: &Strin
             if let Some(page) = pager_item.get(&(page_idx as usize)) {
                 tuples.append(&mut page_read_tuples(page))
             } else {
-                let buffer: Page = read_data(page_key, page_idx as u64);
-                pager_item.insert(page_idx as usize, buffer);
+                let buffer: Page = page_deserialize(read_data(page_key, page_idx as u64));
                 tuples.append(&mut page_read_tuples(&buffer));
+                pager_item.insert(page_idx as usize, buffer);
             }
         }
     }
@@ -170,7 +174,7 @@ pub fn pager_flush_page(pager: &mut Pager, page_key: &String) {
     }
     if let Some(pager_item) = &pager.pages.get(page_key) {
         for (idx, page) in *pager_item {
-            write_data(page_key, *idx as u64, &page);
+            write_data(page_key, *idx as u64, &page_serialize(page));
         }
     }
 }

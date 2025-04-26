@@ -12,7 +12,7 @@ use rusticodb::storage::Data;
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
-pub fn test_write_data_metadata_file() {
+pub fn test_write_data_100_tuples() {
     let database1 = String::from("database1");
     let table1 = String::from("table1");
     let page_key = format_table_name(&database1, &table1);

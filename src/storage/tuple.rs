@@ -4,15 +4,17 @@ use std::ops;
 //use std::cmp::Ordering;
 use std::string::ToString;
 
-//use ordered_float::OrderedFloat;
-use bincode::serialize;
-use serde::Serialize;
-use serde::Deserialize;
-
-use crate::storage::BLOCK_SIZE;
+use crate::utils::vec_u8_to_u16;
+use crate::utils::vec_u8_to_u32;
+use crate::utils::vec_u8_to_u64;
+use crate::utils::vec_u8_to_i16;
+use crate::utils::vec_u8_to_i32;
+use crate::utils::vec_u8_to_i64;
+use crate::utils::vec_u8_to_string;
+use crate::utils::vec_u8_to_text;
 
 // Should be save in one byte
-#[derive(Debug,Eq,Clone, Ord, PartialOrd, Serialize, Deserialize)]
+#[derive(Debug,Eq,Clone, Ord, PartialOrd)]
 pub enum Data {
     Undefined,
     Null,
@@ -34,14 +36,16 @@ impl Data {
     pub fn and(&self, other: &Data) -> bool {
         return match (self, other) {
             (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => *a > 0 && *b > 0,
-            _ => panic!("Not implemented")
+            (Data::Boolean(a), Data::Boolean(b)) => *a && *b,
+            other => panic!("Not implemented {:?}", other)
         }
     }
 
     pub fn or(&self, other: &Data) -> bool {
         return match (self, other) {
             (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => *a > 0 || *b > 0,
-            _ => panic!("Not implemented")
+            (Data::Boolean(a), Data::Boolean(b)) => *a || *b,
+            other => panic!("Not implemented {:?}", other)
         }
     }
 
@@ -49,19 +53,37 @@ impl Data {
         return Data::Boolean(true) == *self;
     }
 
+    pub fn type_of_children(&self) -> u8 {
+        match *self {
+            Data::Null => 1,
+            Data::Undefined => 2,
+            Data::Boolean(_) => 3,
+            Data::UnsignedTinyint(_) => 4,
+            Data::UnsignedSmallint(_) => 5,
+            Data::UnsignedInt(_) => 6,
+            Data::UnsignedBigint(_) => 7,
+            Data::SignedTinyint(_) => 8,
+            Data::SignedSmallint(_) => 9,
+            Data::SignedInt(_) => 10,
+            Data::SignedBigint(_) => 11,
+            Data::Varchar(_) => 12,
+            Data::Text(_) => 13
+        }
+    }
+
     pub fn heap_size_of_children(&self) -> usize {
         match *self {
-            Data::Boolean(_) => 0,
-            Data::UnsignedTinyint(_) => 0,
-            Data::UnsignedSmallint(_) => 0,
-            Data::UnsignedInt(_) => 0,
-            Data::UnsignedBigint(_) => 0,
-            Data::SignedTinyint(_) => 0,
-            Data::SignedSmallint(_) => 0,
-            Data::SignedInt(_) => 0,
-            Data::SignedBigint(_) => 0,
-            Data::Varchar(ref s) => s.capacity() * mem::size_of::<u8>(),
-            Data::Text(ref s) => s.capacity() * mem::size_of::<u8>(),
+            Data::Boolean(_) => 1,
+            Data::UnsignedTinyint(_) => 1,
+            Data::UnsignedSmallint(_) => 2,
+            Data::UnsignedInt(_) => 4,
+            Data::UnsignedBigint(_) => 8,
+            Data::SignedTinyint(_) => 1,
+            Data::SignedSmallint(_) => 2,
+            Data::SignedInt(_) => 4,
+            Data::SignedBigint(_) => 8,
+            Data::Varchar(ref s) => s.len() * mem::size_of::<u8>(),
+            Data::Text(ref s) => s.len() * mem::size_of::<u8>(),
             Data::Null => 0,
             Data::Undefined => 0
         }
@@ -80,8 +102,18 @@ impl Data {
             Data::SignedSmallint(i) => i.to_be_bytes().to_vec(),
             Data::SignedInt(i) => i.to_be_bytes().to_vec(),
             Data::SignedBigint(i) => i.to_be_bytes().to_vec(),
-            Data::Varchar(ref s) => s.as_bytes().to_vec(),
-            Data::Text(ref s) => s.as_bytes().to_vec()
+            Data::Varchar(ref s) => {
+                let mut vecs = Vec::new();
+                vecs.append(&mut (s.len() as u16).to_be_bytes().to_vec());
+                vecs.append(&mut s.as_bytes().to_vec());
+                vecs
+            },
+            Data::Text(ref s) => {
+                let mut vecs = Vec::new();
+                vecs.append(&mut (s.len() as u32).to_be_bytes().to_vec());
+                vecs.append(&mut s.as_bytes().to_vec());
+                vecs
+            },
         }
     }
 
@@ -114,7 +146,31 @@ impl PartialEq for Data {
     fn eq(&self, other: &Self) -> bool {
         return match (self, other) {
             (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) =>  a == b,
-            _ => panic!("Not implemented") 
+            (Data::UnsignedSmallint(a), Data::UnsignedSmallint(b)) =>  a == b,
+            (Data::UnsignedInt(a), Data::UnsignedInt(b)) =>  a == b,
+            (Data::UnsignedTinyint(a), Data::UnsignedTinyint(b)) =>  a == b,
+            (Data::SignedBigint(a), Data::SignedBigint(b)) =>  a == b,
+            (Data::SignedSmallint(a), Data::SignedSmallint(b)) =>  a == b,
+            (Data::SignedInt(a), Data::SignedInt(b)) =>  a == b,
+            (Data::SignedTinyint(a), Data::SignedTinyint(b)) =>  a == b,
+            (Data::Boolean(a), Data::Boolean(b)) =>  a == b,
+            (Data::Varchar(a), Data::Varchar(b)) =>  a == b,
+            (Data::Text(a), Data::Text(b)) =>  *a == *b,
+            (Data::Text(a), Data::Varchar(b)) =>  *a == *b,
+            (Data::Varchar(a), Data::Text(b)) =>  *a == *b,
+            (Data::Null, Data::Varchar(_)) => false,
+            (Data::Null, Data::Boolean(_)) => false,
+            (Data::Null, Data::UnsignedBigint(_)) => false,
+            (Data::Null, Data::UnsignedTinyint(_)) => false,
+            (Data::Null, Data::UnsignedSmallint(_)) => false,
+            (Data::Null, Data::UnsignedInt(_)) => false,
+            (Data::Null, Data::SignedBigint(_)) => false,
+            (Data::Null, Data::SignedTinyint(_)) => false,
+            (Data::Null, Data::SignedSmallint(_)) => false,
+            (Data::Null, Data::SignedInt(_)) => false,
+            (Data::Null, Data::Text(_)) => false,
+            (Data::Null, Data::Null) => true,
+            other => panic!("Not implemented {:?}", other) 
         }
     }
 }
@@ -185,116 +241,110 @@ impl ops::Neg for Data {
     }
 }
 
-/*
-impl From<f64> for Data {
-    fn from(val: f64) -> Self {
-        Data::Float(OrderedFloat(val))
-    }
-}
-
-impl From<String> for Data {
-    fn from(val: String) -> Self {
-        Data::Str(val)
-    }
-}
-
-impl From<()> for Data {
-    fn from(_: ()) -> Self {
-        Data::Null
-    }
-}
-
-impl<T: Into<Data>> From<Option<T>> for Data {
-    fn from(val: Option<T>) -> Self {
-        match val {
-            Some(val) => val.into(),
-            None => Data::Null,
-        }
-    }
-}
-
-impl<'a> From<&'a str> for Data {
-    fn from(val: &str) -> Data {
-        Data::Str(val.to_string())
-    }
-}
-
-impl From<u64> for Data {
-    fn from(val: u64) -> Data {
-        Data::Int(val)
-    }
-}
-*/
-
 pub type Tuple = Vec<Data>;
 
 pub fn tuple_new() -> Tuple {
     Vec::new()
 }
 
-/*
-pub fn tuple_get_cell(tuple: &Tuple, position: u16) -> Vec<u8> {
-    let cell_count = tuple_cell_count(tuple);
+pub fn tuple_size(tuple: &Tuple) -> usize {
+    let mut tuple_size = 0;
 
-    if position >= cell_count {
-        return Vec::new();
+    for (_, cell) in tuple.iter().enumerate() {
+        tuple_size += cell.heap_size_of_children();
     }
 
-    let mut cell_index = 0;
-    let mut position_index: usize = 4;
-    let mut cell_size: u32;
-
-    loop {
-        if position_index >= tuple.len() {
-            return Vec::new();
-        }
-
-        if tuple[position_index as usize] == (CellType::Varchar as u8) {
-            let byte_array: [u8; 2] = [tuple[position_index + 1], tuple[position_index + 2]];
-            cell_size = (u16::from_be_bytes(byte_array) as u32) + 3u32; // or use `from_be_bytes` for big-endian
-        } else if tuple[position_index as usize] == (CellType::Text as u8) {
-            let byte_array: [u8; 4] = [
-                tuple[position_index + 1],
-                tuple[position_index + 2],
-                tuple[position_index + 3],
-                tuple[position_index + 4]
-            ];
-            cell_size = (u32::from_be_bytes(byte_array) as u32) + 5u32; // or use `from_be_bytes` for big-endian
-        } else if tuple[position_index as usize] == (CellType::Text as u8) {
-            let byte_array: [u8; 4] = [
-                tuple[position_index + 1], tuple[position_index + 2],
-                tuple[position_index + 3], tuple[position_index + 4]
-            ];
-            cell_size = u32::from_be_bytes(byte_array) + 6u32; // or use `from_be_bytes` for big-endian
-        } else {
-            cell_size = Cell::count_data_size(tuple[position_index as usize]);
-        }
-
-        if cell_index >= cell_count || cell_index == position {
-            break;
-        }
-
-        cell_index += 1;
-        position_index += cell_size as usize;
-    }
-    let mut buffer_array: Vec<u8> = Vec::new();
-    for n in position_index..(position_index + (cell_size as usize)) {
-        buffer_array.push(tuple[n as usize]);
-    }
-    return buffer_array;
+    tuple_size
 }
-*/
 
-pub fn tuple_to_raw_data(tuple: &Tuple) -> [u8; BLOCK_SIZE] {
-    let mut buffer: [u8; BLOCK_SIZE] = [0u8; BLOCK_SIZE];
+pub fn tuple_serialize(tuple: &Tuple) -> Vec<u8> {
+    let mut header: Vec<u8> = Vec::new();
+    let mut body: Vec<u8> = Vec::new();
+    let mut buffer: Vec<u8> = Vec::new();
 
-    for (idx, cell) in serialize(tuple).iter().enumerate() {
-        for (idx2, elem) in cell.iter().enumerate() {
-            buffer[idx + idx2 + 2] = *elem;
+    for (_, cell) in tuple.iter().enumerate() {
+        header.push(cell.type_of_children());
+        match cell {
+            Data::Null | Data::Undefined => {},
+            _ => {
+                body.append(&mut cell.to_vec_u8());
+            }
         }
     }
+
+    buffer.push(header.len() as u8);
+    buffer.append(&mut header);
+    buffer.append(&mut body);
     buffer
 }
+
+pub fn tuple_deserialize(buffer: &Vec<u8> ) -> Tuple {
+    let mut tuple = Tuple::new();
+
+    if buffer.len() > 0 {
+        let cell_count: usize = buffer[0] as usize;
+        let mut value_position: usize = cell_count+1;
+       
+        for idx in 0..cell_count {
+            match buffer[idx + 1] {
+                1 => tuple.push(Data::Null),
+                2 => tuple.push(Data::Undefined),
+                3 => { 
+                    tuple.push(Data::Boolean(buffer[value_position] == 1));
+                    value_position += 1;
+                },
+                4 => {
+                    tuple.push(Data::UnsignedTinyint(buffer[value_position]));
+                    value_position += 1;
+                },
+                5 => {
+                    tuple.push(Data::UnsignedSmallint(vec_u8_to_u16(buffer, value_position)));
+                    value_position += 2;
+                },
+                6 => {
+                    tuple.push(Data::UnsignedInt(vec_u8_to_u32(buffer, value_position)));
+                    value_position += 4;
+                },
+                7 => {
+                    tuple.push(Data::UnsignedBigint(vec_u8_to_u64(buffer, value_position)));
+                    value_position += 8;
+                },
+                8 => {
+                    tuple.push(Data::SignedTinyint(buffer[value_position] as i8));
+                    value_position += 1;
+                },
+                9 => {
+                    tuple.push(Data::SignedSmallint(vec_u8_to_i16(buffer, value_position)));
+                    value_position += 2;
+                },
+                10 => { 
+                    tuple.push(Data::SignedInt(vec_u8_to_i32(buffer, value_position)));
+                    value_position += 4;
+                },
+                11 => { 
+                    tuple.push(Data::SignedBigint(vec_u8_to_i64(buffer, value_position)));
+                    value_position += 8;
+                },
+                12 => { 
+                    let string = vec_u8_to_string(buffer, value_position);
+                    let string_size = string.len() + 2;
+                    tuple.push(Data::Varchar(string));
+                    value_position += string_size;
+                },
+                13 => { 
+                    let string = vec_u8_to_text(buffer, value_position);
+                    let string_size = string.len() + 4;
+                    tuple.push(Data::Text(string));
+                    value_position += string_size;
+                },
+                _ => {}
+            }
+        }
+    }
+
+    return tuple;
+}
+
 
 pub fn tuple_display(tuple: &Tuple) {
     print!("Tuple [(");
