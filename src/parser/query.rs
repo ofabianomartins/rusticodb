@@ -11,7 +11,7 @@ use crate::machine::get_columns as machine_get_columns;
 use crate::machine::check_table_exists;
 use crate::machine::product_cartesian;
 
-use crate::storage::RawVal;
+use crate::storage::Data;
 use crate::storage::Expression;
 use crate::storage::Expression1Type;
 use crate::storage::Expression2Type;
@@ -118,7 +118,7 @@ pub fn get_columns(
                     Column::new(
                         0u64,
                         tables[0].database_name.clone(),
-                        String::from(""),
+                        tables[0].name.clone(),
                         e.to_string(),
                         ColumnType::Undefined,
                         false,
@@ -136,7 +136,11 @@ pub fn get_columns(
                         tables[0].database_alias.clone(),
                         tables[0].name.clone(),
                         tables[0].alias.clone(),
-                        expr.to_string(),
+                        match expr {
+                            ASTNode::CompoundIdentifier(quotes) => quotes[1].to_string(),
+                            ASTNode::Identifier(Ident { value, .. }) => value.clone(),
+                            other => other.to_string()
+                        }, 
                         alias.to_string(),
                         ColumnType::Undefined,
                         false,
@@ -207,10 +211,10 @@ fn map_binary_operator(o: &BinaryOperator) -> Result<Expression2Type, QueryError
 //        BinaryOperator::GtEq => Func2Type::GTE,
 //        BinaryOperator::Lt => Func2Type::LT,
 //        BinaryOperator::LtEq => Func2Type::LTE,
-        _ => {
+        other => {
             return Err(QueryError::NotImplemented(format!(
                 "Unsupported operator {:?}",
-                o
+                other
             )))
         }
     })
@@ -220,10 +224,10 @@ fn map_unary_operator(op: &UnaryOperator) -> Result<Expression1Type, QueryError>
     Ok(match op {
         UnaryOperator::Not => Expression1Type::Not,
         UnaryOperator::Minus => Expression1Type::Negate,
-        _ => {
+        other => {
             return Err(QueryError::NotImplemented(format!(
                 "Unsupported operator {:?}",
-                op
+                other
             )))
         }
     })
@@ -231,17 +235,18 @@ fn map_unary_operator(op: &UnaryOperator) -> Result<Expression1Type, QueryError>
 
 
 // Fn to map sqlparser-rs `Value` to LocustDB's `RawVal`.
-fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
+fn get_raw_val(constant: &Value) -> Result<Data, QueryError> {
     match constant {
         Value::Number(num, _) => {
             if num.parse::<u64>().is_ok() {
-                Ok(RawVal::Int(num.parse::<u64>().unwrap()))
+                Ok(Data::UnsignedBigint(num.parse::<u64>().unwrap()))
             } else {
-                Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
+                // Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
+                Ok(Data::Null)
             }
         },
-        Value::SingleQuotedString(string) => Ok(RawVal::Str(string.to_string())),
-        Value::Null => Ok(RawVal::Null),
+        Value::SingleQuotedString(string) => Ok(Data::Varchar(string.to_string())),
+        Value::Null => Ok(Data::Null),
         _ => Err(QueryError::NotImplemented(format!("{:?}", constant))),
     }
 }

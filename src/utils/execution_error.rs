@@ -33,6 +33,7 @@ pub enum ExecutionError {
 
     WrongTupleSize(usize, usize),
     TupleNotExists(usize),
+    PositionNotExists(usize),
     FailedUpdateTuples,
 
     NotImplementedYet

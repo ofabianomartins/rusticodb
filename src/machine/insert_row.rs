@@ -1,61 +1,32 @@
-
 use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::get_sequence_next_id;
-use crate::machine::get_columns;
 
 use crate::storage::Tuple;
-use crate::storage::CellType;
+use crate::storage::Data;
 use crate::storage::format_table_name;
 use crate::storage::pager_insert_tuples;
 use crate::storage::pager_flush_page;
-use crate::storage::tuple_push_unsigned_bigint;
-use crate::storage::tuple_get_cell;
-use crate::storage::tuple_append_cell;
+use crate::storage::pager_get_next_rowid;
 use crate::storage::tuple_new;
 use crate::storage::ResultSet;
 use crate::storage::ResultSetType;
 
 use crate::utils::ExecutionError;
-
-pub fn insert_row(
-    machine: &mut Machine,
-    table: &Table,
-    columns: &Vec<Column>,
-    tuples: &mut Vec<Tuple>
-) -> Result<ResultSet, ExecutionError>{
-    if let Err(error) = validate_tuples(machine, table, columns, tuples) {
-        return Err(error);
-    }
-
-    let adjusted_tuples_result = adjust_tuples(machine, table, columns, tuples);
-    if let Err(error) = adjusted_tuples_result {
-        return Err(error);
-    }
-
-    let mut adjusted_tuples = adjusted_tuples_result.unwrap();
-
-    let page_key = format_table_name(&table.database_name, &table.name);
-    pager_insert_tuples(&mut machine.pager, &page_key, &mut adjusted_tuples);
-    pager_flush_page(&mut machine.pager, &page_key);
-
-    return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
-}
+use crate::utils::Logger;
 
 fn validate_tuples(
-    machine: &mut Machine, 
     table: &Table,
+    table_columns: &Vec<Column>,
     columns: &Vec<Column>, 
     tuples: &mut Vec<Tuple>
 ) -> Result<bool, ExecutionError> {
-    let table_columns = get_columns(machine, table);
-
     for (_idx, tuple) in tuples.iter().enumerate() {
         for (_idx, column) in table_columns.iter().enumerate() {
             let index_result = columns.iter().position(|e| e == column);
             if let Some(index) = index_result {
-                if column.not_null == true && tuple_get_cell(&tuple, index as u16)[0] == (CellType::Null as u8) {
+                if column.not_null == true && Data::Null == tuple.get(index).unwrap().clone() {
                     return Err(ExecutionError::ColumnCantBeNull(
                             table.database_name.clone(),
                             table.name.clone(),
@@ -69,25 +40,70 @@ fn validate_tuples(
     return Ok(true);
 }
 
-fn adjust_tuples(
+pub fn insert_row(
     machine: &mut Machine,
     table: &Table,
+    table_columns: &Vec<Column>,
+    columns: &Vec<Column>,
+    tuples: &mut Vec<Tuple>,
+    avoid_validation: bool
+) -> Result<ResultSet, ExecutionError>{
+    if avoid_validation == false {
+        if let Err(error) = validate_tuples(table, &table_columns, columns, tuples) {
+            return Err(error);
+        }
+    }
+
+    let page_key = format_table_name(&table.database_name, &table.name);
+    let adjusted_tuples_result = adjust_rows(machine, &page_key,  &table_columns, columns, tuples);
+    if let Err(error) = adjusted_tuples_result {
+        return Err(error);
+    }
+
+    let mut adjusted_tuples = adjusted_tuples_result.unwrap();
+
+    pager_insert_tuples(&mut machine.pager, &page_key, &mut adjusted_tuples);
+    pager_flush_page(&mut machine.pager, &page_key);
+
+    return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
+}
+
+pub fn adjust_rows(
+    machine: &mut Machine,
+    page_key: &String,
+    table_columns: &Vec<Column>,
     columns: &Vec<Column>,
     tuples: &mut Vec<Tuple>
 ) -> Result<Vec<Tuple>, ExecutionError> {
-    let table_columns = get_columns(machine, table);
+    let mut has_primary_key: bool = false;
 
-    let new_tuples: Vec<Tuple> = tuples.iter()
+    for item in table_columns.iter() {
+        if item.primary_key {
+            has_primary_key = true;
+        }
+    }
+
+    let new_tuples: Vec<Tuple> = tuples.iter_mut()
         .map(|tuple| { 
             let mut new_tuple = tuple_new();
+
+            if has_primary_key == false {
+                new_tuple.push(
+                    Data::UnsignedBigint(
+                        pager_get_next_rowid(&mut machine.pager, page_key)
+                    )
+                );
+            }
 
             for (_idx, column) in table_columns.iter().enumerate() {
                 let index_result = columns.iter().position(|e| e == column);
                 if let Some(index) = index_result {
-                    tuple_append_cell(&mut new_tuple, tuple_get_cell(&tuple, index as u16));
+                    new_tuple.push(tuple.get(index).unwrap().clone());
                 } else {
+                    Logger::debug(format!("Getting next id for column {}", column).leak());
                     if let Some(next_id) = get_sequence_next_id(machine, column) {
-                        tuple_push_unsigned_bigint(&mut new_tuple, next_id);
+                        Logger::debug(format!("Next id for column {} is {}", column, next_id).leak());
+                        new_tuple.push(Data::UnsignedBigint(next_id));
                     }
                 }
             }

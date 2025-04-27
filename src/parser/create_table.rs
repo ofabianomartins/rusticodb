@@ -71,27 +71,27 @@ pub fn create_table(machine: &mut Machine, create_table: CreateTable) -> Result<
             }
 
             let type_column = match column.data_type {
-                DataType::TinyInt(_) => if primary_key { ColumnType::UnsignedTinyint } else { ColumnType::SignedTinyint },
-                DataType::UnsignedTinyInt(_) => ColumnType::UnsignedTinyint,
+                DataType::TinyInt(_) => if primary_key { ColumnType::UnsignedTinyint(0) } else { ColumnType::SignedTinyint(0) },
+                DataType::UnsignedTinyInt(_) => ColumnType::UnsignedTinyint(0),
                 
-                DataType::SmallInt(_) => if primary_key { ColumnType::UnsignedSmallint } else { ColumnType::SignedSmallint },
-                DataType::UnsignedSmallInt(_) => ColumnType::UnsignedSmallint,
+                DataType::SmallInt(_) => if primary_key { ColumnType::UnsignedSmallint(0) } else { ColumnType::SignedSmallint(0) },
+                DataType::UnsignedSmallInt(_) => ColumnType::UnsignedSmallint(0),
 
-                DataType::MediumInt(_) => if primary_key { ColumnType::UnsignedInt } else { ColumnType::SignedInt },
-                DataType::UnsignedMediumInt(_) => ColumnType::UnsignedInt,
+                DataType::MediumInt(_) => if primary_key { ColumnType::UnsignedInt(0) } else { ColumnType::SignedInt(0) },
+                DataType::UnsignedMediumInt(_) => ColumnType::UnsignedInt(0),
 
-                DataType::Int(_) => if primary_key { ColumnType::UnsignedInt } else { ColumnType::SignedInt },
-                DataType::UnsignedInt(_) => ColumnType::UnsignedInt,
+                DataType::Int(_) => if primary_key { ColumnType::UnsignedInt(0) } else { ColumnType::SignedInt(0) },
+                DataType::UnsignedInt(_) => ColumnType::UnsignedInt(0),
 
-                DataType::Integer(_) => if primary_key { ColumnType::UnsignedInt } else { ColumnType::SignedInt },
-                DataType::UnsignedInteger(_) => ColumnType::UnsignedInt,
+                DataType::Integer(_) => if primary_key { ColumnType::UnsignedInt(0) } else { ColumnType::SignedInt(0) },
+                DataType::UnsignedInteger(_) => ColumnType::UnsignedInt(0),
 
-                DataType::BigInt(_) => if primary_key { ColumnType::UnsignedBigint } else { ColumnType::SignedBigint },
-                DataType::UnsignedBigInt(_) => ColumnType::UnsignedBigint,
+                DataType::BigInt(_) => if primary_key { ColumnType::UnsignedBigint(0) } else { ColumnType::SignedBigint(0) },
+                DataType::UnsignedBigInt(_) => ColumnType::UnsignedBigint(0),
 
-                DataType::Varchar(_) => ColumnType::Varchar,
-                DataType::Text => ColumnType::Text,
-                DataType::Boolean => ColumnType::UnsignedTinyint,
+                DataType::Varchar(_) => ColumnType::Varchar("".to_string()),
+                DataType::Text => ColumnType::Text("".to_string()),
+                DataType::Boolean => ColumnType::UnsignedTinyint(0),
                 _ => ColumnType::Undefined
             };
 

@@ -65,7 +65,7 @@ pub fn process_command(machine: &mut Machine, statement: Statement) -> Result<Re
         Statement::ShowDatabases { .. } => show_databases(machine),
         Statement::ShowTables { .. } => show_tables(machine),
         value => { 
-            println!("{:?}", value);
+            println!("not implemented yet {:?}", value);
             Err(ExecutionError::NotImplementedYet)
         }
     }

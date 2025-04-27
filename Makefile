@@ -3,13 +3,13 @@ build:
 	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo build
 
 run:
-	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo run --bin rusticodbshell
+	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo run --bin shell
 
 server:
-	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo run --bin rusticodbserver
+	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo run --bin server
 
 client:
-	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo run --bin rusticodbclient
+	DATA_FOLDER=./rusticodb_data LOG_MODE=3 cargo run --bin client
 
 test:
 	mkdir -p ./tmp_tests/

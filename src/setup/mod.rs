@@ -17,9 +17,7 @@ use crate::utils::Logger;
 pub fn setup_system(machine: &mut Machine) {
     create_folder_if_not_exists(&Config::data_folder());
 
-    Logger::info("Initializing setup!");
     load_context(machine);
-    Logger::info("Finalizing setup!");
 }
 
 pub fn load_context(machine: &mut Machine) {

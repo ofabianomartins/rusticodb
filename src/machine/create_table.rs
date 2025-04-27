@@ -6,6 +6,7 @@ use crate::machine::insert_row;
 use crate::machine::get_tables_table_definition_without_id;
 use crate::machine::create_sequence;
 use crate::machine::create_columns;
+use crate::machine::get_columns;
 
 use crate::storage::create_file;
 use crate::storage::get_tuple_table;
@@ -29,11 +30,14 @@ pub fn create_table(
 ) -> Result<ResultSet, ExecutionError>{
 
     Logger::info(format!("CREATE TABLE {}", table.name).leak());
+    let table_columns = &get_columns(machine, &SysDb::table_tables());
     let _ = insert_row(
         machine,
         &SysDb::table_tables(),
+        table_columns,
         &get_tables_table_definition_without_id(),
-        &mut vec![get_tuple_table(&table.database_name, &table.name)]
+        &mut vec![get_tuple_table(&table.database_name, &table.name)],
+        false
     );
 
     if let Err(err) = create_columns(machine, table, &columns) {

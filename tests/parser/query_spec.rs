@@ -1,10 +1,10 @@
 use rusticodb::machine::Machine;
 use rusticodb::machine::check_database_exists;
-use rusticodb::utils::execution_error::ExecutionError;
+use rusticodb::utils::ExecutionError;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 use rusticodb::storage::Pager;
-use rusticodb::storage::tuple_cell_count;
+use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -22,9 +22,12 @@ pub fn test_select_database_tables() {
     let result_set = parse_command(&mut machine, "SELECT name FROM databases");
 
     assert!(matches!(use_database, Ok(_result_set)));
-    // assert!(matches!(result_set, Ok(ref result_sets)));
-
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+    assert!(
+        matches!(
+            result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")),
+            Ok(_database_name)
+        )
+    );
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -49,8 +52,8 @@ pub fn test_select_all_database_tables() {
 
     assert_eq!(rs.get(0).unwrap().line_count(), 1);
     assert_eq!(
-        rs.get(0).unwrap().get_string(0, &String::from("name")).unwrap(),
-        String::from("rusticodb")
+        rs.get(0).unwrap().get_value(0, &String::from("name")).unwrap(),
+        Data::Varchar(String::from("rusticodb"))
     );
 }
 
@@ -69,8 +72,13 @@ pub fn test_select_with_alias_database_tables() {
 
     assert!(matches!(use_database, Ok(_result_set)));
     // assert!(matches!(result_set, Ok(ref result_sets)));
-
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+    
+    assert!(
+        matches!(
+            result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")),
+            Ok(_database_name)
+        )
+    );
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -94,7 +102,7 @@ pub fn test_select_with_defined_wizard_database_tables() {
     assert!(matches!(use_database, Ok(_result_set)));
     // assert!(matches!(result_set, Ok(ref result_sets)));
 
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+    assert!(matches!(result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")), Ok(_database_name)));
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -118,7 +126,12 @@ pub fn test_select_with_defined_wizard_and_alias_database_tables() {
     assert!(matches!(use_database, Ok(_result_set)));
     // assert!(matches!(result_set, Ok(ref result_sets)));
 
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+    assert!(
+        matches!(
+            result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")), 
+            Ok(_database_name)
+        )
+    );
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -140,9 +153,12 @@ pub fn test_select_with_defined_attr_and_alias_database_tables() {
     let result_set = parse_command(&mut machine, "SELECT columns.name as atr2, name as atr1 FROM columns");
 
     assert!(matches!(use_database, Ok(_result_set)));
-    // assert!(matches!(result_set, Ok(ref result_sets)));
-
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_string(0, &String::from("name")), Ok(_database_name)));
+    assert!(
+        matches!(
+            result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")),
+            Ok(_database_name)
+        )
+    );
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -167,6 +183,23 @@ pub fn test_select_with_wrong_database_that_not_exists() {
 }
 
 #[test]
+pub fn test_select_with_one_tables() {
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut machine);
+
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "SELECT * FROM columns b");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 28);
+    assert_eq!(result_set.as_ref().unwrap()[0].columns.len(), 9);
+}
+
+#[test]
 pub fn test_select_with_two_tables() {
     let pager = Pager::new();
     let mut machine = Machine::new(pager);
@@ -180,7 +213,7 @@ pub fn test_select_with_two_tables() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 784);
-    assert_eq!(tuple_cell_count(&result_set.unwrap()[0].tuples[0]), 18);
+    assert_eq!(result_set.as_ref().unwrap()[0].columns.len(), 18);
 }
 
 #[test]
@@ -195,9 +228,9 @@ pub fn test_select_with_three_tables() {
     let _ = parse_command(&mut machine, "USE rusticodb;");
     let result_set = parse_command(&mut machine, "SELECT * FROM columns a, columns b, columns c");
 
-    assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 21952);
-    assert_eq!(tuple_cell_count(&result_set.unwrap()[0].tuples[0]), 27);
+    assert_eq!(result_set.as_ref().unwrap()[0].columns.len(), 27);
+    //assert_eq!(result_set.unwrap()[0].tuples[0].len(), 27);
 }
 
 #[test]

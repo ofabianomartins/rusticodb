@@ -48,7 +48,6 @@ pub mod check_view_exists;
 // TUPLE FUNCTIONS
 pub mod read_tuples;
 pub mod insert_row;
-pub mod insert_full_row;
 pub mod insert_tuples;
 pub mod update_tuples;
 pub mod drop_tuples;
@@ -67,6 +66,7 @@ pub use self::column::{
     ColumnType,
     get_columns_table_definition,
     get_columns_table_definition_without_id,
+    get_rowid_column_for_table,
     map_column_type
 };
 pub use self::sequence::{ 
@@ -113,7 +113,7 @@ pub use check_view_exists::check_view_exists;
 pub use product_cartesian::product_cartesian;
 
 pub use insert_row::insert_row;
-pub use insert_full_row::insert_full_row;
+pub use insert_row::adjust_rows;
 pub use insert_tuples::insert_tuples;
 pub use update_tuples::update_tuples;
 pub use read_tuples::read_tuples;

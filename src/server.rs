@@ -35,7 +35,7 @@ async fn handle_client(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
         Ok(v) => v,
         Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
     };
-    print!("Received data: {}", received_data);
+    println!("Received data: {}\n", received_data);
 
     match parse_command(&mut machine, received_data) {
         Ok(result_set) => {

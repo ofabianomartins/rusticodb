@@ -7,11 +7,12 @@ use rusticodb::machine::Table;
 use rusticodb::machine::check_table_exists;
 use rusticodb::machine::check_database_exists;
 
-use rusticodb::utils::execution_error::ExecutionError;
+use rusticodb::utils::ExecutionError;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 
 use rusticodb::storage::Pager;
+use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -181,12 +182,12 @@ pub fn test_with_two_varchar_columns_and_one_is_not_null() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
 }
 
@@ -222,12 +223,12 @@ pub fn test_with_two_columns_one_is_int_and_other_is_varchar() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("SIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED INT"))
     );
     assert_eq!(
-        result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("VARCHAR")
+        result_set.unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("VARCHAR"))
     );
 }
 
@@ -263,12 +264,12 @@ pub fn test_with_two_columns_one_is_int_and_other_is_text() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("SIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED INT"))
     );
     assert_eq!(
-        result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("TEXT")
+        result_set.unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("TEXT"))
     );
 }
 
@@ -304,12 +305,12 @@ pub fn test_with_two_columns_one_is_int_and_other_is_boolean() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("SIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED INT"))
     );
     assert_eq!(
-        result_set.unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED TINYINT")
+        result_set.unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED TINYINT"))
     );
 }
 
@@ -345,20 +346,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_tinyint() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("UNSIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("unique")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("unique")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("primary_key")).unwrap(),
+        Data::Boolean(true)
     );
 }
 
@@ -394,20 +395,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_mediumint() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("UNSIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED INT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("unique")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("unique")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("primary_key")).unwrap(),
+        Data::Boolean(true)
     );
 }
 
@@ -443,20 +444,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_smallint() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("UNSIGNED SMALLINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED SMALLINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("unique")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("unique")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("primary_key")).unwrap(),
+        Data::Boolean(true)
     );
 }
 
@@ -492,20 +493,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_int() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("UNSIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED INT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("unique")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("unique")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("primary_key")).unwrap(),
+        Data::Boolean(true)
     );
 }
 
@@ -535,20 +536,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_unsigned_bigint() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("UNSIGNED BIGINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED BIGINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("unique")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("unique")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(0, &String::from("primary_key")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("primary_key")).unwrap(),
+        Data::Boolean(true)
     );
 }
 
@@ -577,20 +578,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_tinyin
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -619,20 +620,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_tinyint(
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -661,20 +662,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_smalli
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED SMALLINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED SMALLINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -703,20 +704,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_smallint
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED SMALLINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED SMALLINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -745,20 +746,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_int() 
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED INT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -787,20 +788,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_int() {
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED INT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -829,20 +830,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_unsigned_bigint
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED BIGINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED BIGINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -871,20 +872,20 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_signed_bigint()
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED BIGINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED BIGINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
 }
 
@@ -915,24 +916,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED BIGINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED BIGINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("1"))
     );
 }
 
@@ -963,24 +964,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED BIGINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED BIGINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("-1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("-1"))
     );
 }
 
@@ -1011,24 +1012,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED INT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("1"))
     );
 }
 
@@ -1059,24 +1060,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED INT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED INT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("-1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("-1"))
     );
 }
 
@@ -1107,24 +1108,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED SMALLINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED SMALLINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("1"))
     );
 }
 
@@ -1155,24 +1156,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED SMALLINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED SMALLINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("-1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("-1"))
     );
 }
 
@@ -1203,24 +1204,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("1"))
     );
 }
 
@@ -1251,24 +1252,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("SIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("SIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("-1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("-1"))
     );
 }
 
@@ -1299,24 +1300,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("VARCHAR")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("VARCHAR"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("test1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("test1"))
     );
 }
 
@@ -1347,24 +1348,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("TEXT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("TEXT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("test1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("test1"))
     );
 }
 
@@ -1395,24 +1396,24 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("1"))
     );
 }
 
@@ -1443,23 +1444,23 @@ pub fn test_with_two_columns_and_one_is_a_primary_key_and_second_has_default_val
     assert_eq!(result_set.as_ref().unwrap()[0].column_count(), 9);
 
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("type")).unwrap(),
-        String::from("UNSIGNED TINYINT")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("UNSIGNED TINYINT"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("not_null")).unwrap(),
-        true
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("not_null")).unwrap(),
+        Data::Boolean(true)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("unique")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("unique")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_boolean(1, &String::from("primary_key")).unwrap(),
-        false
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("primary_key")).unwrap(),
+        Data::Boolean(false)
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(1, &String::from("default")).unwrap(),
-        String::from("0")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(1, &String::from("default")).unwrap(),
+        Data::Varchar(String::from("0"))
     );
 }

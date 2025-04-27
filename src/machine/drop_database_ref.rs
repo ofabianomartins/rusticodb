@@ -2,7 +2,7 @@ use crate::machine::Machine;
 use crate::machine::get_columns;
 use crate::machine::drop_tuples;
 
-use crate::storage::RawVal;
+use crate::storage::Data;
 use crate::storage::Expression;
 use crate::storage::Expression2Type;
 
@@ -14,7 +14,7 @@ pub fn drop_database_ref(machine: &mut Machine, database_name: &String) {
     let condition = Expression::Func2(
         Expression2Type::Equal,
         Box::new(Expression::ColName(String::from("name"))),
-        Box::new(Expression::Const(RawVal::Str(database_name.clone())))
+        Box::new(Expression::Const(Data::Varchar(database_name.clone())))
     );
 
     drop_tuples(machine, &SysDb::table_databases(), columns, &condition);

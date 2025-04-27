@@ -8,6 +8,7 @@ use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 
 use rusticodb::storage::Pager;
+use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
@@ -38,16 +39,16 @@ pub fn test_view_creation() {
 
     assert_eq!(result_set.as_ref().unwrap().get(0).unwrap().line_count(), 1);
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("database_name")).unwrap(),
-        String::from("rusticodb")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("database_name")).unwrap(),
+        Data::Varchar(String::from("rusticodb"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("name")).unwrap(),
-        String::from("view1")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("name")).unwrap(),
+        Data::Varchar(String::from("view1"))
     );
     assert_eq!(
-        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("type")).unwrap(),
-        String::from("view")
+        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("type")).unwrap(),
+        Data::Varchar(String::from("view"))
     );
 }
 
@@ -108,7 +109,7 @@ pub fn test_view_creation_error_when_exists() {
 //    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 1);
 //
 //    assert_eq!(
-//        result_set.as_ref().unwrap().get(0).unwrap().get_string(0, &String::from("query")).unwrap(),
+//        result_set.as_ref().unwrap().get(0).unwrap().get_value(0, &String::from("query")).unwrap(),
 //        String::from("SELECT * FROM tables")
 //    );
 //}

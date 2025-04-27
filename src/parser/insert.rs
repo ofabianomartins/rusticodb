@@ -17,17 +17,7 @@ use crate::machine::get_columns;
 use crate::machine::get_sequence_next_id;
 
 use crate::storage::Tuple;
-use crate::storage::tuple_push_signed_bigint;
-use crate::storage::tuple_push_signed_smallint;
-use crate::storage::tuple_push_signed_int;
-use crate::storage::tuple_push_signed_tinyint;
-use crate::storage::tuple_push_unsigned_bigint;
-use crate::storage::tuple_push_unsigned_smallint;
-use crate::storage::tuple_push_unsigned_int;
-use crate::storage::tuple_push_unsigned_tinyint;
-use crate::storage::tuple_push_varchar;
-use crate::storage::tuple_push_text;
-use crate::storage::tuple_push_null;
+use crate::storage::Data;
 use crate::storage::tuple_new;
 use crate::storage::ResultSet;
 
@@ -59,14 +49,14 @@ fn get_tuples(
                                 if tcolumn.clone().is_number() {
                                     let my_integer: Result<u64, _> = value.parse();
                                     match my_integer {
-                                        Ok(number) => tuple_push_unsigned_bigint(&mut tuple, number),
+                                        Ok(number) => tuple.push(Data::UnsignedBigint(number)),
                                         Err(_) => println!("Failed to parse string to integer"),
                                     }
                                 }
                             },
                             Some(Expr::Value(Value::Null)) => {
                                 if tcolumn.not_null == false {
-                                    tuple_push_null(&mut tuple);
+                                    tuple.push(Data::Null);
                                 } else {
                                     return Err(ExecutionError::ColumnCantBeNull(
                                         table.database_name.clone(),
@@ -76,8 +66,8 @@ fn get_tuples(
                                 }
                             },
                             Some(Expr::Value(Value::SingleQuotedString(value))) => {
-                                if tcolumn.column_type == ColumnType::Varchar {
-                                    tuple_push_varchar(&mut tuple, &value);
+                                if matches!(tcolumn.column_type,ColumnType::Varchar(_)) {
+                                    tuple.push(Data::Varchar(value.clone()));
                                 }
                             },
                             other => {
@@ -86,7 +76,7 @@ fn get_tuples(
                         }
                     } else if tcolumn.primary_key {
                         if let Some(next_id) = get_sequence_next_id(machine, tcolumn) {
-                            tuple_push_unsigned_bigint(&mut tuple, next_id);
+                            tuple.push(Data::UnsignedBigint(next_id));
                         }
                     } else if tcolumn.not_null && tcolumn.default == String::from("") {
                         return Err(ExecutionError::ColumnCantBeNull(
@@ -96,50 +86,50 @@ fn get_tuples(
                         ))
                     } else if tcolumn.default != String::from("") {
                         match &tcolumn.column_type {
-                            ColumnType::UnsignedBigint => {
+                            ColumnType::UnsignedBigint(_) => {
                                 let num_parse: u64 = tcolumn.default.parse::<u64>().unwrap();
-                                tuple_push_unsigned_bigint(&mut tuple, num_parse)
+                                tuple.push(Data::UnsignedBigint(num_parse));
                             },
-                            ColumnType::UnsignedInt => {
+                            ColumnType::UnsignedInt(_) => {
                                 let num_parse: u32 = tcolumn.default.parse::<u32>().unwrap();
-                                tuple_push_unsigned_int(&mut tuple, num_parse)
+                                tuple.push(Data::UnsignedInt(num_parse));
                             },
-                            ColumnType::UnsignedSmallint => {
+                            ColumnType::UnsignedSmallint(_) => {
                                 let num_parse: u16 = tcolumn.default.parse::<u16>().unwrap();
-                                tuple_push_unsigned_smallint(&mut tuple, num_parse)
+                                tuple.push(Data::UnsignedSmallint(num_parse));
                             },
-                            ColumnType::UnsignedTinyint => {
+                            ColumnType::UnsignedTinyint(_) => {
                                 let num_parse: u8 = tcolumn.default.parse::<u8>().unwrap();
-                                tuple_push_unsigned_tinyint(&mut tuple, num_parse)
+                                tuple.push(Data::UnsignedTinyint(num_parse));
                             },
-                            ColumnType::SignedBigint => {
+                            ColumnType::SignedBigint(_) => {
                                 let num_parse: i64 = tcolumn.default.parse::<i64>().unwrap();
-                                tuple_push_signed_bigint(&mut tuple, num_parse)
+                                tuple.push(Data::SignedBigint(num_parse));
                             },
-                            ColumnType::SignedInt => {
+                            ColumnType::SignedInt(_) => {
                                 let num_parse: i32 = tcolumn.default.parse::<i32>().unwrap();
-                                tuple_push_signed_int(&mut tuple, num_parse)
+                                tuple.push(Data::SignedInt(num_parse));
                             },
-                            ColumnType::SignedSmallint => {
+                            ColumnType::SignedSmallint(_) => {
                                 let num_parse: i16 = tcolumn.default.parse::<i16>().unwrap();
-                                tuple_push_signed_smallint(&mut tuple, num_parse)
+                                tuple.push(Data::SignedSmallint(num_parse));
                             },
-                            ColumnType::SignedTinyint => {
+                            ColumnType::SignedTinyint(_) => {
                                 let num_parse: i8 = tcolumn.default.parse::<i8>().unwrap();
-                                tuple_push_signed_tinyint(&mut tuple, num_parse)
+                                tuple.push(Data::SignedTinyint(num_parse));
                             },
-                            ColumnType::Boolean => {
+                            ColumnType::Boolean(_) => {
                                 let value = tcolumn.default == String::from("1");
-                                tuple_push_unsigned_tinyint(&mut tuple, if value { 1u8 } else { 0u8 })
+                                tuple.push(Data::Boolean(value));
                             },
-                            ColumnType::Varchar => tuple_push_varchar(&mut tuple, &tcolumn.default),
-                            ColumnType::Text => tuple_push_text(&mut tuple, &tcolumn.default),
+                            ColumnType::Varchar(_) => tuple.push(Data::Varchar(tcolumn.default.clone())),
+                            ColumnType::Text(_) => tuple.push(Data::Text(tcolumn.default.clone())),
                             other => {
                                 println!("insert value and column_type not identified {:?}", other);
                             }
                         }
                     } else if tcolumn.not_null == false {
-                        tuple_push_null(&mut tuple);
+                        tuple.push(Data::Null);
                     } 
                 }
 
@@ -167,7 +157,7 @@ pub fn insert(machine: &mut Machine, insert: Insert) -> Result<ResultSet, Execut
         let tuples_result = get_tuples(machine, &table, &columns, insert.columns, insert.source);
 
         match tuples_result {
-           Ok(mut tuples) => insert_row(machine, &table, &columns, &mut tuples),
+           Ok(mut tuples) => insert_row(machine, &table, &columns, &columns, &mut tuples, false),
            Err(err) => Err(err)
         }
     } else {

@@ -9,7 +9,7 @@ use crate::machine::get_columns;
 use crate::machine::check_table_exists;
 use crate::machine::drop_tuples;
 
-use crate::storage::RawVal;
+use crate::storage::Data;
 use crate::storage::Expression;
 use crate::storage::Expression1Type;
 use crate::storage::Expression2Type;
@@ -65,17 +65,18 @@ fn map_unary_operator(op: &UnaryOperator) -> Result<Expression1Type, QueryError>
 }
 
 // Fn to map sqlparser-rs `Value` to LocustDB's `RawVal`.
-fn get_raw_val(constant: &Value) -> Result<RawVal, QueryError> {
+fn get_raw_val(constant: &Value) -> Result<Data, QueryError> {
     match constant {
         Value::Number(num, _) => {
             if num.parse::<u64>().is_ok() {
-                Ok(RawVal::Int(num.parse::<u64>().unwrap()))
+                Ok(Data::UnsignedBigint(num.parse::<u64>().unwrap()))
             } else {
-                Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
+                // Ok(RawVal::Float(ordered_float::OrderedFloat(num.parse::<f64>().unwrap())))
+                Ok(Data::Null) 
             }
         },
-        Value::SingleQuotedString(string) => Ok(RawVal::Str(string.to_string())),
-        Value::Null => Ok(RawVal::Null),
+        Value::SingleQuotedString(string) => Ok(Data::Varchar(string.to_string())),
+        Value::Null => Ok(Data::Null),
         _ => Err(QueryError::NotImplemented(format!("{:?}", constant))),
     }
 }

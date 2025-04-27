@@ -12,7 +12,7 @@ use crate::machine::Table;
 use crate::machine::update_row;
 
 use crate::storage::Expression;
-use crate::storage::RawVal;
+use crate::storage::Data;
 use crate::storage::ResultSet;
 
 use crate::utils::ExecutionError;
@@ -38,7 +38,7 @@ fn get_attributions(
                     false,
                     String::from("")
                 );
-                let expression = Expression::Const(RawVal::Str(assignment.value.to_string()));
+                let expression = Expression::Const(Data::Varchar(assignment.value.to_string()));
                 let attribution = Attribution::new(column, expression);
                 attributions.push(attribution);
             },
@@ -68,7 +68,7 @@ pub fn update(
            machine,
            &table,
            &attributions,
-           Expression::Const(RawVal::Str(String::from("fabiano")))
+           Expression::Const(Data::Varchar(String::from("fabiano")))
         );
     } else {
         return Err(ExecutionError::DatabaseNotSetted);

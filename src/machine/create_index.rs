@@ -1,6 +1,7 @@
 use crate::machine::Machine;
 use crate::machine::insert_row;
 use crate::machine::get_indexes_table_definition_without_id;
+use crate::machine::get_columns;
 
 use crate::storage::Tuple;
 use crate::storage::get_tuple_index;
@@ -23,7 +24,15 @@ pub fn create_index(
     let mut tuples: Vec<Tuple> = Vec::new();
     tuples.push(get_tuple_index(&database_name, &table_name, &column_name, &index_name, &index_type));
 
-    let _ = insert_row(machine, &SysDb::table_indexes(), &get_indexes_table_definition_without_id(), &mut tuples);
+    let table_columns = &get_columns(machine, &SysDb::table_indexes());
+    let _ = insert_row(
+        machine,
+        &SysDb::table_indexes(),
+        table_columns,
+        &get_indexes_table_definition_without_id(),
+        &mut tuples,
+        false
+    );
 
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE INDEX")))
 }
