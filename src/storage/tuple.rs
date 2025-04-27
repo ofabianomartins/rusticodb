@@ -33,18 +33,48 @@ pub enum Data {
 
 impl Data {
 
-    pub fn and(&self, other: &Data) -> bool {
+    pub fn and(&self, other: &Data) -> Data {
         return match (self, other) {
-            (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => *a > 0 && *b > 0,
-            (Data::Boolean(a), Data::Boolean(b)) => *a && *b,
+            (Data::UnsignedTinyint(a), Data::UnsignedTinyint(b)) => Data::Boolean(*a > 0 && *b > 0),
+            (Data::UnsignedSmallint(a), Data::UnsignedSmallint(b)) => Data::Boolean(*a > 0 && *b > 0),
+            (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => Data::Boolean(*a > 0 && *b > 0),
+            (Data::UnsignedInt(a), Data::UnsignedInt(b)) => Data::Boolean(*a > 0 && *b > 0),
+            (Data::SignedTinyint(a), Data::SignedTinyint(b)) => Data::Boolean(*a != 0 && *b != 0),
+            (Data::SignedSmallint(a), Data::SignedSmallint(b)) => Data::Boolean(*a != 0 && *b != 0),
+            (Data::SignedBigint(a), Data::SignedBigint(b)) => Data::Boolean(*a != 0 && *b != 0),
+            (Data::SignedInt(a), Data::SignedInt(b)) => Data::Boolean(*a != 0 && *b != 0),
+            (Data::Boolean(a), Data::Boolean(b)) => Data::Boolean(*a && *b),
+            (Data::Null, Data::Null) => Data::Boolean(true),
+            (_, Data::Null) => Data::Boolean(false),
+            (Data::Null, _) => Data::Boolean(false),
+            (Data::Undefined, Data::Undefined) => Data::Boolean(true),
+            (_, Data::Undefined) => Data::Boolean(false),
+            (Data::Undefined, _) => Data::Boolean(false),
+            (Data::Varchar(a), Data::Varchar(b)) => Data::Boolean(a.len() > 0 && b.len() > 0),
+            (Data::Text(a), Data::Text(b)) => Data::Boolean(a.len() > 0 && b.len() > 0),
             other => panic!("Not implemented {:?}", other)
         }
     }
 
-    pub fn or(&self, other: &Data) -> bool {
+    pub fn or(&self, other: &Data) -> Data {
         return match (self, other) {
-            (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => *a > 0 || *b > 0,
-            (Data::Boolean(a), Data::Boolean(b)) => *a || *b,
+            (Data::UnsignedTinyint(a), Data::UnsignedTinyint(b)) => Data::Boolean(*a > 0 || *b > 0),
+            (Data::UnsignedSmallint(a), Data::UnsignedSmallint(b)) => Data::Boolean(*a > 0 || *b > 0),
+            (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => Data::Boolean(*a > 0 || *b > 0),
+            (Data::UnsignedInt(a), Data::UnsignedInt(b)) => Data::Boolean(*a > 0 || *b > 0),
+            (Data::SignedTinyint(a), Data::SignedTinyint(b)) => Data::Boolean(*a != 0 || *b != 0),
+            (Data::SignedSmallint(a), Data::SignedSmallint(b)) => Data::Boolean(*a != 0 || *b != 0),
+            (Data::SignedBigint(a), Data::SignedBigint(b)) => Data::Boolean(*a != 0 || *b != 0),
+            (Data::SignedInt(a), Data::SignedInt(b)) => Data::Boolean(*a != 0 || *b != 0),
+            (Data::Boolean(a), Data::Boolean(b)) => Data::Boolean(*a || *b),
+            (Data::Null, Data::Null) => Data::Boolean(true),
+            (_, Data::Null) => Data::Boolean(true),
+            (Data::Null, _) => Data::Boolean(true),
+            (Data::Undefined, Data::Undefined) => Data::Boolean(true),
+            (_, Data::Undefined) => Data::Boolean(true),
+            (Data::Undefined, _) => Data::Boolean(true),
+            (Data::Varchar(a), Data::Varchar(b)) => Data::Boolean(a.len() > 0 || b.len() > 0),
+            (Data::Text(a), Data::Text(b)) => Data::Boolean(a.len() > 0 || b.len() > 0),
             other => panic!("Not implemented {:?}", other)
         }
     }
@@ -145,33 +175,30 @@ impl fmt::Display for Data {
 impl PartialEq for Data {
     fn eq(&self, other: &Self) -> bool {
         return match (self, other) {
-            (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) =>  a == b,
-            (Data::UnsignedSmallint(a), Data::UnsignedSmallint(b)) =>  a == b,
-            (Data::UnsignedInt(a), Data::UnsignedInt(b)) =>  a == b,
-            (Data::UnsignedTinyint(a), Data::UnsignedTinyint(b)) =>  a == b,
-            (Data::SignedBigint(a), Data::SignedBigint(b)) =>  a == b,
-            (Data::SignedSmallint(a), Data::SignedSmallint(b)) =>  a == b,
-            (Data::SignedInt(a), Data::SignedInt(b)) =>  a == b,
-            (Data::SignedTinyint(a), Data::SignedTinyint(b)) =>  a == b,
-            (Data::Boolean(a), Data::Boolean(b)) =>  a == b,
-            (Data::Varchar(a), Data::Varchar(b)) =>  a == b,
+            (Data::SignedBigint(a), Data::UnsignedBigint(b)) => *a == (*b as i64),
+            (Data::SignedInt(a), Data::UnsignedInt(b)) => *a == (*b as i32),
+            (Data::SignedSmallint(a), Data::UnsignedSmallint(b)) => *a == (*b as i16),
+            (Data::SignedTinyint(a), Data::UnsignedTinyint(b)) => *a == (*b as i8),
+            (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => *a == *b,
+            (Data::UnsignedSmallint(a), Data::UnsignedSmallint(b)) =>  *a == *b,
+            (Data::UnsignedInt(a), Data::UnsignedInt(b)) =>  *a == *b,
+            (Data::UnsignedTinyint(a), Data::UnsignedTinyint(b)) =>  *a == *b,
+            (Data::SignedBigint(a), Data::SignedBigint(b)) =>  *a == *b,
+            (Data::SignedSmallint(a), Data::SignedSmallint(b)) => *a == *b,
+            (Data::SignedInt(a), Data::SignedInt(b)) => *a == *b,
+            (Data::SignedTinyint(a), Data::SignedTinyint(b)) => *a == *b,
+            (Data::Boolean(a), Data::Boolean(b)) => *a == *b,
+            (Data::Varchar(a), Data::Varchar(b)) => *a == *b,
             (Data::Text(a), Data::Text(b)) =>  *a == *b,
             (Data::Null, Data::Null) => true,
             (Data::Undefined, Data::Undefined) => true,
             (Data::Text(a), Data::Varchar(b)) =>  *a == *b,
             (Data::Varchar(a), Data::Text(b)) =>  *a == *b,
-            (Data::Null, Data::Varchar(_)) => false,
-            (Data::Null, Data::Boolean(_)) => false,
-            (Data::Null, Data::UnsignedBigint(_)) => false,
-            (Data::Null, Data::UnsignedTinyint(_)) => false,
-            (Data::Null, Data::UnsignedSmallint(_)) => false,
-            (Data::Null, Data::UnsignedInt(_)) => false,
-            (Data::Null, Data::SignedBigint(_)) => false,
-            (Data::Null, Data::SignedTinyint(_)) => false,
-            (Data::Null, Data::SignedSmallint(_)) => false,
-            (Data::Null, Data::SignedInt(_)) => false,
-            (Data::Null, Data::Text(_)) => false,
-            other => panic!("Not implemented {:?}", other) 
+            (Data::Null, _) => false,
+            (_, Data::Null) => false,
+            (Data::Undefined, _) => false,
+            (_, Data::Undefined) => false,
+            other => panic!("Not implemented equal {:?}", other) 
         }
     }
 }
@@ -181,8 +208,18 @@ impl ops::Add<Data> for Data {
 
     fn add(self, other: Data) -> Data {
         return match (self, other) {
+            (Data::UnsignedTinyint(a), Data::UnsignedTinyint(b)) => Data::UnsignedTinyint(a + b),
+            (Data::UnsignedSmallint(a), Data::UnsignedSmallint(b)) => Data::UnsignedSmallint(a + b),
+            (Data::UnsignedInt(a), Data::UnsignedInt(b)) => Data::UnsignedInt(a + b),
             (Data::UnsignedBigint(a), Data::UnsignedBigint(b)) => Data::UnsignedBigint(a + b),
-            _ => panic!("Not implemented") 
+            (Data::SignedTinyint(a), Data::SignedTinyint(b)) => Data::SignedTinyint(a + b),
+            (Data::SignedSmallint(a), Data::SignedSmallint(b)) => Data::SignedSmallint(a + b),
+            (Data::SignedInt(a), Data::SignedInt(b)) => Data::SignedInt(a + b),
+            (Data::SignedBigint(a), Data::SignedBigint(b)) => Data::SignedBigint(a + b),
+            (Data::Boolean(a), Data::Boolean(b)) => Data::Boolean(a && b),
+            (Data::Varchar(a), Data::Varchar(b)) => Data::Varchar(format!("{}{}", a, b)),
+            (Data::Text(a), Data::Text(b)) => Data::Text(format!("{}{}", a, b)),
+            other => panic!("Not implemented plus {:?}", other) 
         }
     }
 }
@@ -225,8 +262,19 @@ impl ops::Not for Data {
 
     fn not(self) -> Data {
         return match self {
+            Data::UnsignedTinyint(a) => Data::Boolean(a == 0),
+            Data::UnsignedSmallint(a) => Data::Boolean(a == 0),
+            Data::UnsignedInt(a) => Data::Boolean(a == 0),
             Data::UnsignedBigint(a) => Data::Boolean(a == 0),
-            _ => panic!("Not implemented") 
+            Data::SignedTinyint(a) => Data::Boolean(a == 0),
+            Data::SignedSmallint(a) => Data::Boolean(a == 0),
+            Data::SignedInt(a) => Data::Boolean(a == 0),
+            Data::SignedBigint(a) => Data::Boolean(a == 0),
+            Data::Boolean(a) => Data::Boolean(!a),
+            Data::Varchar(a) => Data::Boolean(a == ""),
+            Data::Text(a) => Data::Boolean(a == ""),
+            Data::Null => Data::Boolean(true),
+            Data::Undefined => Data::Boolean(true)
         }
     }
 }
@@ -237,7 +285,18 @@ impl ops::Neg for Data {
     fn neg(self) -> Data {
         return match self {
             Data::UnsignedBigint(a) => Data::SignedBigint(-1 * (a as i64)),
-            _ => panic!("Not implemented") 
+            Data::UnsignedSmallint(a) => Data::SignedSmallint(-1 * (a as i16)),
+            Data::UnsignedTinyint(a) => Data::SignedTinyint(-1 * (a as i8)),
+            Data::UnsignedInt(a) => Data::SignedInt(-1 * (a as i32)),
+            Data::SignedBigint(a) => Data::SignedBigint(-1 * (a as i64)),
+            Data::SignedSmallint(a) => Data::SignedSmallint(-1 * (a as i16)),
+            Data::SignedTinyint(a) => Data::SignedTinyint(-1 * (a as i8)),
+            Data::SignedInt(a) => Data::SignedInt(-1 * (a as i32)),
+            Data::Boolean(a) => Data::Boolean(!a),
+            Data::Varchar(a) => Data::Varchar(a),
+            Data::Text(a) => Data::Text(a),
+            Data::Null => Data::Boolean(true),
+            Data::Undefined => Data::Boolean(true)
         }
     }
 }

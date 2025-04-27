@@ -67,8 +67,8 @@ impl Expression {
                 let value_opr2 = opr2.result(tuple, columns);
                 return match operator {
                     // Logic implementation
-                    Expression2Type::And => Data::Boolean(value_opr1.and(&value_opr2)),
-                    Expression2Type::Or => Data::Boolean(value_opr1.or(&value_opr2)),
+                    Expression2Type::And => value_opr1.and(&value_opr2),
+                    Expression2Type::Or => value_opr1.or(&value_opr2),
 
                     // Comparison implementation
                     Expression2Type::GreatherOrEqual => Data::Boolean(value_opr1 >= value_opr2),

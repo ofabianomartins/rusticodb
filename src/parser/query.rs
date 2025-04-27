@@ -118,7 +118,7 @@ pub fn get_columns(
                     Column::new(
                         0u64,
                         tables[0].database_name.clone(),
-                        String::from(""),
+                        tables[0].name.clone(),
                         e.to_string(),
                         ColumnType::Undefined,
                         false,

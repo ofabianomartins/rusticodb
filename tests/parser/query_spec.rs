@@ -22,9 +22,12 @@ pub fn test_select_database_tables() {
     let result_set = parse_command(&mut machine, "SELECT name FROM databases");
 
     assert!(matches!(use_database, Ok(_result_set)));
-    // assert!(matches!(result_set, Ok(ref result_sets)));
-
-    assert!(matches!(result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")), Ok(_database_name)));
+    assert!(
+        matches!(
+            result_set.unwrap().get(0).unwrap().get_value(0, &String::from("name")),
+            Ok(_database_name)
+        )
+    );
 
     let database_name = String::from("database1");
     assert!(check_database_exists(&mut machine, &database_name));
@@ -180,6 +183,23 @@ pub fn test_select_with_wrong_database_that_not_exists() {
 }
 
 #[test]
+pub fn test_select_with_one_tables() {
+    let pager = Pager::new();
+    let mut machine = Machine::new(pager);
+
+    create_tmp_test_folder();
+
+    setup_system(&mut machine);
+
+    let _ = parse_command(&mut machine, "USE rusticodb;");
+    let result_set = parse_command(&mut machine, "SELECT * FROM columns b");
+
+    assert!(matches!(result_set, Ok(ref _result_set)));
+    assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 28);
+    assert_eq!(result_set.as_ref().unwrap()[0].columns.len(), 9);
+}
+
+#[test]
 pub fn test_select_with_two_tables() {
     let pager = Pager::new();
     let mut machine = Machine::new(pager);
@@ -193,7 +213,7 @@ pub fn test_select_with_two_tables() {
 
     assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 784);
-    assert_eq!(result_set.unwrap()[0].tuples[0].len(), 18);
+    assert_eq!(result_set.as_ref().unwrap()[0].columns.len(), 18);
 }
 
 #[test]
@@ -208,9 +228,9 @@ pub fn test_select_with_three_tables() {
     let _ = parse_command(&mut machine, "USE rusticodb;");
     let result_set = parse_command(&mut machine, "SELECT * FROM columns a, columns b, columns c");
 
-    assert!(matches!(result_set, Ok(ref _result_set)));
     assert_eq!(result_set.as_ref().unwrap()[0].tuples.len(), 21952);
-    assert_eq!(result_set.unwrap()[0].tuples[0].len(), 27);
+    assert_eq!(result_set.as_ref().unwrap()[0].columns.len(), 27);
+    //assert_eq!(result_set.unwrap()[0].tuples[0].len(), 27);
 }
 
 #[test]

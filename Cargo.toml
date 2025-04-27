@@ -11,6 +11,9 @@ path = "src/main.rs"
 name = "rusticodb"
 path = "src/lib.rs"
 
+[dev-dependencies]
+rstest = "0.18"
+
 [dependencies]
 sqlparser = { git = "https://github.com/apache/datafusion-sqlparser-rs.git", branch="main" }
 failure = "0.1"
