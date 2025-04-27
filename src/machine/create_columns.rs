@@ -3,6 +3,7 @@ use crate::machine::Column;
 use crate::machine::Machine;
 use crate::machine::insert_row;
 use crate::machine::get_columns_table_definition_without_id;
+use crate::machine::get_columns;
 
 use crate::storage::Tuple;
 use crate::storage::get_tuple_column_without_id;
@@ -36,11 +37,14 @@ pub fn create_columns(
         );
     }
 
+    let table_columns = &get_columns(machine, &SysDb::table_columns());
     if let Err(err) = insert_row(
         machine,
         &SysDb::table_columns(),
+        table_columns,
         &get_columns_table_definition_without_id(),
-        &mut column_tuples
+        &mut column_tuples,
+        false
     ) {
         return Err(err);
     }

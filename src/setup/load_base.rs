@@ -2,7 +2,7 @@ use crate::machine::Machine;
 use crate::machine::Column;
 use crate::machine::insert_tuples;
 use crate::machine::insert_row;
-use crate::machine::insert_full_row;
+use crate::machine::get_columns;
 use crate::machine::create_file;
 use crate::machine::get_databases_table_definition;
 use crate::machine::get_databases_table_definition_without_id;
@@ -25,8 +25,10 @@ use crate::config::SysDb;
 use crate::utils::Logger;
 
 pub fn setup_base(machine: &mut Machine) {
-    Logger::info("setup sequences table");
-
+    println!("\n\n");
+    Logger::info("############################################################");
+    Logger::info("#######################START LOAD BASE######################");
+    Logger::info("############################################################");
     let mut tuples: Vec<Tuple> = Vec::new();
     tuples.push(get_tuple_sequence(1u64, &SysDb::dbname(), &SysDb::tblname_databases(), &String::from("id"), &String::from("rusticodb_databases_id"), 1u64));
     tuples.push(get_tuple_sequence(2u64, &SysDb::dbname(), &SysDb::tblname_tables()   , &String::from("id"), &String::from("rusticodb_tables_id"), 1u64));
@@ -73,12 +75,13 @@ pub fn setup_base(machine: &mut Machine) {
     tuples.push(get_tuple_database(&SysDb::dbname()));
 
     create_file(machine, &SysDb::table_databases());
-    let _ = insert_full_row(
+    let _ = insert_row(
         machine,
         &SysDb::table_databases(),
         &get_databases_table_definition(),
         &get_databases_table_definition_without_id(),
-        &mut tuples
+        &mut tuples,
+        true
     );
 
     Logger::info("setup tables table");
@@ -91,12 +94,13 @@ pub fn setup_base(machine: &mut Machine) {
     tuples.push(get_tuple_table(&SysDb::dbname(), &SysDb::tblname_indexes()));
 
     create_file(machine, &SysDb::table_tables());
-    let _ = insert_full_row(
+    let _ = insert_row(
         machine, 
         &SysDb::table_tables(),
         &get_tables_table_definition(),
         &get_tables_table_definition_without_id(),
-        &mut tuples
+        &mut tuples,
+        true
     );
 
     Logger::info("setup indexes table");
@@ -109,10 +113,17 @@ pub fn setup_base(machine: &mut Machine) {
     tuples.push(get_tuple_index(&SysDb::dbname(), &SysDb::tblname_indexes()  , &String::from("id"), &String::from("rusticodb_indexes_id"), &String::from("btree")));
 
     create_file(machine, &SysDb::table_indexes());
+    let table_columns = &get_columns(machine, &SysDb::table_indexes());
     let _ = insert_row(
         machine,
         &SysDb::table_indexes(), 
+        table_columns,
         &get_indexes_table_definition_without_id(),
-        &mut tuples
+        &mut tuples,
+        false
     );
+
+    Logger::info("############################################################");
+    Logger::info("#######################END LOAD BASE########################");
+    Logger::info("############################################################\n\n\n");
 }

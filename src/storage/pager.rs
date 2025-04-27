@@ -110,6 +110,28 @@ pub fn pager_new() -> Pager {
     return Pager::new()
 }
 
+pub fn pager_get_next_rowid(pager: &mut Pager, page_key: &String) -> u64 {
+    Logger::debug(format!("search page {} on pager", page_key).leak());
+    let mut next_rowid = 0;
+
+    if path_exists(page_key) {
+        if let None = pager.headers.get(page_key) {
+            pager.headers.insert(page_key.clone(), header_deserialize(&read_data(page_key, 0)));
+        }
+    }
+
+    pager.headers.entry(page_key.clone()).and_modify(|_| {}).or_insert(header_new());
+
+    pager.headers.entry(page_key.clone())
+        .and_modify(|header| {
+            next_rowid = header.next_rowid;
+            header.next_rowid += 1;
+        })
+        .or_insert(header_new());
+
+    return next_rowid;
+}
+
 pub fn pager_read_tuples(pager: &mut Pager, page_key: &String) -> Vec<Tuple> {
     Logger::debug(format!("search page {} on pager", page_key).leak());
     let mut tuples = Vec::new();

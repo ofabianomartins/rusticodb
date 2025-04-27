@@ -4,6 +4,7 @@ use sqlparser::ast::SequenceOptions;
 use crate::machine::Machine;
 use crate::machine::insert_row;
 use crate::machine::get_sequences_table_definition_without_id;
+use crate::machine::get_columns;
 
 use crate::storage::Tuple;
 use crate::storage::get_tuple_sequence_without_id;
@@ -37,11 +38,15 @@ pub fn create_sequence(
     );
 
     Logger::info(format!("CREATE SEQUENCE {}", sequence_name).leak());
+
+    let table_columns = &get_columns(machine, &SysDb::table_sequences());
     let _ = insert_row(
         machine, 
         &SysDb::table_sequences(),
+        table_columns,
         &get_sequences_table_definition_without_id(),
-        &mut tuples
+        &mut tuples,
+        false
     );
 
     Ok(ResultSet::new_command(ResultSetType::Change, String::from("CREATE SEQUENCE")))

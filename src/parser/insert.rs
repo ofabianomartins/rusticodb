@@ -157,7 +157,7 @@ pub fn insert(machine: &mut Machine, insert: Insert) -> Result<ResultSet, Execut
         let tuples_result = get_tuples(machine, &table, &columns, insert.columns, insert.source);
 
         match tuples_result {
-           Ok(mut tuples) => insert_row(machine, &table, &columns, &mut tuples),
+           Ok(mut tuples) => insert_row(machine, &table, &columns, &columns, &mut tuples, false),
            Err(err) => Err(err)
         }
     } else {

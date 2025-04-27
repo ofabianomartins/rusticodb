@@ -1,5 +1,7 @@
 use std::fmt;
 
+use crate::machine::Table;
+
 use crate::storage::Data;
 
 use crate::config::SysDb;
@@ -156,6 +158,20 @@ pub fn map_column_type(value: String) -> ColumnType {
         "TEXT" => ColumnType::Text("".to_string()),
         _ => ColumnType::Varchar("".to_string())
     }
+}
+
+pub fn get_rowid_column_for_table(table: &Table) -> Column {
+    Column::new(
+        08u64,
+        table.database_name.clone(),
+        table.name.clone(),
+        String::from("rowid"),
+        ColumnType::UnsignedBigint(0),
+        true,
+        true,
+        true,
+        String::from("")
+    )
 }
 
 pub fn get_columns_table_definition() -> Vec<Column> {
