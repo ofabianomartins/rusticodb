@@ -5,17 +5,17 @@ use rusticodb::config::Config;
 use rusticodb::machine::Machine;
 use rusticodb::machine::Table;
 use rusticodb::machine::check_table_exists;
+use rusticodb::machine::PagerManager;
 
 use rusticodb::utils::ExecutionError;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
-use rusticodb::storage::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_drop_table_metadata_file_table1() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -44,7 +44,7 @@ pub fn test_drop_table_metadata_file_table1() {
 
 #[test]
 pub fn test_drop_table_metadata_that_not_exists() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -72,7 +72,7 @@ pub fn test_drop_table_metadata_that_not_exists() {
 
 #[test]
 pub fn test_drop_table_if_exists() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

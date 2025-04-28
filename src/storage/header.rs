@@ -9,11 +9,10 @@ use crate::storage::BLOCK_SIZE;
 pub struct Header {
     pub page_count: u64,
     pub next_rowid: u64,
-    pub tuple_order: Vec<u8>
 }
 
 pub fn header_new() -> Header {
-    Header { page_count: 0, next_rowid: 1, tuple_order: Vec::new() }
+    Header { page_count: 0, next_rowid: 1 }
 }
 
 pub fn header_serialize(header: &Header) -> [u8; BLOCK_SIZE] {
@@ -26,4 +25,11 @@ pub fn header_serialize(header: &Header) -> [u8; BLOCK_SIZE] {
 
 pub fn header_deserialize(header: &[u8; BLOCK_SIZE]) -> Header {
     return deserialize(header).unwrap();
+}
+
+pub fn header_get_next_rowid(header: &mut Header) -> u64 {
+    let next_rowid = header.next_rowid;
+    header.next_rowid += 1;
+
+    return next_rowid;
 }

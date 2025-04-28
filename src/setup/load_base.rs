@@ -25,7 +25,6 @@ use crate::config::SysDb;
 use crate::utils::Logger;
 
 pub fn setup_base(machine: &mut Machine) {
-    println!("\n\n");
     Logger::info("############################################################");
     Logger::info("#######################START LOAD BASE######################");
     Logger::info("############################################################");

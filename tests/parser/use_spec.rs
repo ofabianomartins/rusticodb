@@ -3,17 +3,17 @@ use std::path::Path;
 use rusticodb::config::Config;
 use rusticodb::machine::Machine;
 use rusticodb::machine::check_database_exists;
+use rusticodb::machine::PagerManager;
 
 use rusticodb::utils::execution_error::ExecutionError;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
-use rusticodb::storage::Pager;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_use_database_that_not_exists() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -37,7 +37,7 @@ pub fn test_use_database_that_not_exists() {
 
 #[test]
 pub fn test_use_database_set_in_context() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

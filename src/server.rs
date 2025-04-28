@@ -13,7 +13,7 @@ use std::error::Error;
 
 use crate::setup::setup_system;
 use crate::machine::Machine;
-use crate::storage::Pager;
+use crate::machine::PagerManager;
 
 use crate::parser::parse_command;
 
@@ -26,7 +26,7 @@ async fn handle_client(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
 
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     setup_system(&mut machine);

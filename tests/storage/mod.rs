@@ -1,6 +1,5 @@
 pub mod header_spec;
 
-pub mod pager_spec;
 pub mod page_spec;
 pub mod tuple_spec;
 pub mod expression_spec;

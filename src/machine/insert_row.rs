@@ -2,13 +2,13 @@ use crate::machine::Column;
 use crate::machine::Table;
 use crate::machine::Machine;
 use crate::machine::get_sequence_next_id;
+use crate::machine::pager_manager_flush_page;
+use crate::machine::pager_manager_get_next_rowid;
+use crate::machine::pager_manager_insert_tuples;
 
 use crate::storage::Tuple;
 use crate::storage::Data;
 use crate::storage::format_table_name;
-use crate::storage::pager_insert_tuples;
-use crate::storage::pager_flush_page;
-use crate::storage::pager_get_next_rowid;
 use crate::storage::tuple_new;
 use crate::storage::ResultSet;
 use crate::storage::ResultSetType;
@@ -62,8 +62,8 @@ pub fn insert_row(
 
     let mut adjusted_tuples = adjusted_tuples_result.unwrap();
 
-    pager_insert_tuples(&mut machine.pager, &page_key, &mut adjusted_tuples);
-    pager_flush_page(&mut machine.pager, &page_key);
+    pager_manager_insert_tuples(&mut machine.pager_manager, &page_key, &mut adjusted_tuples);
+    pager_manager_flush_page(&mut machine.pager_manager, &page_key);
 
     return Ok(ResultSet::new_command(ResultSetType::Change, String::from("INSERT")))
 }
@@ -90,7 +90,7 @@ pub fn adjust_rows(
             if has_primary_key == false {
                 new_tuple.push(
                     Data::UnsignedBigint(
-                        pager_get_next_rowid(&mut machine.pager, page_key)
+                        pager_manager_get_next_rowid(&mut machine.pager_manager, page_key)
                     )
                 );
             }

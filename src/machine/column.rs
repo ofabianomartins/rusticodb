@@ -121,7 +121,6 @@ impl Column {
 
 impl PartialEq for Column {
     fn eq(&self, other: &Self) -> bool {
-        // println!("\n\n\n{}\n{}\n\n\n", self, other);
         (self.name == other.name && self.table_name == other.table_name) ||
         (self.alias == other.alias && self.table_alias == other.table_alias)
     }

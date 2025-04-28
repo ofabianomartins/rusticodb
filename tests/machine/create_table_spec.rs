@@ -8,9 +8,9 @@ use rusticodb::machine::Table;
 use rusticodb::machine::create_database;
 use rusticodb::machine::create_table;
 use rusticodb::machine::check_table_exists;
+use rusticodb::machine::PagerManager;
 
 use rusticodb::storage::Header;
-use rusticodb::storage::Pager;
 use rusticodb::storage::read_data;
 
 use rusticodb::setup::setup_system;
@@ -21,7 +21,7 @@ use crate::test_utils::create_tmp_test_folder;
 pub fn test_if_table_exists_is_true() {
     let database1 = String::from("database1");
     let table1 = String::from("table1");
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -38,7 +38,7 @@ pub fn test_if_table_exists_is_true() {
 pub fn test_if_table_exists_is_false() {
     let database1 = String::from("database1");
     let table1 = String::from("table1");
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -53,7 +53,7 @@ pub fn test_if_table_exists_is_false() {
 #[test]
 pub fn test_create_table_metadata_file() {
     let database1 = String::from("database1");
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

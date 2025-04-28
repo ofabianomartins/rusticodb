@@ -1,10 +1,11 @@
+use rusticodb::machine::PagerManager;
+use rusticodb::machine::pager_manager_insert_tuples;
+use rusticodb::machine::pager_manager_read_tuples;
+use rusticodb::machine::pager_manager_flush_page;
+
 use rusticodb::storage::format_table_name;
 use rusticodb::storage::format_database_name;
-use rusticodb::storage::Pager;
 use rusticodb::storage::tuple_new;
-use rusticodb::storage::pager_insert_tuples;
-use rusticodb::storage::pager_read_tuples;
-use rusticodb::storage::pager_flush_page;
 use rusticodb::storage::create_file;
 use rusticodb::storage::create_folder;
 use rusticodb::storage::Data;
@@ -19,13 +20,13 @@ pub fn test_write_data_100_tuples() {
 
     create_tmp_test_folder();
 
-    let mut pager = Pager::new();
+    let mut pager = PagerManager::new();
 
     for _ in 1..100 {
         let mut tuple = tuple_new();
         tuple.push(Data::UnsignedTinyint(2u8));
 
-        pager_insert_tuples(&mut pager, &page_key, &mut vec![tuple]);
+        pager_manager_insert_tuples(&mut pager, &page_key, &mut vec![tuple]);
     }
 
     assert!(matches!(pager.headers.get(&page_key), Some(_hash_page)));
@@ -41,7 +42,7 @@ pub fn test_read_data_metadata_file() {
 
     create_tmp_test_folder();
 
-    let mut pager = Pager::new();
+    let mut pager = PagerManager::new();
 
     for _ in 0..100 {
         let mut tuple = tuple_new();
@@ -51,10 +52,10 @@ pub fn test_read_data_metadata_file() {
         tuple.push(Data::UnsignedBigint(5u64));
         tuple.push(Data::UnsignedBigint(6u64));
 
-        pager_insert_tuples(&mut pager, &page_key, &mut vec![tuple]);
+        pager_manager_insert_tuples(&mut pager, &page_key, &mut vec![tuple]);
     }
 
-    let tuples = pager_read_tuples(&mut pager, &page_key);
+    let tuples = pager_manager_read_tuples(&mut pager, &page_key);
 
     assert_eq!(tuples.len(), 100);
     assert!(matches!(pager.headers.get(&page_key), Some(_hash_page)));
@@ -75,7 +76,7 @@ pub fn test_read_data_from_new_pager() {
     create_folder(&database_key);
     create_file(&page_key);
 
-    let mut pager = Pager::new();
+    let mut pager = PagerManager::new();
 
     for _ in 0..100 {
         let mut tuple = tuple_new();
@@ -85,14 +86,14 @@ pub fn test_read_data_from_new_pager() {
         tuple.push(Data::UnsignedBigint(5u64));
         tuple.push(Data::UnsignedBigint(6u64));
 
-        pager_insert_tuples(&mut pager, &page_key, &mut vec![tuple]);
+        pager_manager_insert_tuples(&mut pager, &page_key, &mut vec![tuple]);
     }
 
-    pager_flush_page(&mut pager, &page_key);
+    pager_manager_flush_page(&mut pager, &page_key);
 
-    let mut pager_new = Pager::new();
+    let mut pager_new = PagerManager::new();
 
-    let tuples = pager_read_tuples(&mut pager_new, &page_key);
+    let tuples = pager_manager_read_tuples(&mut pager_new, &page_key);
 
     assert_eq!(tuples.len(), 100);
     assert!(matches!(pager.headers.get(&page_key), Some(_hash_page)));

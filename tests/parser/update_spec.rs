@@ -2,14 +2,13 @@
 use rusticodb::machine::Machine;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
-use rusticodb::storage::Pager;
-// use rusticodb::utils::ExecutionError;
+use rusticodb::machine::PagerManager;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_in_two_rows_varchar_and_update() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

@@ -1,15 +1,15 @@
 use rusticodb::machine::Machine;
+use rusticodb::machine::PagerManager;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
 use rusticodb::utils::ExecutionError;
-use rusticodb::storage::Pager;
 use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_in_two_varchar_columns() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -33,7 +33,7 @@ pub fn test_in_two_varchar_columns() {
 
 #[test]
 pub fn test_in_two_columns_varchar_and_with_primary_key() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -74,7 +74,7 @@ pub fn test_in_two_columns_varchar_and_with_primary_key() {
 
 #[test]
 pub fn test_in_two_rows_with_null_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -100,7 +100,7 @@ pub fn test_in_two_rows_with_null_value() {
 
 #[test]
 pub fn test_in_two_columns_and_one_accept_null_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -136,7 +136,7 @@ pub fn test_in_two_columns_and_one_accept_null_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_varchar_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -177,7 +177,7 @@ pub fn test_in_two_columns_one_with_default_varchar_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_text_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -218,7 +218,7 @@ pub fn test_in_two_columns_one_with_default_text_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_unsigned_bigint_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -259,7 +259,7 @@ pub fn test_in_two_columns_one_with_default_unsigned_bigint_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_unsigned_int_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -300,7 +300,7 @@ pub fn test_in_two_columns_one_with_default_unsigned_int_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_unsigned_smallint_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -341,7 +341,7 @@ pub fn test_in_two_columns_one_with_default_unsigned_smallint_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_unsigned_tinyint_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -382,7 +382,7 @@ pub fn test_in_two_columns_one_with_default_unsigned_tinyint_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_signed_bigint_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -423,7 +423,7 @@ pub fn test_in_two_columns_one_with_default_signed_bigint_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_signed_int_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -464,7 +464,7 @@ pub fn test_in_two_columns_one_with_default_signed_int_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_signed_smallint_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -505,7 +505,7 @@ pub fn test_in_two_columns_one_with_default_signed_smallint_value() {
 
 #[test]
 pub fn test_in_two_columns_one_with_default_signed_tinyint_value() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

@@ -1,16 +1,16 @@
 use rusticodb::machine::Machine;
 use rusticodb::machine::check_database_exists;
+use rusticodb::machine::PagerManager;
 use rusticodb::utils::ExecutionError;
 use rusticodb::parser::parse_command;
 use rusticodb::setup::setup_system;
-use rusticodb::storage::Pager;
 use rusticodb::storage::Data;
 
 use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_select_database_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -37,7 +37,7 @@ pub fn test_select_database_tables() {
 
 #[test]
 pub fn test_select_all_database_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -59,7 +59,7 @@ pub fn test_select_all_database_tables() {
 
 #[test]
 pub fn test_select_with_alias_database_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -88,7 +88,7 @@ pub fn test_select_with_alias_database_tables() {
 
 #[test]
 pub fn test_select_with_defined_wizard_database_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -112,7 +112,7 @@ pub fn test_select_with_defined_wizard_database_tables() {
 
 #[test]
 pub fn test_select_with_defined_wizard_and_alias_database_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -141,7 +141,7 @@ pub fn test_select_with_defined_wizard_and_alias_database_tables() {
 
 #[test]
 pub fn test_select_with_defined_attr_and_alias_database_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -168,7 +168,7 @@ pub fn test_select_with_defined_attr_and_alias_database_tables() {
 
 #[test]
 pub fn test_select_with_wrong_database_that_not_exists() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -184,7 +184,7 @@ pub fn test_select_with_wrong_database_that_not_exists() {
 
 #[test]
 pub fn test_select_with_one_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -201,7 +201,7 @@ pub fn test_select_with_one_tables() {
 
 #[test]
 pub fn test_select_with_two_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -218,7 +218,7 @@ pub fn test_select_with_two_tables() {
 
 #[test]
 pub fn test_select_with_three_tables() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -235,7 +235,7 @@ pub fn test_select_with_three_tables() {
 
 #[test]
 pub fn test_select_with_all_and_more_one_attr() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -252,7 +252,7 @@ pub fn test_select_with_all_and_more_one_attr() {
 
 #[test]
 pub fn test_select_with_limit_clause() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -269,7 +269,7 @@ pub fn test_select_with_limit_clause() {
 
 #[test]
 pub fn test_select_with_all_where_equal() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -286,7 +286,7 @@ pub fn test_select_with_all_where_equal() {
 
 #[test]
 pub fn test_select_with_all_where_with_not_equal() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -304,7 +304,7 @@ pub fn test_select_with_all_where_with_not_equal() {
 
 #[test]
 pub fn test_select_with_all_where_with_and_conditions() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -324,7 +324,7 @@ pub fn test_select_with_all_where_with_and_conditions() {
 
 #[test]
 pub fn test_select_with_all_where_with_or_conditions() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

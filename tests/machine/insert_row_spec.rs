@@ -9,8 +9,8 @@ use rusticodb::machine::Column;
 use rusticodb::machine::ColumnType;
 use rusticodb::machine::get_columns;
 use rusticodb::machine::product_cartesian;
+use rusticodb::machine::PagerManager;
 
-use rusticodb::storage::Pager;
 use rusticodb::storage::Data;
 use rusticodb::storage::Tuple;
 
@@ -18,7 +18,7 @@ use crate::test_utils::create_tmp_test_folder;
 
 #[test]
 pub fn test_in_one_column_without_primary_key() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();
@@ -64,7 +64,7 @@ pub fn test_in_one_column_without_primary_key() {
 
 #[test]
 pub fn test_in_one_column_with_primary_key() {
-    let pager = Pager::new();
+    let pager = PagerManager::new();
     let mut machine = Machine::new(pager);
 
     create_tmp_test_folder();

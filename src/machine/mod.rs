@@ -3,6 +3,8 @@ pub mod database;
 pub mod table;
 pub mod column;
 
+pub mod pager_manager;
+
 // FILE FUNCTIONS
 pub mod create_file;
 pub mod path_exists;
@@ -77,6 +79,14 @@ pub use self::sequence::{
 };
 pub use self::index::{ Index, get_indexes_table_definition, get_indexes_table_definition_without_id };
 
+pub use self::pager_manager::PagerManager;
+pub use self::pager_manager::pager_manager_new;
+pub use self::pager_manager::pager_manager_insert_tuples;
+pub use self::pager_manager::pager_manager_update_tuples;
+pub use self::pager_manager::pager_manager_read_tuples;
+pub use self::pager_manager::pager_manager_flush_page;
+pub use self::pager_manager::pager_manager_get_next_rowid;
+
 pub use create_file::create_file;
 pub use path_exists::path_exists;
 pub use database_exists::database_exists;
@@ -120,17 +130,15 @@ pub use read_tuples::read_tuples;
 pub use drop_tuples::drop_tuples;
 pub use update_row::update_row;
 
-use crate::storage::Pager;
-
 #[derive(Debug)]
 pub struct Machine { 
-    pub pager: Pager,
+    pub pager_manager: PagerManager,
     pub actual_database: Option<String>
 }
 
 impl Machine {
-    pub fn new(pager: Pager) -> Self {
-        Self { pager, actual_database: None }
+    pub fn new(pager_manager: PagerManager) -> Self {
+        Self { pager_manager, actual_database: None }
     }
 
     pub fn get_actual_database_name(&mut self) -> String {
