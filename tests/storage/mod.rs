@@ -1,5 +1,7 @@
 pub mod header_spec;
 
+pub mod btree_spec;
+
 pub mod page_spec;
 pub mod tuple_spec;
 pub mod expression_spec;

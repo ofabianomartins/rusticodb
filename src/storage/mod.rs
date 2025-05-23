@@ -4,7 +4,7 @@ pub mod header;
 pub mod pager;
 pub mod page;
 pub mod result_set;
-pub mod bplustree;
+pub mod btree;
 
 pub mod expression;
 
@@ -56,12 +56,19 @@ pub use self::header::header_new;
 pub use self::header::header_serialize;
 pub use self::header::header_deserialize;
 pub use self::header::header_get_next_rowid;
+pub use self::header::header_flush_page;
 
 pub use self::pager::Pager;
 pub use self::pager::pager_new;
 pub use self::pager::pager_insert_tuples;
 pub use self::pager::pager_update_tuples;
 pub use self::pager::pager_read_tuples;
+pub use self::pager::pager_flush_page;
+
+pub use self::btree::btree_new;
+pub use self::btree::btree_insert;
+pub use self::btree::btree_remove;
+pub use self::btree::btree_flush;
 
 pub use self::os_interface::{ BLOCK_SIZE };
 pub use self::os_interface::create_file;

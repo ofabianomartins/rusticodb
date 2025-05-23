@@ -3,6 +3,7 @@ use bincode::deserialize;
 use serde::Serialize;
 use serde::Deserialize;
 
+use crate::storage::write_data;
 use crate::storage::BLOCK_SIZE;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -32,4 +33,8 @@ pub fn header_get_next_rowid(header: &mut Header) -> u64 {
     header.next_rowid += 1;
 
     return next_rowid;
+}
+
+pub fn header_flush_page(header: &Header, page_key: &String) {
+    write_data(page_key, 0, &header_serialize(header));
 }

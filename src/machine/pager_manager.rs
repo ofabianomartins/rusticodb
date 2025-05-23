@@ -3,19 +3,19 @@ use std::collections::HashMap;
 use crate::storage::Tuple;
 use crate::storage::Header;
 use crate::storage::header_new;
-use crate::storage::header_serialize;
 use crate::storage::header_deserialize;
 use crate::storage::header_get_next_rowid;
 use crate::storage::pager_insert_tuples;
 use crate::storage::pager_update_tuples;
 use crate::storage::pager_read_tuples;
 use crate::storage::pager_new;
-use crate::storage::page_serialize;
 use crate::storage::Pager;
 
-use crate::storage::write_data;
 use crate::storage::read_data;
 use crate::storage::path_exists;
+
+use crate::storage::pager_flush_page;
+use crate::storage::header_flush_page;
 
 use crate::utils::Logger;
 
@@ -114,15 +114,13 @@ pub fn pager_manager_get_next_rowid(pager: &mut PagerManager, page_key: &String)
 }
 
 
-pub fn pager_manager_flush_page(pager: &mut PagerManager, page_key: &String) {
+pub fn pager_manager_flush_page(pager_manager: &mut PagerManager, page_key: &String) {
     Logger::debug(format!("FLUSH {}", page_key).leak());
-    if let Some(header) = &pager.headers.get(page_key) {
-        write_data(page_key, 0, &header_serialize(header));
+    if let Some(header) = &pager_manager.headers.get(page_key) {
+        header_flush_page(header, page_key);
     }
-    if let Some(pager_item) = &pager.pages.get(page_key) {
-        for (idx, page) in *pager_item {
-            write_data(page_key, *idx as u64, &page_serialize(page));
-        }
+    if let Some(pager) = pager_manager.pages.get(page_key) {
+        pager_flush_page(&pager, page_key);
     }
 }
 

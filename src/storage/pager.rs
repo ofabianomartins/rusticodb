@@ -2,17 +2,18 @@ use std::collections::HashMap;
 
 use crate::storage::Tuple;
 use crate::storage::Header;
-use crate::storage::header_new;
 use crate::storage::Page;
 use crate::storage::page_insert_tuples;
 use crate::storage::page_update_tuples;
 use crate::storage::page_read_tuples;
 use crate::storage::page_new;
 use crate::storage::page_amount_left;
+use crate::storage::page_serialize;
 use crate::storage::page_deserialize;
 use crate::storage::tuple_size;
 
 use crate::storage::read_data;
+use crate::storage::write_data;
 
 pub type Pager = HashMap<usize, Page>;
 
@@ -83,4 +84,10 @@ pub fn pager_read_tuples(pager: &mut Pager, page_key: &String, header: &mut Head
     }
 
     return tuples;
+}
+
+pub fn pager_flush_page(pager: &Pager, page_key: &String) {
+    for (idx, page) in pager {
+        write_data(page_key, *idx as u64, &page_serialize(&page));
+    }
 }
